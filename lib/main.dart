@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:simple_weahter/Home/homePage.dart';
 void main() {
   runApp(MyApp());
 }
@@ -29,9 +30,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
-    Text(
-      'Home Page',
-    ),
+    HomePage(title: "1"),
     Text(
       'Search Page',
     ),
@@ -64,19 +63,23 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               IconButton(
-                icon: Icon(MdiIcons.windPower),
+                icon: Icon(Icons.wb_sunny),
+                color: _selectedIndex == 0 ? Colors.blue : null,
                 onPressed: () => _onItemTapped(0),
               ),
               IconButton(
                 icon: Icon(Icons.cloud),
+                  color: _selectedIndex == 1 ? Colors.blue : null,
                 onPressed: () => _onItemTapped(1),
               ),
               IconButton(
                 icon: Icon(Icons.favorite),
+                  color: _selectedIndex == 2 ? Colors.blue : null,
                 onPressed: () => _onItemTapped(2),
               ),
               IconButton(
                 icon: Icon(Icons.settings),
+                  color: _selectedIndex == 3 ? Colors.blue : null,
                 onPressed: () => _onItemTapped(3),
               ),
             ],
@@ -86,3 +89,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
