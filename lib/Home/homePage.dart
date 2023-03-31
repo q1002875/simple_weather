@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'homeWidget.dart/countryWeatherHourType.dart';
 import 'homeWidget.dart/countryWeatherState.dart';
 class HomePage extends StatefulWidget {
   const HomePage({this.title});
@@ -28,17 +29,20 @@ class _HomePageState extends State<HomePage> {
             color: Colors.purple,
             child: CountryWeather(),
           ),
-          // Container(
-          //   width: 100,
-          //   height: 100,
-          //   color: Colors.blue,
-          // ),
+           SizedBox(height: 30),
+            MyListView()
+  // Container(
+  //           width: screenWidth - 50,
+  //           height: screenHeight / 4.5,
+  //           color: Colors.yellow,
+  //           child: MyListView(),
+  //         ),
+
+
+      
         ],
       ),
           ));
-
-    // TODO: implement build
-    throw UnimplementedError();
   }
 }
 
