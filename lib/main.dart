@@ -1,0 +1,88 @@
+import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Navigation Bar',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: MyHomePage(title: 'Flutter Navigation Bar'),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key key, this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int _selectedIndex = 0;
+  static const List<Widget> _widgetOptions = <Widget>[
+    Text(
+      'Home Page',
+    ),
+    Text(
+      'Search Page',
+    ),
+    Text(
+      'Favorites Page',
+    ),
+    Text(
+      'Settings Page',
+    ),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: _widgetOptions.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        shape: CircularNotchedRectangle(),
+        child: Container(
+          height: 60,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              IconButton(
+                icon: Icon(MdiIcons.windPower),
+                onPressed: () => _onItemTapped(0),
+              ),
+              IconButton(
+                icon: Icon(Icons.cloud),
+                onPressed: () => _onItemTapped(1),
+              ),
+              IconButton(
+                icon: Icon(Icons.favorite),
+                onPressed: () => _onItemTapped(2),
+              ),
+              IconButton(
+                icon: Icon(Icons.settings),
+                onPressed: () => _onItemTapped(3),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
