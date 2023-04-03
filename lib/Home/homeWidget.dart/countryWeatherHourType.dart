@@ -1,62 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:simple_weahter/Home/homeWidget.dart/ListWidget/weatherHourIten.dart';
 
-class MyListView extends StatefulWidget {
-  const MyListView();
+import 'countryWeatherState.dart';
+
+class HorizontalList extends StatefulWidget {
   @override
-  _MyListViewState createState() => _MyListViewState();
+  _HorizontalListState createState() => _HorizontalListState();
 }
 
-class _MyListViewState extends State<MyListView> {
-  List<Widget> _items = [
-    MyWidget(title: 'Widget 1'),
-    MyWidget(title: 'Widget 2'),
-    MyWidget(title: 'Widget 3'),
-    MyWidget(title: 'Widget 4'),
-    MyWidget(title: 'Widget 5'),
+class _HorizontalListState extends State<HorizontalList> {
+  final List<Widget> items = [
+     ImageTextWidget(),
+      ImageTextWidget(),
+       ImageTextWidget(),
+      ImageTextWidget(),
   ];
 
   @override
- Widget build(BuildContext context) {
-    return Scaffold(
-      body: Row(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _items.length,
-              itemBuilder: (BuildContext context, int index) {
-                return _items[index];
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class MyWidget extends StatefulWidget {
-  final String title;
-
-  MyWidget({this.title});
-
-  @override
-  _MyWidgetState createState() => _MyWidgetState();
-}
-
-class _MyWidgetState extends State<MyWidget> {
-  bool _isChecked = false;
-
-  @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(widget.title),
-      trailing: Checkbox(
-        value: _isChecked,
-        onChanged: (bool value) {
-          setState(() {
-            _isChecked = value;
-          });
+    return Container(
+      height: 100.0,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: items.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            width: 100.0,
+            margin: EdgeInsets.all(10.0),
+            decoration: BoxDecoration(
+              color: Colors.blueGrey,
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Center(
+              child: items[index]
+            ),
+          );
         },
       ),
     );
