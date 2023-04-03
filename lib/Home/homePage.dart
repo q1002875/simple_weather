@@ -24,29 +24,29 @@ class _HomePageState extends State<HomePage> {
           SizedBox(height: 50),
           Container(
             width: screenWidth / 1.6,
-            height: screenHeight / 2.4,
-            color: Colors.purple,
-            child: CountryWeather(),
+            height: screenHeight / 2.2,
+            // color: Colors.purple,
+            child: CountryWeather(height:screenHeight / 2.4,width: screenWidth / 1.6,title: "ththtthhththt",),
           ),
           SizedBox(height: 30),
           Container(
              width: screenWidth/1.1,
-            height: screenHeight / 6,
+            height: screenHeight / 7,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30),
-              color: Colors.yellow,
+              // color: Colors.yellow,
             ),
             child: Center(
               child: HorizontalList()
             ),
           ),
-          SizedBox(height: 30),
+          SizedBox(height: 5),
           Container(
              width: screenWidth/1.1,
-            height: screenHeight / 6,
+            height: screenHeight / 7,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30),
-              color: Colors.blue,
+              // color: Colors.blue,
             ),
             child: Center(
               child:HorizontalList()
