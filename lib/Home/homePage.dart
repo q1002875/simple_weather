@@ -1,4 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:simple_weahter/ApiCommand.dart/apiService.dart';
+import 'package:simple_weahter/Cloud/Cloud.dart';
+import 'package:simple_weahter/HttpServer/HttpServerModel.dart';
+import 'package:simple_weahter/HttpServer/Httpserver.dart';
 import 'homeWidget.dart/countryWeatherHourType.dart';
 import 'homeWidget.dart/countryWeatherState.dart';
 
@@ -10,7 +17,20 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
+
+
+// ignore: missing_return
+Future<WeatherData> getcountryData() async {
+  final api = apiService();
+  final countrydata = await api.getCountryData('新竹縣');
+  return  countrydata;
+  final loacls = countrydata.locations;
+  print('here $loacls');
+}
+
 class _HomePageState extends State<HomePage> {
+
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -26,8 +46,21 @@ class _HomePageState extends State<HomePage> {
             width: screenWidth / 1.6,
             height: screenHeight / 2.2,
             // color: Colors.purple,
-            child: CountryWeather(height:screenHeight / 2.4,width: screenWidth / 1.6,title: "ththtthhththt",),
-          ),
+            child: FutureBuilder<WeatherData>(
+      future: getcountryData(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final weatherData = snapshot.data;
+          return Container(
+            child:  CountryWeather(height:screenHeight / 2.4,width: screenWidth / 1.6,weatherData: weatherData),
+          );
+        } else if (snapshot.hasError) {
+          return Text("${snapshot.error}");
+        }
+        return CircularProgressIndicator();
+      },
+    )
+                 ),
           SizedBox(height: 30),
           Container(
              width: screenWidth/1.1,

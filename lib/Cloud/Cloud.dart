@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+
+import '../HttpServer/Httpserver.dart';
 
 class WeatherData {
   final List<Location> locations;
@@ -34,20 +38,27 @@ class Location {
 
 class Weather {
   final String description;
+  final String weatherState;
   final String temperature;
-
-  Weather({ this.description,  this.temperature});
+  Weather({ this.description,  this.weatherState,this.temperature});
 
   factory Weather.fromJson(Map<String, dynamic> json) {
     return Weather(
       description: json['description'],
-      temperature: json['time'][0]['parameter']['parameterName'],
+      weatherState: json['time'][0]['parameter']['parameterName'],
+      temperature: json['time'][2]['parameter']['parameterName'],
     );
   }
 }
 
 Future<http.Response> fetchWeatherData(String country) async {
   final String apiUrl = 'https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-95C4A955-4E38-4B86-92B4-2F1E71669956&limit=7&format=JSON&locationName=$country&elementName=&sort=time&timeTo=2023-04-03T20%3A00%3A00';
+// final httpService  = HttpService(baseUrl: apiUrl);
+
+// final response = await httpService.getJson();
+// final usersJson = response['data'] as List<dynamic>;
+// final users = usersJson.map((userJson) => User.fromJson(userJson)).toList();
+
   try {
     return await http.get(Uri.parse(apiUrl));
   } catch (e) {
@@ -79,7 +90,7 @@ class Cloud extends StatelessWidget {
                     var location = weatherData.locations[index];
                     return ListTile(
                       title: Text(location.name ?? ""),
-                      subtitle: Text(location.weather[index].temperature.toString() ?? ""),
+                      subtitle: Text(location.weather[index].weatherState.toString() ?? ""),
                     );
                   },
                 );
