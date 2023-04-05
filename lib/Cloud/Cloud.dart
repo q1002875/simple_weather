@@ -46,7 +46,7 @@ class Weather {
     return Weather(
       description: json['description'],
       weatherState: json['time'][0]['parameter']['parameterName'],
-      temperature: json['time'][2]['parameter']['parameterName'],
+      temperature: json['time'][0]['parameter']['parameterName'],
     );
   }
 }

@@ -17,76 +17,81 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-
-
 // ignore: missing_return
 Future<WeatherData> getcountryData() async {
   final api = apiService();
   final countrydata = await api.getCountryData('新竹縣');
-  return  countrydata;
-  final loacls = countrydata.locations;
-  print('here $loacls');
+  return countrydata;
 }
 
 class _HomePageState extends State<HomePage> {
-
+  Future<void> _onRefresh() async {
+    setState() {
+      print('reflash');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight =
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
-    return Scaffold(
-        body: Center(
-      child: Column(
-        // mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          SizedBox(height: 50),
-          Container(
-            width: screenWidth / 1.6,
-            height: screenHeight / 2.2,
-            // color: Colors.purple,
-            child: FutureBuilder<WeatherData>(
-      future: getcountryData(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final weatherData = snapshot.data;
-          return Container(
-            child:  CountryWeather(height:screenHeight / 2.4,width: screenWidth / 1.6,weatherData: weatherData),
-          );
-        } else if (snapshot.hasError) {
-          return Text("${snapshot.error}");
-        }
-        return CircularProgressIndicator();
-      },
-    )
-                 ),
-          SizedBox(height: 30),
-          Container(
-             width: screenWidth/1.1,
-            height: screenHeight / 7,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              // color: Colors.yellow,
-            ),
-            child: Center(
-              child: HorizontalList()
-            ),
-          ),
-          SizedBox(height: 5),
-          Container(
-             width: screenWidth/1.1,
-            height: screenHeight / 7,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              // color: Colors.blue,
-            ),
-            child: Center(
-              child:HorizontalList()
-            ),
-          )
-        ],
+    return MaterialApp(
+      title: 'Flutter Pull-to-Refresh',
+      home: Scaffold(
+        body: RefreshIndicator(
+            onRefresh: _onRefresh,
+            child: Scaffold(
+                body: Center(
+              child: Column(
+                // mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(height: 50),
+                  Container(
+                      width: screenWidth / 1.6,
+                      height: screenHeight / 2.2,
+                      // color: Colors.purple,
+                      child: FutureBuilder<WeatherData>(
+                        future: getcountryData(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            final weatherData = snapshot.data;
+                            return Container(
+                              child: CountryWeather(
+                                  height: screenHeight / 2.4,
+                                  width: screenWidth / 1.6,
+                                  weatherData: weatherData),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text("${snapshot.error}");
+                          }
+                          return CircularProgressIndicator();
+                        },
+                      )),
+                  SizedBox(height: 30),
+                  Container(
+                    width: screenWidth / 1.1,
+                    height: screenHeight / 7,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      // color: Colors.yellow,
+                    ),
+                    child: Center(child: HorizontalList()),
+                  ),
+                  SizedBox(height: 5),
+                  Container(
+                    width: screenWidth / 1.1,
+                    height: screenHeight / 7,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      // color: Colors.blue,
+                    ),
+                    child: Center(child: HorizontalList()),
+                  )
+                ],
+              ),
+            ))),
       ),
-    ));
+    );
   }
 }
