@@ -1,23 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:simple_weahter/Home/homeWidget.dart/ListWidget/weatherHourIten.dart';
-
-import 'countryWeatherState.dart';
+import '../../Cloud/Cloud.dart';
 
 class HorizontalList extends StatefulWidget {
+
+  HorizontalList({this.weatherData});
+  final WeatherWeekData weatherData;
+
   @override
   _HorizontalListState createState() => _HorizontalListState();
 }
 
 class _HorizontalListState extends State<HorizontalList> {
+                
   final List<Widget> items = [
-     ImageTextWidget(),
-      ImageTextWidget(),
-       ImageTextWidget(),
-      ImageTextWidget(),
+    ImageTextWidget(text: '1232',),
+    ImageTextWidget(),
+    ImageTextWidget(),
+    ImageTextWidget(),
+    ImageTextWidget(),
+    ImageTextWidget(),
+    ImageTextWidget(),
+    ImageTextWidget(),
+    ImageTextWidget(),
+    ImageTextWidget(),
+    ImageTextWidget(),
+    ImageTextWidget(),
   ];
+  
+  get weatherData => weatherData;
 
   @override
   Widget build(BuildContext context) {
+
+    // print(weatherData);
+
     return Container(
       height: 100.0,
       child: ListView.builder(
@@ -31,9 +48,7 @@ class _HorizontalListState extends State<HorizontalList> {
               color: Colors.blueGrey,
               borderRadius: BorderRadius.circular(10.0),
             ),
-            child: Center(
-              child: items[index]
-            ),
+            child: Center(child: items[index]),
           );
         },
       ),

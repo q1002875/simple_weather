@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:simple_weahter/Home/homePage.dart';
-
 import 'Cloud/Cloud.dart';
+
+
+
 void main() {
+
   runApp(MyApp());
 }
 
