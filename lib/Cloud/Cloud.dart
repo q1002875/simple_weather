@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../ExtensionToolClass/HttpServer/Httpserver.dart';
+
 class WeatherData {
   String _datasetDescription;
   List<Location> _locations;
@@ -15,11 +16,10 @@ class WeatherData {
 
   WeatherData.fromJson(Map<String, dynamic> json) {
     _datasetDescription = json['records']['datasetDescription'];
-    _locations = List<Location>.from(
-        json['records']['location'].map((location) => Location.fromJson(location)));
+    _locations = List<Location>.from(json['records']['location']
+        .map((location) => Location.fromJson(location)));
   }
 }
-
 
 class Location {
   String _locationName;
@@ -70,8 +70,6 @@ class Time {
   }
 }
 
-
-
 ///////////////week data
 
 class WeatherWeekData {
@@ -83,21 +81,23 @@ class WeatherWeekData {
 
   WeatherWeekData.fromJson(Map<String, dynamic> json) {
     _datasetDescription = json['records']['datasetDescription'];
-    _locations = List<Locationweek>.from(json['records']['locations']['location']
+    _locations = List<Locationweek>.from(json['records']['locations'][0]
+            ['location']
         .map((location) => Locationweek.fromJson(location)));
   }
 }
+
 class Locationweek {
   String _locationName;
-  // List<Weatherweek> _weatherElements;
+  List<Weatherweek> _weatherElements;
 
   String get locationName => _locationName;
-  // List<Weatherweek> get weatherElements => _weatherElements;
+  List<Weatherweek> get weatherElements => _weatherElements;
 
   Locationweek.fromJson(Map<String, dynamic> json) {
     _locationName = json['locationName'];
-    // _weatherElements = List<Weatherweek>.from(
-        // json['weatherElement'].map((element) => Weatherweek.fromJson(element)));
+    _weatherElements = List<Weatherweek>.from(
+        json['weatherElement'].map((element) => Weatherweek.fromJson(element)));
   }
 }
 
@@ -110,14 +110,16 @@ class Weatherweek {
 
   Weatherweek.fromJson(Map<String, dynamic> json) {
     _elementName = json['elementName'];
-    _times = List<Timeweek>.from(json['time'].map((time) => Timeweek.fromJson(time)));
+    _times = List<Timeweek>.from(
+        json['time'].map((time) => Timeweek.fromJson(time)));
   }
 }
+
 class Timeweek {
   DateTime _startTime;
   DateTime _endTime;
   String _parameterValue;
- 
+
   DateTime get startTime => _startTime;
   DateTime get endTime => _endTime;
   String get parameterValue => _parameterValue;
@@ -183,7 +185,6 @@ class Timeweek {
 //     );
 //   }
 // }
-
 
 // class Time {
 //   DateTime _startTime;
@@ -298,9 +299,10 @@ class Cloud extends StatelessWidget {
                     var location = weatherData.locations[index];
                     return ListTile(
                       title: Text(location._locationName ?? ""),
-                      subtitle: Text(
-                          location.weatherElements[index]._elementName.toString() ??
-                              ""),
+                      subtitle: Text(location
+                              .weatherElements[index]._elementName
+                              .toString() ??
+                          ""),
                     );
                   },
                 );

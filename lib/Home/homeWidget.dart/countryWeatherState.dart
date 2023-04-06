@@ -1,4 +1,3 @@
-
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_weahter/Cloud/Cloud.dart';
@@ -17,12 +16,16 @@ class CountryWeather extends StatelessWidget {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now); // 格式化日期時間
     print(formattedDate);
-    final weatherStatus = weatherData.locations[0].weatherElements[0].times[0].parameterName;
-    final rain = weatherData.locations[0].weatherElements[1].times[0].parameterName;
+    final weatherStatus =
+        weatherData.locations[0].weatherElements[0].times[0].parameterName;
+    final rain =
+        weatherData.locations[0].weatherElements[1].times[0].parameterName;
     final temperature =
         weatherData.locations[0].weatherElements[2].times[0].parameterName;
-    final tt = weatherData.locations[0].weatherElements[0].times[0].parameterName;
-    final conforStatus = weatherData.locations[0].weatherElements[3].times[0].parameterName;
+    final tt =
+        weatherData.locations[0].weatherElements[0].times[0].parameterName;
+    final conforStatus =
+        weatherData.locations[0].weatherElements[3].times[0].parameterName;
     print('weatherStatus$weatherStatus');
     print('temperature$temperature');
     print('conforStatus$conforStatus');
@@ -116,15 +119,15 @@ class CountryWeather extends StatelessWidget {
               color: Colors.green,
               child: Center(
                 child: Text(
-                  '$conforStatus', 
+                  '$conforStatus',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 18, 
-                    fontWeight: FontWeight.bold, 
-                    color: Colors.black, 
-                    letterSpacing: 1.5, 
-                    wordSpacing: 5.0, 
-                    decorationStyle: TextDecorationStyle.dashed, 
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    letterSpacing: 1.5,
+                    wordSpacing: 5.0,
+                    decorationStyle: TextDecorationStyle.dashed,
                   ),
                 ),
               ),
@@ -139,12 +142,12 @@ class CountryWeather extends StatelessWidget {
                   '降雨機率$rain%',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 18, 
-                    fontWeight: FontWeight.bold, 
-                    color: Colors.black, 
-                    letterSpacing: 1.5, 
-                    wordSpacing: 5.0, 
-                    decorationStyle: TextDecorationStyle.dashed, 
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    letterSpacing: 1.5,
+                    wordSpacing: 5.0,
+                    decorationStyle: TextDecorationStyle.dashed,
                   ),
                 ),
               ),

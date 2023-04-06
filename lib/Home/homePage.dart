@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:simple_weahter/ApiCommand.dart/apiService.dart';
 import 'package:simple_weahter/Cloud/Cloud.dart';
+import 'homeWidget.dart/ListWidget/weatherHourIten.dart';
 import 'homeWidget.dart/countryWeatherHourType.dart';
 import 'homeWidget.dart/countryWeatherState.dart';
 
@@ -12,15 +13,14 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
+final api = apiService();
 // ignore: missing_return
 Future<WeatherData> getcountryData(String country) async {
-  final api = apiService();
   final countrydata = await api.getCountryData(country);
   return countrydata;
 }
 
 Future<WeatherWeekData> getweekcountryData(String country) async {
-  final api = apiService();
   final data = await api.getWeekCountryData(country);
   final dddd = data.locations[0].locationName;
   print('heeee$dddd');
@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight =
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
-
+    final List<Widget> push = [ImageTextWidget(text: 'time')];
     return MaterialApp(
       title: 'Flutter Pull-to-Refresh',
       home: Scaffold(
@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 // mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  SizedBox(height: 50),
+                  SizedBox(height: 25),
                   Container(
                       child: Center(
                     child: DropdownButton<String>(
@@ -157,8 +157,20 @@ class _HomePageState extends State<HomePage> {
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             final weatherData = snapshot.data;
+                            final List<Widget> items = [];
+
+                            for (var weather
+                                in weatherData.locations[0].weatherElements) {
+                              for (var time in weather.times) {
+                                final timeday = time.startTime.day;
+                                items.add(ImageTextWidget(text: '$timeday'));
+                              }
+                            }
                             return Container(
-                              child: Center(child: HorizontalList(weatherData: weatherData,)),
+                              child: Center(
+                                  child: HorizontalLis(
+                                weatherData: items,
+                              )),
                             );
                           } else if (snapshot.hasError) {
                             return Text("${snapshot.error}");
@@ -174,7 +186,10 @@ class _HomePageState extends State<HomePage> {
                       borderRadius: BorderRadius.circular(30),
                       // color: Colors.blue,
                     ),
-                    child: Center(child: HorizontalList()),
+                    child: Center(
+                        child: HorizontalLis(
+                      weatherData: push,
+                    )),
                   )
                 ],
               ),
