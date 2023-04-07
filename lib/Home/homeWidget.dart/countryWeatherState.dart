@@ -2,6 +2,8 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_weahter/Cloud/Cloud.dart';
 
+import '../../ExtensionToolClass/CustomText.dart';
+
 class CountryWeather extends StatelessWidget {
   CountryWeather({this.width, this.height, this.weatherData});
 
@@ -30,7 +32,7 @@ class CountryWeather extends StatelessWidget {
     print('溫度:$temperature');
     print('舒適度:$conforStatus');
     print('降雨機率:$rain');
-    print('縣市:$tt');
+
 
     return Column(
       children: [
@@ -44,35 +46,15 @@ class CountryWeather extends StatelessWidget {
             height: height / 8,
             // color: Color.fromARGB(70, 255, 235, 59),
             child: Center(
-              child: Text(
-                '$temperature℃', // 文本内容
-                style: TextStyle(
-                  fontSize: 40, // 字体大小
-                  fontWeight: FontWeight.bold, // 字体粗细
-                  // fontStyle: FontStyle.italic, // 字体样式
-                  color: Colors.yellow, // 字体颜色
-                  letterSpacing: 1.5, // 字母间距
-                  wordSpacing: 5.0, // 单词间距
-                  decorationStyle: TextDecorationStyle.dashed, // 装饰样式
-                ),
-              ),
+              child:CustomText(textContent:'$temperature℃',textColor: Colors.yellow,fontSize: 40, ),
             )),
         Container(
             width: 200,
             height: height / 9.5,
             // color: Colors.yellow,
             child: Center(
-              child: Text(
-                '$formattedDate', // 文本内容
-                style: TextStyle(
-                  fontSize: 18, // 字体大小
-                  fontWeight: FontWeight.bold, // 字体粗细
-                  color: Colors.black, // 字体颜色
-                  letterSpacing: 1.5, // 字母间距
-                  wordSpacing: 5.0, // 单词间距
-                  decorationStyle: TextDecorationStyle.dashed, // 装饰样式
-                ),
-              ),
+              child: 
+              CustomText(textContent:'$formattedDate',textColor: Colors.black,fontSize: 18, ),
             )),
         SizedBox(
           height: 10,
@@ -86,18 +68,8 @@ class CountryWeather extends StatelessWidget {
                 height: height / 3.4,
                 color: Color.fromARGB(255, 230, 37, 37),
                 child: Center(
-                  child: Text(
-                    '$weatherStatus', // 文本内容
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 18, // 字体大小
-                      fontWeight: FontWeight.bold, // 字体粗细
-                      color: Colors.black, // 字体颜色
-                      letterSpacing: 1.5, // 字母间距
-                      wordSpacing: 5.0, // 单词间距
-                      decorationStyle: TextDecorationStyle.dashed, // 装饰样式
-                    ),
-                  ),
+                  child:
+                     CustomText(textContent:'$weatherStatus',textColor: Colors.black,fontSize: 18),
                 )),
             SizedBox(width: 5),
             Container(
@@ -105,18 +77,8 @@ class CountryWeather extends StatelessWidget {
               height: height / 3.4,
               color: Colors.green,
               child: Center(
-                child: Text(
-                  '$conforStatus',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    letterSpacing: 1.5,
-                    wordSpacing: 5.0,
-                    decorationStyle: TextDecorationStyle.dashed,
-                  ),
-                ),
+                child: 
+                  CustomText(textContent:'$conforStatus',textColor: Colors.black,fontSize: 18),
               ),
             ),
             SizedBox(width: 5),
@@ -125,18 +87,8 @@ class CountryWeather extends StatelessWidget {
               height: height / 3.4,
               color: Color.fromARGB(255, 25, 136, 228),
               child: Center(
-                child: Text(
-                  '降雨機率$rain%',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    letterSpacing: 1.5,
-                    wordSpacing: 5.0,
-                    decorationStyle: TextDecorationStyle.dashed,
-                  ),
-                ),
+                child: 
+                 CustomText(textContent:'降雨機率$rain%',textColor: Colors.black,fontSize: 18),
               ),
             ),
           ],

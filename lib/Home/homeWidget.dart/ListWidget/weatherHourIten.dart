@@ -10,7 +10,7 @@ class ImageTextWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Icon(Icons.sunny, size: 50, color: Colors.yellow),
+        Icon(Icons.wind_power, size: 50, color: Colors.yellow),
         // Image(width: 60, height: 40, image: AssetImage('assets/菜單.jpg')),
         SizedBox(height: 5.0),
         Text(text ?? '',

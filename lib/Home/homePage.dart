@@ -3,6 +3,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_weahter/ApiCommand.dart/apiService.dart';
 import 'package:simple_weahter/Cloud/Cloud.dart';
+import '../ExtensionToolClass/CustomText.dart';
 import 'homeWidget.dart/ListWidget/weatherHourIten.dart';
 import 'homeWidget.dart/countryWeatherHourType.dart';
 import 'homeWidget.dart/countryWeatherState.dart';
@@ -145,7 +146,7 @@ class _HomePageState extends State<HomePage> {
                           return CircularProgressIndicator();
                         },
                       )),
-                  SizedBox(height: 30),
+                  SizedBox(height: 10),
                   Container(
                       width: screenWidth / 1.1,
                       height: screenHeight / 5,
@@ -153,42 +154,47 @@ class _HomePageState extends State<HomePage> {
                         borderRadius: BorderRadius.circular(30),
                         // color: Colors.yellow,
                       ),
-                      child: FutureBuilder<WeatherWeekData>(
-                        future: getweekcountryData(selectedOption),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            final weatherData = snapshot.data;
-                            final List<Widget> items = [];
-                            final test =
-                                weatherData.locations[0].weatherElements[0];
+                      child: Column(
+                        children: [
+                          CustomText(textContent: ' 一週天氣預報',fontSize: 20,),
+                          SizedBox(height: 20,),
+                          FutureBuilder<WeatherWeekData>(
+                            future: getweekcountryData(selectedOption),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                final weatherData = snapshot.data;
+                                final List<Widget> items = [];
+                                final test =
+                                    weatherData.locations[0].weatherElements[0];
 
-                            for (var weather in test.times) {
-                              final w = weather.startTime.weekday;
-                              String formattedDate =
-                                  DateFormat('EEEE','zh_Hant').format(weather.startTime);
-                                   final s = weather.startTime.hour;
-                              final e = weather.endTime.hour;
-                              final p = weather.parameterValue;
-                              final i = weather.imageValue;
+                                for (var weather in test.times) {
+                                  final w = weather.startTime.weekday;
+                                  String formattedDate =
+                                      DateFormat('EEEE', 'zh_Hant')
+                                          .format(weather.startTime);
+                                  final s = weather.startTime.hour;
+                                  final e = weather.endTime.hour;
+                                  final p = weather.parameterValue;
+                                  final i = weather.imageValue;
 
-                              if (s!=6){
-                                items.add(ImageTextWidget(
-                                    text: '$formattedDate\n$p'));
+                                  if (s != 6) {
+                                    items.add(ImageTextWidget(
+                                        text: '$formattedDate\n$p'));
+                                  }
+                                }
+                                return Container(
+                                  child: Center(
+                                      child: HorizontalLis(
+                                    weatherData: items,
+                                  )),
+                                );
+                              } else if (snapshot.hasError) {
+                                return Text("${snapshot.error}");
                               }
-
-                             
-                            }
-                            return Container(
-                              child: Center(
-                                  child: HorizontalLis(
-                                weatherData: items,
-                              )),
-                            );
-                          } else if (snapshot.hasError) {
-                            return Text("${snapshot.error}");
-                          }
-                          return CircularProgressIndicator();
-                        },
+                              return CircularProgressIndicator();
+                            },
+                          )
+                        ],
                       )),
                   SizedBox(height: 5),
                   Container(
