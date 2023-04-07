@@ -4,7 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:simple_weahter/ApiCommand.dart/apiService.dart';
 import 'package:simple_weahter/Cloud/Cloud.dart';
 import '../ExtensionToolClass/CustomText.dart';
-import 'homeWidget.dart/ListWidget/weatherHourIten.dart';
+import '../ExtensionToolClass/StorageService.dart';
+import 'homeWidget.dart/ListWidget/weatherHourItem.dart';
 import 'homeWidget.dart/countryWeatherHourType.dart';
 import 'homeWidget.dart/countryWeatherState.dart';
 
@@ -30,10 +31,13 @@ Future<WeatherWeekData> getweekcountryData(String country) async {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  StorageService _storageService = StorageService();
+
   Future<void> _onRefresh() async {
-    setState() {
-      print('reflash');
-    }
+    // setState() {
+    //   print('reflash');
+    // }
   }
 
   List<String> options = [
@@ -68,13 +72,6 @@ class _HomePageState extends State<HomePage> {
   initState() {
     super.initState();
     initializeDateFormatting('zh_Hant');
-    //  storageService.init().then((_) {
-    //   final data = storageService.loadData('country');
-    //     print('data here$data');
-    //   setState(() {
-    //     selectedOption = data as String ?? '新竹縣';
-    //   });
-    // });
   }
 
   @override
@@ -87,7 +84,17 @@ class _HomePageState extends State<HomePage> {
       title: 'Flutter Pull-to-Refresh',
       home: Scaffold(
           body: SafeArea(
-        child: RefreshIndicator(
+        child: 
+        FutureBuilder<String>(
+    future: _storageService.loadData('country'),
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        setState(() {
+              selectedOption = snapshot.data;
+        });
+      }
+      return ListView(
+        children: [RefreshIndicator(
             onRefresh: _onRefresh,
             child: Scaffold(
                 body: Center(
@@ -119,7 +126,8 @@ class _HomePageState extends State<HomePage> {
                       onChanged: (String newValue) {
                         setState(() {
                           selectedOption = newValue;
-                          // storageService.saveData('country',newValue);
+                            _storageService.saveData('country', newValue);
+
                         });
                       },
                     ),
@@ -177,7 +185,7 @@ class _HomePageState extends State<HomePage> {
                                   final p = weather.parameterValue;
                                   final i = weather.imageValue;
 
-                                  if (s != 6) {
+                                  if (s == 18 && e == 06) {
                                     items.add(ImageTextWidget(
                                         text: '$formattedDate\n$p'));
                                   }
@@ -211,7 +219,18 @@ class _HomePageState extends State<HomePage> {
                   )
                 ],
               ),
-            ))),
+            )))],
+      );
+      
+      
+      
+        
+      }
+      )
+        
+        
+        
+       
       )),
     );
   }

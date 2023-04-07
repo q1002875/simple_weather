@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:simple_weahter/Home/homeWidget.dart/ListWidget/weatherHourIten.dart';
-import '../../Cloud/Cloud.dart';
 
 class HorizontalLis extends StatelessWidget {
   HorizontalLis({this.weatherData});

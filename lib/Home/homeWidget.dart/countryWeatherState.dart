@@ -1,7 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_weahter/Cloud/Cloud.dart';
-
 import '../../ExtensionToolClass/CustomText.dart';
 
 class CountryWeather extends StatelessWidget {
