@@ -14,7 +14,7 @@ class CountryWeather extends StatelessWidget {
     //image
 
     DateTime now = DateTime.now();
-    String formattedDate = DateFormat('yyyy-MM-dd').format(now); // 格式化日期時間
+    String formattedDate = DateFormat('yyyy-MM-dd','zh_Hant').format(now); // 格式化日期時間
     print(formattedDate);
     final weatherStatus =
         weatherData.locations[0].weatherElements[0].times[0].parameterName;
@@ -26,27 +26,14 @@ class CountryWeather extends StatelessWidget {
         weatherData.locations[0].weatherElements[0].times[0].parameterName;
     final conforStatus =
         weatherData.locations[0].weatherElements[3].times[0].parameterName;
-    print('weatherStatus$weatherStatus');
-    print('temperature$temperature');
-    print('conforStatus$conforStatus');
-    print('rain$rain');
-    print('tt$tt');
-    final localname = weatherData.locations[0].locationName ?? '';
+    print('天氣狀態:$weatherStatus');
+    print('溫度:$temperature');
+    print('舒適度:$conforStatus');
+    print('降雨機率:$rain');
+    print('縣市:$tt');
 
     return Column(
       children: [
-        // Text(
-        //   localname, // 文本内容
-        //   style: TextStyle(
-        //     fontSize: 24, // 字体大小
-        //     fontWeight: FontWeight.bold, // 字体粗细
-        //     // fontStyle: FontStyle.italic, // 字体样式
-        //     color: Colors.black, // 字体颜色
-        //     letterSpacing: 1.5, // 字母间距
-        //     wordSpacing: 5.0, // 单词间距
-        //     decorationStyle: TextDecorationStyle.dashed, // 装饰样式
-        //   ),
-        // ),
         Container(
           width: 200,
           height: height / 2.5,
@@ -55,15 +42,15 @@ class CountryWeather extends StatelessWidget {
         Container(
             width: 200,
             height: height / 8,
-            color: Color.fromARGB(70, 255, 235, 59),
+            // color: Color.fromARGB(70, 255, 235, 59),
             child: Center(
               child: Text(
                 '$temperature℃', // 文本内容
                 style: TextStyle(
-                  fontSize: 28, // 字体大小
+                  fontSize: 40, // 字体大小
                   fontWeight: FontWeight.bold, // 字体粗细
                   // fontStyle: FontStyle.italic, // 字体样式
-                  color: Colors.black, // 字体颜色
+                  color: Colors.yellow, // 字体颜色
                   letterSpacing: 1.5, // 字母间距
                   wordSpacing: 5.0, // 单词间距
                   decorationStyle: TextDecorationStyle.dashed, // 装饰样式
@@ -73,7 +60,7 @@ class CountryWeather extends StatelessWidget {
         Container(
             width: 200,
             height: height / 9.5,
-            color: Colors.yellow,
+            // color: Colors.yellow,
             child: Center(
               child: Text(
                 '$formattedDate', // 文本内容

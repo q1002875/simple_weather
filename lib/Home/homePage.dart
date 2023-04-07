@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:simple_weahter/ApiCommand.dart/apiService.dart';
 import 'package:simple_weahter/Cloud/Cloud.dart';
 import 'homeWidget.dart/ListWidget/weatherHourIten.dart';
@@ -22,8 +24,7 @@ Future<WeatherData> getcountryData(String country) async {
 
 Future<WeatherWeekData> getweekcountryData(String country) async {
   final data = await api.getWeekCountryData(country);
-  final dddd = data.locations[0].locationName;
-  print('heeee$dddd');
+  // final dddd = data.locations[0].locationName;
   return data;
 }
 
@@ -65,7 +66,7 @@ class _HomePageState extends State<HomePage> {
   @override
   initState() {
     super.initState();
-
+    initializeDateFormatting('zh_Hant');
     //  storageService.init().then((_) {
     //   final data = storageService.loadData('country');
     //     print('data here$data');
@@ -147,7 +148,7 @@ class _HomePageState extends State<HomePage> {
                   SizedBox(height: 30),
                   Container(
                       width: screenWidth / 1.1,
-                      height: screenHeight / 7,
+                      height: screenHeight / 5,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(30),
                         // color: Colors.yellow,
@@ -158,13 +159,24 @@ class _HomePageState extends State<HomePage> {
                           if (snapshot.hasData) {
                             final weatherData = snapshot.data;
                             final List<Widget> items = [];
+                            final test =
+                                weatherData.locations[0].weatherElements[0];
 
-                            for (var weather
-                                in weatherData.locations[0].weatherElements) {
-                              for (var time in weather.times) {
-                                final timeday = time.startTime.day;
-                                items.add(ImageTextWidget(text: '$timeday'));
+                            for (var weather in test.times) {
+                              final w = weather.startTime.weekday;
+                              String formattedDate =
+                                  DateFormat('EEEE','zh_Hant').format(weather.startTime);
+                                   final s = weather.startTime.hour;
+                              final e = weather.endTime.hour;
+                              final p = weather.parameterValue;
+                              final i = weather.imageValue;
+
+                              if (s!=6){
+                                items.add(ImageTextWidget(
+                                    text: '$formattedDate\n$p'));
                               }
+
+                             
                             }
                             return Container(
                               child: Center(

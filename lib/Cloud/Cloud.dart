@@ -119,15 +119,16 @@ class Timeweek {
   DateTime _startTime;
   DateTime _endTime;
   String _parameterValue;
-
+  String _imageValue;
   DateTime get startTime => _startTime;
   DateTime get endTime => _endTime;
   String get parameterValue => _parameterValue;
-
+  String get imageValue => _imageValue;
   Timeweek.fromJson(Map<String, dynamic> json) {
     _startTime = DateTime.parse(json['startTime']);
     _endTime = DateTime.parse(json['endTime']);
-    _parameterValue = json['elementValue'][0]['Value'];
+    _parameterValue = json['elementValue'][0]['value'];
+    _imageValue = json['elementValue'][1]['value'];
   }
 }
 
