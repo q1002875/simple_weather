@@ -9,7 +9,7 @@ class CustomText extends StatelessWidget {
     Key key,
     this.textContent,
     this.fontSize = 16,
-    this.textColor = Colors.black,
+    this.textColor = Colors.white,
   }) : super(key: key);
 
   @override

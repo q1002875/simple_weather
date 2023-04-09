@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:simple_weahter/Home/homePage.dart';
 import 'Cloud/Cloud.dart';
 
-
-
 void main() {
-
   runApp(MyApp());
 }
 
@@ -57,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
+        color: Color.fromARGB(255, 62, 36, 105),
         shape: CircularNotchedRectangle(),
         child: Container(
           height: 60,
@@ -66,22 +63,22 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               IconButton(
                 icon: Icon(Icons.wb_sunny),
-                color: _selectedIndex == 0 ? Colors.blue : null,
+                color: _selectedIndex == 0 ? Colors.white : null,
                 onPressed: () => _onItemTapped(0),
               ),
               IconButton(
                 icon: Icon(Icons.cloud),
-                  color: _selectedIndex == 1 ? Colors.blue : null,
+                color: _selectedIndex == 1 ? Colors.white : null,
                 onPressed: () => _onItemTapped(1),
               ),
               IconButton(
                 icon: Icon(Icons.favorite),
-                  color: _selectedIndex == 2 ? Colors.blue : null,
+                color: _selectedIndex == 2 ? Colors.white : null,
                 onPressed: () => _onItemTapped(2),
               ),
               IconButton(
                 icon: Icon(Icons.settings),
-                  color: _selectedIndex == 3 ? Colors.blue : null,
+                color: _selectedIndex == 3 ? Colors.white : null,
                 onPressed: () => _onItemTapped(3),
               ),
             ],
@@ -91,4 +88,3 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-

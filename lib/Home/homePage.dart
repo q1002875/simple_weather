@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:simple_weahter/ApiCommand.dart/apiService.dart';
 import 'package:simple_weahter/Cloud/Cloud.dart';
 import '../ExtensionToolClass/CustomText.dart';
+import '../ExtensionToolClass/ReusableFutureBuilder.dart';
 import '../ExtensionToolClass/StorageService.dart';
 import 'homeWidget.dart/ListWidget/weatherHourItem.dart';
 import 'homeWidget.dart/countryWeatherHourType.dart';
@@ -79,7 +80,7 @@ class _HomePageState extends State<HomePage> {
     return MaterialApp(
       title: 'Flutter Pull-to-Refresh',
       home: Scaffold(
-          body: SafeArea(
+          body: Container(
               child: FutureBuilder<String>(
                   future: _storageService.loadData('country'),
                   builder: (context, snapshot) {
@@ -90,132 +91,134 @@ class _HomePageState extends State<HomePage> {
                     }
                     return RefreshIndicator(
                         onRefresh: _onRefresh,
-                        child: ListView(
-                          children: [
-                            Container(
-                                child: Center(
-                              child: DropdownButton<String>(
-                                value: selectedOption,
-                                items: options.map((String option) {
-                                  return DropdownMenuItem<String>(
-                                    value: option,
-                                    child: Text(
-                                      option,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                        letterSpacing: 1.5,
-                                        wordSpacing: 5.0,
-                                        decorationStyle:
-                                            TextDecorationStyle.dashed,
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                                onChanged: (String newValue) {
-                                  setState(() {
-                                    selectedOption = newValue;
-                                    _storageService.saveData(
-                                        'country', newValue);
-                                  });
-                                },
+                        child: Container(
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage('assets/homeBackground.png'),
+                                fit: BoxFit.cover,
                               ),
-                            )),
-                            // SizedBox(height: 10),
-                            Container(
-                                width: screenWidth / 1.6,
-                                height: screenHeight / 2.2,
-                                // color: Colors.purple,
-                                child: FutureBuilder<WeatherData>(
-                                  future: getcountryData(selectedOption),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.hasData) {
-                                      final weatherData = snapshot.data;
-                                      return Container(
-                                        child: CountryWeather(
-                                            height: screenHeight / 2.4,
-                                            width: screenWidth / 1.6,
-                                            weatherData: weatherData),
+                            ),
+                            // color: Color.fromARGB(255, 49, 61, 230),
+                            child: ListView(
+                              children: [
+                                Container(
+                                    child: Center(
+                                  child: DropdownButton<String>(
+                                    dropdownColor: Colors.black26,
+                                    value: selectedOption,
+                                    items: options.map((String option) {
+                                      return DropdownMenuItem<String>(
+                                        value: option,
+                                        child: CustomText(
+                                            textContent: option, fontSize: 24),
                                       );
-                                    } else if (snapshot.hasError) {
-                                      return Text("${snapshot.error}");
-                                    }
-                                    return CircularProgressIndicator();
-                                  },
+                                    }).toList(),
+                                    onChanged: (String newValue) {
+                                      setState(() {
+                                        selectedOption = newValue;
+                                        _storageService.saveData(
+                                            'country', newValue);
+                                      });
+                                    },
+                                  ),
                                 )),
-                            // SizedBox(height: 10),
-                            Container(
-                                width: screenWidth / 1.1,
-                                height: screenHeight / 5,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  // color: Colors.yellow,
-                                ),
-                                child: Column(
-                                  children: [
-                                    CustomText(
-                                      textContent: ' 一週天氣預報',
-                                      fontSize: 20,
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    FutureBuilder<WeatherWeekData>(
-                                      future:
-                                          getweekcountryData(selectedOption),
+                                Container(
+                                    width: screenWidth / 1.6,
+                                    height: screenHeight / 2.2,
+                                    // color: Colors.purple,
+                                    child: FutureBuilder<WeatherData>(
+                                      future: getcountryData(selectedOption),
                                       builder: (context, snapshot) {
                                         if (snapshot.hasData) {
                                           final weatherData = snapshot.data;
-                                          final List<Widget> items = [];
-                                          final test = weatherData
-                                              .locations[0].weatherElements[0];
-
-                                          for (var weather in test.times) {
-                                            final w = weather.startTime.weekday;
-                                            String formattedDate =
-                                                DateFormat('EEEE', 'zh_Hant')
-                                                    .format(weather.startTime);
-                                            final s = weather.startTime.hour;
-                                            final e = weather.endTime.hour;
-                                            final p = weather.parameterValue;
-                                            final i = weather.imageValue;
-
-                                            if (s == 18 && e == 06) {
-                                              items.add(ImageTextWidget(
-                                                  text: '$formattedDate\n$p'));
-                                            }
-                                          }
                                           return Container(
-                                            child: Center(
-                                                child: HorizontalLis(
-                                              weatherData: items,
-                                            )),
+                                            child: CountryWeather(
+                                                height: screenHeight / 2.4,
+                                                width: screenWidth / 1.6,
+                                                weatherData: weatherData),
                                           );
                                         } else if (snapshot.hasError) {
                                           return Text("${snapshot.error}");
                                         }
                                         return CircularProgressIndicator();
                                       },
-                                    )
-                                  ],
-                                )),
-                            // SizedBox(height: 5),
-                            Container(
-                              width: screenWidth / 1.1,
-                              height: screenHeight / 6,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                // color: Colors.blue,
-                              ),
-                              child: Center(
-                                  child: HorizontalLis(
-                                weatherData: push,
-                              )),
-                            ),
-                          ],
-                        ));
+                                    )),
+                                // SizedBox(height: 10),
+                                Container(
+                                    width: screenWidth / 1.1,
+                                    height: screenHeight / 5,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30),
+                                      // color: Colors.yellow,
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        CustomText(
+                                          textContent: ' 一週天氣預報',
+                                          fontSize: 20,
+                                        ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        FutureBuilder<WeatherWeekData>(
+                                          future: getweekcountryData(
+                                              selectedOption),
+                                          builder: (context, snapshot) {
+                                            if (snapshot.hasData) {
+                                              final weatherData = snapshot.data;
+                                              final List<Widget> items = [];
+                                              final test = weatherData
+                                                  .locations[0]
+                                                  .weatherElements[0];
+
+                                              for (var weather in test.times) {
+                                                final w =
+                                                    weather.startTime.weekday;
+                                                String formattedDate =
+                                                    DateFormat(
+                                                            'EEEE', 'zh_Hant')
+                                                        .format(
+                                                            weather.startTime);
+                                                final s =
+                                                    weather.startTime.hour;
+                                                final e = weather.endTime.hour;
+                                                final p =
+                                                    weather.parameterValue;
+                                                final i = weather.imageValue;
+
+                                                if (s == 18 && e == 06) {
+                                                  items.add(ImageTextWidget(
+                                                      text:
+                                                          '$formattedDate\n$p'));
+                                                }
+                                              }
+                                              return Container(
+                                                child: Center(
+                                                    child: HorizontalLis(
+                                                  weatherData: items,
+                                                )),
+                                              );
+                                            } else if (snapshot.hasError) {
+                                              return Text("${snapshot.error}");
+                                            }
+                                            return CircularProgressIndicator();
+                                          },
+                                        )
+                                      ],
+                                    )),
+                                Container(
+                                  width: screenWidth / 1.1,
+                                  height: screenHeight / 6,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  child: Center(
+                                      child: HorizontalLis(
+                                    weatherData: push,
+                                  )),
+                                ),
+                              ],
+                            )));
                   }))),
     );
   }

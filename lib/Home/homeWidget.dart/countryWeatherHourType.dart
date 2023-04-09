@@ -12,10 +12,10 @@ class HorizontalLis extends StatelessWidget {
         itemCount: weatherData.length,
         itemBuilder: (BuildContext context, int index) {
           return Container(
-            width: 100.0,
+            width: 80.0,
             margin: EdgeInsets.all(5.0),
             decoration: BoxDecoration(
-              color: Color.fromARGB(255, 160, 209, 234),
+              color: Color.fromARGB(255, 74, 57, 131),
               borderRadius: BorderRadius.circular(10.0),
             ),
             child: Center(child: weatherData[index]),

@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_weahter/Cloud/Cloud.dart';
 import '../../ExtensionToolClass/CustomText.dart';
+import 'ListWidget/weatherHourItem.dart';
 
 class CountryWeather extends StatelessWidget {
   CountryWeather({this.width, this.height, this.weatherData});
@@ -15,7 +16,8 @@ class CountryWeather extends StatelessWidget {
     //image
 
     DateTime now = DateTime.now();
-    String formattedDate = DateFormat('yyyy-MM-dd','zh_Hant').format(now); // 格式化日期時間
+    String formattedDate =
+        DateFormat('yyyy-MM-dd', 'zh_Hant').format(now); // 格式化日期時間
     print(formattedDate);
     final weatherStatus =
         weatherData.locations[0].weatherElements[0].times[0].parameterName;
@@ -32,7 +34,6 @@ class CountryWeather extends StatelessWidget {
     print('舒適度:$conforStatus');
     print('降雨機率:$rain');
 
-
     return Column(
       children: [
         Container(
@@ -45,15 +46,21 @@ class CountryWeather extends StatelessWidget {
             height: height / 8,
             // color: Color.fromARGB(70, 255, 235, 59),
             child: Center(
-              child:CustomText(textContent:'$temperature℃',textColor: Colors.yellow,fontSize: 40, ),
+              child: CustomText(
+                textContent: '$temperature℃',
+                textColor: Colors.yellow,
+                fontSize: 40,
+              ),
             )),
         Container(
             width: 200,
             height: height / 9.5,
             // color: Colors.yellow,
             child: Center(
-              child: 
-              CustomText(textContent:'$formattedDate',textColor: Colors.black,fontSize: 18, ),
+              child: CustomText(
+                textContent: '$formattedDate',
+                fontSize: 18,
+              ),
             )),
         SizedBox(
           height: 10,
@@ -63,32 +70,34 @@ class CountryWeather extends StatelessWidget {
           // crossAxisAlignment: CrossAxisAlignment.center, // 交叉軸對齊方式
           children: <Widget>[
             Container(
-                width: width / 3.3,
-                height: height / 3.4,
-                color: Color.fromARGB(255, 230, 37, 37),
-                child: Center(
-                  child:
-                     CustomText(textContent:'$weatherStatus',textColor: Colors.black,fontSize: 18),
-                )),
-            SizedBox(width: 5),
-            Container(
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 74, 57, 131),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
               width: width / 3.3,
               height: height / 3.4,
-              color: Colors.green,
-              child: Center(
-                child: 
-                  CustomText(textContent:'$conforStatus',textColor: Colors.black,fontSize: 18),
-              ),
+              child: Center(child: ImageTextWidget(text: '$weatherStatus')),
             ),
-            SizedBox(width: 5),
             Container(
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 74, 57, 131),
+                borderRadius: BorderRadius.circular(10.0),
+              ),
               width: width / 3.3,
               height: height / 3.4,
-              color: Color.fromARGB(255, 25, 136, 228),
-              child: Center(
-                child: 
-                 CustomText(textContent:'降雨機率$rain%',textColor: Colors.black,fontSize: 18),
+              child: Center(child: ImageTextWidget(text: '$conforStatus')),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 74, 57, 131),
+                borderRadius: BorderRadius.circular(10.0),
               ),
+              width: width / 3.3,
+              height: height / 3.4,
+              child: Center(
+                  child: ImageTextWidget(
+                      image: Image.asset('assets/raining.png'),
+                      text: '降雨機率$rain%')),
             ),
           ],
         ),
