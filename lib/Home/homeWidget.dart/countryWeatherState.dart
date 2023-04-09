@@ -21,6 +21,14 @@ class CountryWeather extends StatelessWidget {
     print(formattedDate);
     final weatherStatus =
         weatherData.locations[0].weatherElements[0].times[0].parameterName;
+
+    String weatherimage =
+        weatherData.locations[0].weatherElements[0].times[0].parameterValue;
+    int myInt = int.parse(weatherimage);
+    if (myInt < 10) {
+      weatherimage = '0$weatherimage';
+    }
+
     final rain =
         weatherData.locations[0].weatherElements[1].times[0].parameterName;
     final temperature =
@@ -34,12 +42,15 @@ class CountryWeather extends StatelessWidget {
     print('舒適度:$conforStatus');
     print('降雨機率:$rain');
 
-    return Column(
+    return Container(
+        child: Column(
       children: [
         Container(
           width: 200,
           height: height / 2.5,
-          child: Icon(Icons.cloud, size: 150, color: Colors.blue),
+          child: Image(
+            image: AssetImage('assets/$weatherimage.png'),
+          ),
         ),
         Container(
             width: 200,
@@ -76,7 +87,10 @@ class CountryWeather extends StatelessWidget {
               ),
               width: width / 3.3,
               height: height / 3.4,
-              child: Center(child: ImageTextWidget(text: '$weatherStatus')),
+              child: Center(
+                  child: ImageTextWidget(
+                      image: Image.asset('assets/$weatherimage.png'),
+                      text: '$weatherStatus')),
             ),
             Container(
               decoration: BoxDecoration(
@@ -85,7 +99,10 @@ class CountryWeather extends StatelessWidget {
               ),
               width: width / 3.3,
               height: height / 3.4,
-              child: Center(child: ImageTextWidget(text: '$conforStatus')),
+              child: Center(
+                  child: ImageTextWidget(
+                      image: Image.asset('assets/bodytemp.png'),
+                      text: '$conforStatus')),
             ),
             Container(
               decoration: BoxDecoration(
@@ -102,6 +119,6 @@ class CountryWeather extends StatelessWidget {
           ],
         ),
       ],
-    );
+    ));
   }
 }

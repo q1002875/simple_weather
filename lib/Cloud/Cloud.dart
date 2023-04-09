@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import 'dart:convert';
@@ -82,6 +81,10 @@ class WeatherWeekData {
             ['location']
         .map((location) => Locationweek.fromJson(location)));
   }
+  @override
+  String toString() {
+    return 'WeatherWeekData(datasetDescription: $datasetDescription, locations: $locations)';
+  }
 }
 
 class Locationweek {
@@ -96,6 +99,10 @@ class Locationweek {
     _weatherElements = List<Weatherweek>.from(
         json['weatherElement'].map((element) => Weatherweek.fromJson(element)));
   }
+  @override
+  String toString() {
+    return 'Locationweek(locationName: $locationName, weatherElements: $weatherElements)';
+  }
 }
 
 class Weatherweek {
@@ -109,6 +116,10 @@ class Weatherweek {
     _elementName = json['elementName'];
     _times = List<Timeweek>.from(
         json['time'].map((time) => Timeweek.fromJson(time)));
+  }
+  @override
+  String toString() {
+    return 'Weatherweek(elementName: $elementName, times: $times)';
   }
 }
 
@@ -126,6 +137,10 @@ class Timeweek {
     _endTime = DateTime.parse(json['endTime']);
     _parameterValue = json['elementValue'][0]['value'];
     _imageValue = json['elementValue'][1]['value'];
+  }
+  @override
+  String toString() {
+    return 'Timeweek(startTime: $startTime, endTime: $endTime,parameterValue:$parameterValue,imageValue:$imageValue)';
   }
 }
 

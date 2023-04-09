@@ -25,9 +25,10 @@ Future<WeatherData> getcountryData(String country) async {
   return countrydata;
 }
 
-Future<WeatherWeekData> getweekcountryData(String country) async {
+Future<WeatherWeekData> getWeekCountryData(String country) async {
   final data = await api.getWeekCountryData(country);
-  // final dddd = data.locations[0].locationName;
+  final dddd = data.toString();
+  print('dddd$dddd');
   return data;
 }
 
@@ -98,7 +99,6 @@ class _HomePageState extends State<HomePage> {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            // color: Color.fromARGB(255, 49, 61, 230),
                             child: ListView(
                               children: [
                                 Container(
@@ -145,8 +145,9 @@ class _HomePageState extends State<HomePage> {
                                     )),
                                 // SizedBox(height: 10),
                                 Container(
+                                    // color: Colors.amber,
                                     width: screenWidth / 1.1,
-                                    height: screenHeight / 5,
+                                    height: screenHeight / 2,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(30),
                                       // color: Colors.yellow,
@@ -161,16 +162,24 @@ class _HomePageState extends State<HomePage> {
                                           height: 5,
                                         ),
                                         FutureBuilder<WeatherWeekData>(
-                                          future: getweekcountryData(
+                                          future: getWeekCountryData(
                                               selectedOption),
                                           builder: (context, snapshot) {
                                             if (snapshot.hasData) {
                                               final weatherData = snapshot.data;
+                                              print(weatherData);
                                               final List<Widget> items = [];
+                                              // final test = weatherData
+                                              //     .result
+                                              //     .records
+                                              //     .locations[0]
+                                              //     .weatherElement[0];
+
                                               final test = weatherData
                                                   .locations[0]
                                                   .weatherElements[0];
-
+                                              final d = weatherData.toString();
+                                              print('test$d');
                                               for (var weather in test.times) {
                                                 final w =
                                                     weather.startTime.weekday;
@@ -188,35 +197,42 @@ class _HomePageState extends State<HomePage> {
 
                                                 if (s == 18 && e == 06) {
                                                   items.add(ImageTextWidget(
+                                                      image: Image.asset(
+                                                          'assets/$i.png'),
                                                       text:
                                                           '$formattedDate\n$p'));
                                                 }
                                               }
-                                              return Container(
-                                                child: Center(
-                                                    child: HorizontalLis(
-                                                  weatherData: items,
-                                                )),
+
+                                              return Expanded(
+                                                child: Column(
+                                                  children: [
+                                                    Container(
+                                                      child: Center(
+                                                          child: HorizontalLis(
+                                                        weatherData: items,
+                                                      )),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    Container(
+                                                      child: Center(
+                                                          child: HorizontalLis(
+                                                        weatherData: items,
+                                                      )),
+                                                    ),
+                                                  ],
+                                                ),
                                               );
                                             } else if (snapshot.hasError) {
                                               return Text("${snapshot.error}");
                                             }
                                             return CircularProgressIndicator();
                                           },
-                                        )
+                                        ),
                                       ],
                                     )),
-                                Container(
-                                  width: screenWidth / 1.1,
-                                  height: screenHeight / 6,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                  child: Center(
-                                      child: HorizontalLis(
-                                    weatherData: push,
-                                  )),
-                                ),
                               ],
                             )));
                   }))),
