@@ -145,7 +145,6 @@ class Timeweek {
 }
 ///////////////////////result week get
 
-
 Future<http.Response> fetchWeatherData(String country) async {
   final String apiUrl =
       'https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-95C4A955-4E38-4B86-92B4-2F1E71669956&limit=7&format=JSON&locationName=$country&elementName=&sort=time&timeTo=2023-04-03T20%3A00%3A00';
@@ -201,6 +200,94 @@ class Cloud extends StatelessWidget {
             },
           ),
         ),
+      ),
+    );
+  }
+}
+
+class CloudPage extends StatefulWidget {
+  const CloudPage();
+  @override
+  _CloudPageState createState() => _CloudPageState();
+}
+
+class _CloudPageState extends State<CloudPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('新竹縣')),
+      body: Center(
+        child: Flex(
+          direction: Axis.horizontal,
+          children: [
+            Expanded(
+              child: Column(
+                children: [
+                  MyItem(
+                    text: '1',
+                    left: true,
+                  ),
+                  MyItem(
+                    text: '1',
+                    left: true,
+                  ),
+                  MyItem(
+                    text: '1',
+                    left: true,
+                  ),
+                  MyItem(
+                    text: '1',
+                    left: true,
+                  )
+                ],
+              ),
+            ),
+            Expanded(
+              child: Column(
+                children: [
+                  MyItem(
+                    text: '1',
+                    left: false,
+                  ),
+                  MyItem(
+                    text: '1',
+                    left: false,
+                  ),
+                  MyItem(
+                    text: '1',
+                    left: false,
+                  ),
+                  MyItem(
+                    text: '1',
+                    left: false,
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MyItem extends StatelessWidget {
+  final String text;
+  final bool left;
+  const MyItem({Key key, this.text, this.left}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
+        margin: left
+            ? const EdgeInsets.fromLTRB(30, 10, 5, 10)
+            : const EdgeInsets.fromLTRB(5, 10, 30, 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0),
+          color: Color.fromARGB(255, 74, 57, 131),
+        ),
+        child: Center(child: Text(text)),
       ),
     );
   }

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_weahter/ExtensionToolClass/HttpServer/Httpserver.dart';
@@ -39,11 +38,11 @@ class apiService {
     final response = await weekWeatherData.getJson();
     // print('response:$response');
     // final test = weatherData.locations[0].weatherElement[0];
-    final weathers =  Weathers.fromJson(response);
-    final wx =  weathers.locations[0].weatherElement[0];//天氣狀況
-    final maxT = weathers.locations[0].weatherElement[1];//最高溫度
-    final minT = weathers.locations[0].weatherElement[2];//最低溫度
-      final wxItems = wx.time
+    final weathers = Weathers.fromJson(response);
+    final wx = weathers.locations[0].weatherElement[0]; //天氣狀況
+    final maxT = weathers.locations[0].weatherElement[1]; //最高溫度
+    final minT = weathers.locations[0].weatherElement[2]; //最低溫度
+    final wxItems = wx.time
         .where((w) => w.startTime.hour == 18 && w.endTime.hour == 6)
         .map((w) => ImageTextWidget(
             image: Image.asset('assets/${w.elementValue[1].value}.png'),
@@ -51,88 +50,37 @@ class apiService {
                 '${DateFormat('EEEE', 'zh_Hant').format(w.startTime)}\n${w.elementValue[0].value}'))
         .toList();
     //where 過濾出t.startTime.hour == 18 && t.endTime.hour == 6的物件
+    final matItem = minT.time
+        .where((t) => t.startTime.hour == 18 && t.endTime.hour == 6)
+        .map((t) => ImageTextWidget(
+            image: Image.asset('assets/bodytemp.png'),
+            text: '${t.elementValue[0].value}',
+            textcolor: Colors.yellow))
+        .toList();
+
     final atItems = maxT.time
         .where((t) => t.startTime.hour == 18 && t.endTime.hour == 6)
         .map((t) => ImageTextWidget(
             image: Image.asset('assets/bodytemp.png'),
             text:
-                '${DateFormat('EEEE', 'zh_Hant').format(t.startTime)}\n${t.elementValue[0].value}℃',
-            textcolor: Colors.yellow))
-        .toList();
-
-    final matItem = minT.time.where((t)=> t.startTime.hour == 18 && t.endTime.hour == 6) .map((t) => ImageTextWidget(
-            image: Image.asset('assets/bodytemp.png'),
-            text:
                 '${DateFormat('EEEE', 'zh_Hant').format(t.startTime)}\n${t.elementValue[0].value}',
             textcolor: Colors.yellow))
         .toList();
-     print('matItem$matItem');
-    
-List<String> match = [];
 
-matItem.map((e) => match.add(e.text +'℃'+'~'+ atItems[e.index].text+'℃'));
+    List<String> match = [];
 
-final result =  match.map((e)=> ImageTextWidget(
+    atItems.asMap().forEach((key, value) {
+      match.add(value.text + '℃' + '~' + matItem[key].text + '℃');
+    });
+
+    final minTandMaxT = match
+        .map((e) => ImageTextWidget(
             image: Image.asset('assets/bodytemp.png'),
-            text:
-                '$e',
+            text: '$e',
             textcolor: Colors.yellow))
         .toList();
 
-
-    return [wxItems, result];
-    // List<Widget> wxitems = [];
-    // for (var weather in wx.time) {
-    //   String formattedDate =
-    //       DateFormat('EEEE', 'zh_Hant').format(weather.startTime);
-    //   final s = weather.startTime.hour;
-    //   final e = weather.endTime.hour;
-    //   final p = weather.elementValue[0].value;
-    //   final i = weather.elementValue[1].value;
-
-    //   if (s == 18 && e == 06) {
-    //     wxitems.add(ImageTextWidget(
-    //         image: Image.asset('assets/$i.png'), text: '$formattedDate\n$p'));
-    //   }
-    // }
-
-    // List<Widget> atitems = [];
-    // maxT.time.forEach((element) {
-    //   final start = element.startTime.hour;
-    //   final end = element.endTime.hour;
-    //   final resulttemp = element.elementValue[0].value;
-    //   String formattedDate =
-    //       DateFormat('EEEE', 'zh_Hant').format(element.startTime);
-    //   if (start == 18 && end == 06) {
-    //     atitems.add(ImageTextWidget(
-    //         image: Image.asset('assets/bodytemp.png'),
-    //         text: '$formattedDate\n$resulttemp℃',
-    //         textcolor: Colors.yellow));
-    //   }
-    // });
-
-
-    // // List<Widget> mintitems = [];
-    // // minT.time.forEach((element) {
-    // //   final start = element.startTime.hour;
-    // //   final end = element.endTime.hour;
-    // //   final resulttemp = element.elementValue[0].value;
-    // //   String formattedDate =
-    // //       DateFormat('EEEE', 'zh_Hant').format(element.startTime);
-    // //   if (start == 18 && end == 06) {
-    // //     atitems.add(ImageTextWidget(
-    // //         image: Image.asset('assets/bodytemp.png'),
-    // //         text: '$formattedDate\n$resulttemp℃',
-    // //         textcolor: Colors.yellow));
-    // //   }
-    // // });
-
-    //  List<List<Widget>> fetchwidget = [];
-    //  fetchwidget.add(wxitems);
-    //  fetchwidget.add(atitems);
-    // //  fetchwidget.add(mintitems);
-    // return fetchwidget;
-    // // return Weathers.fromJson(response);
+    return [wxItems, minTandMaxT];
   }
 }
 
