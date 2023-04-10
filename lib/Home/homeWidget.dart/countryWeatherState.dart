@@ -43,82 +43,111 @@ class CountryWeather extends StatelessWidget {
     print('降雨機率:$rain');
 
     return Container(
-        child: Column(
-      children: [
-        Container(
-          width: 200,
-          height: height / 2.5,
-          child: Image(
-            image: AssetImage('assets/$weatherimage.png'),
-          ),
-        ),
-        Container(
+        child: ListView.builder(
+      itemCount: 4,
+      // ignore: missing_return
+      itemBuilder: (context, index) {
+        if (index == 0) {
+          // 顯示天氣狀態和溫度
+          return Container(
+            width: 200,
+            height: height / 2.5,
+            child: Image(
+              image: AssetImage('assets/$weatherimage.png'),
+            ),
+          );
+        } else if (index == 1) {
+          // 顯示溫度
+          return Container(
             width: 200,
             height: height / 8,
-            // color: Color.fromARGB(70, 255, 235, 59),
             child: Center(
               child: CustomText(
                 textContent: '$temperature℃',
                 textColor: Colors.yellow,
                 fontSize: 40,
               ),
-            )),
-        Container(
+            ),
+          );
+        } else if (index == 2) {
+          // 顯示日期
+          return Container(
             width: 200,
             height: height / 9.5,
-            // color: Colors.yellow,
             child: Center(
               child: CustomText(
                 textContent: '$formattedDate',
                 fontSize: 18,
               ),
-            )),
-        SizedBox(
-          height: 10,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly, // 主軸對齊方式
-          // crossAxisAlignment: CrossAxisAlignment.center, // 交叉軸對齊方式
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 74, 57, 131),
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              width: width / 3.3,
-              height: height / 3.4,
-              child: Center(
-                  child: ImageTextWidget(
-                      image: Image.asset('assets/$weatherimage.png'),
-                      text: '$weatherStatus')),
             ),
-            Container(
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 74, 57, 131),
-                borderRadius: BorderRadius.circular(10.0),
+          );
+        } else if (index == 3) {
+          // 顯示三個資訊欄位
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              InfoContainer(
+                image: Image.asset('assets/$weatherimage.png'),
+                text: '$weatherStatus',
+                width: width / 3.3,
+                height: height / 3.4,
               ),
-              width: width / 3.3,
-              height: height / 3.4,
-              child: Center(
-                  child: ImageTextWidget(
-                      image: Image.asset('assets/bodytemp.png'),
-                      text: '$conforStatus')),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 74, 57, 131),
-                borderRadius: BorderRadius.circular(10.0),
+              InfoContainer(
+                image: Image.asset('assets/bodytemp.png'),
+                text: '$conforStatus',
+                width: width / 3.3,
+                height: height / 3.4,
               ),
-              width: width / 3.3,
-              height: height / 3.4,
-              child: Center(
-                  child: ImageTextWidget(
-                      image: Image.asset('assets/raining.png'),
-                      text: '降雨機率$rain%')),
-            ),
-          ],
-        ),
-      ],
+              InfoContainer(
+                image: Image.asset('assets/raining.png'),
+                text: '降雨機率$rain%',
+                width: width / 3.3,
+                height: height / 3.4,
+              ),
+            ],
+          );
+        }
+      },
     ));
   }
 }
+
+
+
+
+class InfoContainer extends StatelessWidget {
+  const InfoContainer({
+    Key key,
+    this.image,
+    this.text,
+    this.width,
+    this.height,
+  }) : super(key: key);
+
+  final Image image;
+  final String text;
+  final double width;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 74, 57, 131),
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      width: width,
+      height: height,
+      child: Center(
+        child: ImageTextWidget(
+          image: image,
+          text: text,
+        ),
+      ),
+    );
+  }
+}
+
+
+
+

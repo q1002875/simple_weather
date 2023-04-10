@@ -1,5 +1,10 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:simple_weahter/ExtensionToolClass/HttpServer/Httpserver.dart';
+import '../ApiModel.dart/weathersModel.dart';
 import '../Cloud/Cloud.dart';
+import '../Home/homeWidget.dart/ListWidget/weatherHourItem.dart';
 
 //ignore: camel_case_types
 class apiService {
@@ -26,146 +31,90 @@ class apiService {
     return WeatherWeekData.fromJson(response as Map<String, dynamic>);
   }
 
-  Future<Weathers> getWeekData(String country) async {
+  Future<List<List<Widget>>> getWeekData(String country) async {
     final api =
-        'https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-091?Authorization=$authkey&format=JSON&locationName=$country&elementName=Wx,MaxT';
+        'https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-091?Authorization=$authkey&format=JSON&locationName=$country&elementName=Wx,MaxT,MinT';
     print('getWeekApi:$api');
     final weekWeatherData = HttpService(baseUrl: api);
     final response = await weekWeatherData.getJson();
     // print('response:$response');
-    final ss = Weathers.fromJson(response).toString();
-    print('ss$ss');
+    // final test = weatherData.locations[0].weatherElement[0];
+    final weathers =  Weathers.fromJson(response);
+    final wx =  weathers.locations[0].weatherElement[0];//天氣狀況
+    final maxT = weathers.locations[0].weatherElement[1];//最高溫度
+    final minT = weathers.locations[0].weatherElement[2];//最高溫度
+      final wxItems = wx.time
+        .where((w) => w.startTime.hour == 18 && w.endTime.hour == 6)
+        .map((w) => ImageTextWidget(
+            image: Image.asset('assets/${w.elementValue[1].value}.png'),
+            text:
+                '${DateFormat('EEEE', 'zh_Hant').format(w.startTime)}\n${w.elementValue[0].value}'))
+        .toList();
 
-    return Weathers.fromJson(response);
+    final atItems = maxT.time
+        .where((t) => t.startTime.hour == 18 && t.endTime.hour == 6)
+        .map((t) => ImageTextWidget(
+            image: Image.asset('assets/bodytemp.png'),
+            text:
+                '${DateFormat('EEEE', 'zh_Hant').format(t.startTime)}\n${t.elementValue[0].value}℃',
+            textcolor: Colors.yellow))
+        .toList();
+
+    return [wxItems, atItems];
+    // List<Widget> wxitems = [];
+    // for (var weather in wx.time) {
+    //   String formattedDate =
+    //       DateFormat('EEEE', 'zh_Hant').format(weather.startTime);
+    //   final s = weather.startTime.hour;
+    //   final e = weather.endTime.hour;
+    //   final p = weather.elementValue[0].value;
+    //   final i = weather.elementValue[1].value;
+
+    //   if (s == 18 && e == 06) {
+    //     wxitems.add(ImageTextWidget(
+    //         image: Image.asset('assets/$i.png'), text: '$formattedDate\n$p'));
+    //   }
+    // }
+
+    // List<Widget> atitems = [];
+    // maxT.time.forEach((element) {
+    //   final start = element.startTime.hour;
+    //   final end = element.endTime.hour;
+    //   final resulttemp = element.elementValue[0].value;
+    //   String formattedDate =
+    //       DateFormat('EEEE', 'zh_Hant').format(element.startTime);
+    //   if (start == 18 && end == 06) {
+    //     atitems.add(ImageTextWidget(
+    //         image: Image.asset('assets/bodytemp.png'),
+    //         text: '$formattedDate\n$resulttemp℃',
+    //         textcolor: Colors.yellow));
+    //   }
+    // });
+
+
+    // // List<Widget> mintitems = [];
+    // // minT.time.forEach((element) {
+    // //   final start = element.startTime.hour;
+    // //   final end = element.endTime.hour;
+    // //   final resulttemp = element.elementValue[0].value;
+    // //   String formattedDate =
+    // //       DateFormat('EEEE', 'zh_Hant').format(element.startTime);
+    // //   if (start == 18 && end == 06) {
+    // //     atitems.add(ImageTextWidget(
+    // //         image: Image.asset('assets/bodytemp.png'),
+    // //         text: '$formattedDate\n$resulttemp℃',
+    // //         textcolor: Colors.yellow));
+    // //   }
+    // // });
+
+    //  List<List<Widget>> fetchwidget = [];
+    //  fetchwidget.add(wxitems);
+    //  fetchwidget.add(atitems);
+    // //  fetchwidget.add(mintitems);
+    // return fetchwidget;
+    // // return Weathers.fromJson(response);
   }
 }
-class Weathers {
-  final String datasetDescription;
-  final String locationsName;
-  final String dataid;
-  final List<Location> locations;
-
-  Weathers({
-     this.datasetDescription,
-     this.locationsName,
-     this.dataid,
-     this.locations,
-  });
-
-  factory Weathers.fromJson(Map<String, dynamic> json) {
-    List<Location> locations = [];
-    for (var location in json['records']['locations'][0]['location']) {
-      locations.add(Location.fromJson(location));
-    }
-
-    return Weathers(
-      datasetDescription: json['records']['locations'][0]['datasetDescription'],
-      locationsName: json['records']['locations'][0]['locationsName'],
-      dataid: json['records']['locations'][0]['dataid'],
-      locations: locations,
-    );
-  }
-}
-
-class Location {
-  final String locationName;
-  final String geocode;
-  final String lat;
-  final String lon;
-  final List<WeatherElement> weatherElement;
-
-  Location({
-     this.locationName,
-     this.geocode,
-     this.lat,
-     this.lon,
-     this.weatherElement,
-  });
-
-  factory Location.fromJson(Map<String, dynamic> json) {
-    List<WeatherElement> weatherElement = [];
-    for (var element in json['weatherElement']) {
-      weatherElement.add(WeatherElement.fromJson(element));
-    }
-
-    return Location(
-      locationName: json['locationName'],
-      geocode: json['geocode'],
-      lat: json['lat'],
-      lon: json['lon'],
-      weatherElement: weatherElement,
-    );
-  }
-}
-
-class WeatherElement {
-  final String elementName;
-  final String description;
-  final List<Timeweather> time;
-
-  WeatherElement({
-     this.elementName,
-     this.description,
-     this.time,
-  });
-
-  factory WeatherElement.fromJson(Map<String, dynamic> json) {
-    List<Timeweather> time = [];
-    for (var t in json['time']) {
-      time.add(Timeweather.fromJson(t));
-    }
-
-    return WeatherElement(
-      elementName: json['elementName'],
-      description: json['description'],
-      time: time,
-    );
-  }
-}
-
-class Timeweather {
-  final DateTime startTime;
-  final DateTime endTime;
-  final List<ElementValue> elementValue;
-
-  Timeweather({
-     this.startTime,
-     this.endTime,
-     this.elementValue,
-  });
-
-  factory Timeweather.fromJson(Map<String, dynamic> json) {
-    List<ElementValue> elementValue = [];
-    for (var v in json['elementValue']) {
-      elementValue.add(ElementValue.fromJson(v));
-    }
-
-    return Timeweather(
-      startTime: DateTime.parse(json['startTime']),
-      endTime: DateTime.parse(json['endTime']),
-      elementValue: elementValue,
-    );
-  }
-}
-
-class ElementValue {
-  final String value;
-  final String measures;
-
-  ElementValue({
-     this.value,
-     this.measures,
-  });
-
-  factory ElementValue.fromJson(Map<String, dynamic> json) {
-    return ElementValue(
-      value: json['value'],
-      measures: json['measures'],
-    );
-  }
-}
-
-
 
 // final users = await httpService.get('users', (json) {
 //   return List<User>.from(json.map((userJson) => User.fromJson(userJson)));
