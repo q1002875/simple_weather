@@ -68,9 +68,19 @@ class apiService {
         .toList();
      print('matItem$matItem');
     
+List<String> match = [];
+
+matItem.map((e) => match.add(e.text +'℃'+'~'+ atItems[e.index].text+'℃'));
+
+final result =  match.map((e)=> ImageTextWidget(
+            image: Image.asset('assets/bodytemp.png'),
+            text:
+                '$e',
+            textcolor: Colors.yellow))
+        .toList();
 
 
-    return [wxItems, atItems, matItem];
+    return [wxItems, result];
     // List<Widget> wxitems = [];
     // for (var weather in wx.time) {
     //   String formattedDate =
