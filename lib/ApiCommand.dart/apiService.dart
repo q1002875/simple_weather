@@ -42,7 +42,7 @@ class apiService {
     final weathers =  Weathers.fromJson(response);
     final wx =  weathers.locations[0].weatherElement[0];//天氣狀況
     final maxT = weathers.locations[0].weatherElement[1];//最高溫度
-    final minT = weathers.locations[0].weatherElement[2];//最高溫度
+    final minT = weathers.locations[0].weatherElement[2];//最低溫度
       final wxItems = wx.time
         .where((w) => w.startTime.hour == 18 && w.endTime.hour == 6)
         .map((w) => ImageTextWidget(
@@ -50,7 +50,7 @@ class apiService {
             text:
                 '${DateFormat('EEEE', 'zh_Hant').format(w.startTime)}\n${w.elementValue[0].value}'))
         .toList();
-
+    //where 過濾出t.startTime.hour == 18 && t.endTime.hour == 6的物件
     final atItems = maxT.time
         .where((t) => t.startTime.hour == 18 && t.endTime.hour == 6)
         .map((t) => ImageTextWidget(
@@ -60,7 +60,17 @@ class apiService {
             textcolor: Colors.yellow))
         .toList();
 
-    return [wxItems, atItems];
+    final matItem = minT.time.where((t)=> t.startTime.hour == 18 && t.endTime.hour == 6) .map((t) => ImageTextWidget(
+            image: Image.asset('assets/bodytemp.png'),
+            text:
+                '${DateFormat('EEEE', 'zh_Hant').format(t.startTime)}\n${t.elementValue[0].value}',
+            textcolor: Colors.yellow))
+        .toList();
+     print('matItem$matItem');
+    
+
+
+    return [wxItems, atItems, matItem];
     // List<Widget> wxitems = [];
     // for (var weather in wx.time) {
     //   String formattedDate =

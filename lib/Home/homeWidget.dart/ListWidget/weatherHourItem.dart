@@ -14,6 +14,7 @@ class ImageTextWidget extends StatelessWidget {
       //
       children: [
         Container(
+          padding: EdgeInsets.all(8),
             height: 50,
             width: 50,
             child: image != null ? image : Image.asset('assets/raining.png')),

@@ -158,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                                 Container(
                                     // color: Colors.amber,
                                     width: screenWidth / 1.1,
-                                    height: screenHeight / 2,
+                                    height: screenHeight / 1.3,
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(30),
                                       // color: Colors.yellow,
@@ -186,8 +186,15 @@ class _HomePageState extends State<HomePage> {
                                                         weatherData: weatherData[0],
                                                       )),
                                                     ),
+                                                      SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    CustomText(
+                                                      textContent: ' 一週體感預報',
+                                                      fontSize: 20,
+                                                    ),
                                                     SizedBox(
-                                                      height: 15,
+                                                      height: 5,
                                                     ),
                                                     Container(
                                                       child: Center(
@@ -195,7 +202,10 @@ class _HomePageState extends State<HomePage> {
                                                         weatherData:  weatherData[1],
                                                       )),
                                                     ),
-                                                    //    Container(
+                                                      SizedBox(
+                                                      height: 15,
+                                                    ),
+                                                    // Container(
                                                     //   child: Center(
                                                     //       child: HorizontalLis(
                                                     //     weatherData:
