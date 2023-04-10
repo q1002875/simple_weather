@@ -3,12 +3,18 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_weahter/ApiCommand.dart/apiService.dart';
 import 'package:simple_weahter/Cloud/Cloud.dart';
+import '../ApiModel.dart/weathersModel.dart';
 import '../ExtensionToolClass/CustomText.dart';
 import '../ExtensionToolClass/ReusableFutureBuilder.dart';
 import '../ExtensionToolClass/StorageService.dart';
 import 'homeWidget.dart/ListWidget/weatherHourItem.dart';
 import 'homeWidget.dart/countryWeatherHourType.dart';
 import 'homeWidget.dart/countryWeatherState.dart';
+
+enum WeaterStatusType {
+  Wx, //天氣狀態
+  MaxT //最低溫
+}
 
 class HomePage extends StatefulWidget {
   const HomePage({this.title});
@@ -27,10 +33,17 @@ Future<WeatherData> getcountryData(String country) async {
 
 Future<WeatherWeekData> getWeekCountryData(String country) async {
   final data = await api.getWeekCountryData(country);
-  final dddd = data.toString();
-  print('dddd$dddd');
   return data;
 }
+
+Future<Weathers> getWeekData(String country) async {
+  final data = await api.getWeekData(country);
+  final resultdata = data.toString();
+  print('resultdata$resultdata');
+  return data;
+}
+
+// ignore: missing_return
 
 class _HomePageState extends State<HomePage> {
   StorageService _storageService = StorageService();
@@ -78,6 +91,7 @@ class _HomePageState extends State<HomePage> {
     final screenHeight =
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
     final List<Widget> push = [ImageTextWidget(text: 'time')];
+
     return MaterialApp(
       title: 'Flutter Pull-to-Refresh',
       home: Scaffold(
@@ -161,26 +175,19 @@ class _HomePageState extends State<HomePage> {
                                         SizedBox(
                                           height: 5,
                                         ),
-                                        FutureBuilder<WeatherWeekData>(
-                                          future: getWeekCountryData(
-                                              selectedOption),
+                                        FutureBuilder<Weathers>(
+                                          future: getWeekData(selectedOption),
                                           builder: (context, snapshot) {
                                             if (snapshot.hasData) {
                                               final weatherData = snapshot.data;
-                                              print(weatherData);
-                                              final List<Widget> items = [];
-                                              // final test = weatherData
-                                              //     .result
-                                              //     .records
-                                              //     .locations[0]
-                                              //     .weatherElement[0];
-
+                                              // print(weatherData);
+                                              List<Widget> items = [];
                                               final test = weatherData
                                                   .locations[0]
-                                                  .weatherElements[0];
-                                              final d = weatherData.toString();
-                                              print('test$d');
-                                              for (var weather in test.times) {
+                                                  .weatherElement[0];
+                                              // final d = weatherData.toString();
+                                              // print('test$d');
+                                              for (var weather in test.time) {
                                                 final w =
                                                     weather.startTime.weekday;
                                                 String formattedDate =
@@ -191,9 +198,10 @@ class _HomePageState extends State<HomePage> {
                                                 final s =
                                                     weather.startTime.hour;
                                                 final e = weather.endTime.hour;
-                                                final p =
-                                                    weather.parameterValue;
-                                                final i = weather.imageValue;
+                                                final p = weather
+                                                    .elementValue[0].value;
+                                                final i = weather
+                                                    .elementValue[1].value;
 
                                                 if (s == 18 && e == 06) {
                                                   items.add(ImageTextWidget(
@@ -204,6 +212,31 @@ class _HomePageState extends State<HomePage> {
                                                 }
                                               }
 
+                                              final temp = weatherData
+                                                  .locations[0]
+                                                  .weatherElement[1]
+                                                  .time;
+                                              List<Widget> temps = [];
+                                              temp.forEach((element) {
+                                                final start =
+                                                    element.startTime.hour;
+                                                final end =
+                                                    element.endTime.hour;
+                                                final resulttemp = element
+                                                    .elementValue[0].value;
+                                                String formattedDate =
+                                                    DateFormat(
+                                                            'EEEE', 'zh_Hant')
+                                                        .format(
+                                                            element.startTime);
+                                                if (start == 18 && end == 06) {
+                                                  temps.add(ImageTextWidget(
+                                                      image: Image.asset(
+                                                          'assets/bodytemp.png'),
+                                                      text:
+                                                          '$formattedDate\n$resulttemp℃',textcolor: Colors.yellow));
+                                                }
+                                              });
                                               return Expanded(
                                                 child: Column(
                                                   children: [
@@ -219,7 +252,7 @@ class _HomePageState extends State<HomePage> {
                                                     Container(
                                                       child: Center(
                                                           child: HorizontalLis(
-                                                        weatherData: items,
+                                                        weatherData: temps,
                                                       )),
                                                     ),
                                                   ],

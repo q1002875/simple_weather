@@ -26,126 +26,144 @@ class apiService {
     return WeatherWeekData.fromJson(response as Map<String, dynamic>);
   }
 
-  Future<WeatherForecast> getWeekData(String country) async {
+  Future<Weathers> getWeekData(String country) async {
     final api =
         'https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-091?Authorization=$authkey&format=JSON&locationName=$country&elementName=Wx,MaxT';
-    // print('getWeekApi:$api');
+    print('getWeekApi:$api');
     final weekWeatherData = HttpService(baseUrl: api);
     final response = await weekWeatherData.getJson();
-    print('response:$response');
-    final ss = WeatherForecast.fromJson(response);
+    // print('response:$response');
+    final ss = Weathers.fromJson(response).toString();
     print('ss$ss');
 
-    return WeatherForecast.fromJson(response);
+    return Weathers.fromJson(response);
   }
 }
+class Weathers {
+  final String datasetDescription;
+  final String locationsName;
+  final String dataid;
+  final List<Location> locations;
 
-class WeatherForecast {
-  Result result;
+  Weathers({
+     this.datasetDescription,
+     this.locationsName,
+     this.dataid,
+     this.locations,
+  });
 
-  WeatherForecast({this.result});
+  factory Weathers.fromJson(Map<String, dynamic> json) {
+    List<Location> locations = [];
+    for (var location in json['records']['locations'][0]['location']) {
+      locations.add(Location.fromJson(location));
+    }
 
-  factory WeatherForecast.fromJson(Map<String, dynamic> json) {
-    return WeatherForecast(
-      result: Result.fromJson(json['result']),
-    );
-  }
-}
-
-class Result {
-  Records records;
-  Result({this.records});
-  factory Result.fromJson(Map<String, dynamic> json) {
-    return Result(
-      records: Records.fromJson(json['records']),
-    );
-  }
-}
-
-class Records {
-  List<Location> locations;
-  Records({this.locations});
-  factory Records.fromJson(Map<String, dynamic> json) {
-    return Records(
-      locations: List<Location>.from(
-          json['locations'].map((x) => Location.fromJson(x))),
+    return Weathers(
+      datasetDescription: json['records']['locations'][0]['datasetDescription'],
+      locationsName: json['records']['locations'][0]['locationsName'],
+      dataid: json['records']['locations'][0]['dataid'],
+      locations: locations,
     );
   }
 }
 
 class Location {
-  String datasetDescription;
-  String locationsName;
-  String dataid;
-  List<WeatherElement> weatherElement;
+  final String locationName;
+  final String geocode;
+  final String lat;
+  final String lon;
+  final List<WeatherElement> weatherElement;
 
-  Location(
-      {this.datasetDescription,
-      this.locationsName,
-      this.dataid,
-      this.weatherElement});
+  Location({
+     this.locationName,
+     this.geocode,
+     this.lat,
+     this.lon,
+     this.weatherElement,
+  });
 
   factory Location.fromJson(Map<String, dynamic> json) {
+    List<WeatherElement> weatherElement = [];
+    for (var element in json['weatherElement']) {
+      weatherElement.add(WeatherElement.fromJson(element));
+    }
+
     return Location(
-      datasetDescription: json['datasetDescription'] ?? '',
-      locationsName: json['locationsName'] ?? '',
-      dataid: json['dataid'] ?? '',
-      weatherElement: List<WeatherElement>.from(json['location'][0]
-              ['weatherElement']
-          .map((x) => WeatherElement.fromJson(x))),
+      locationName: json['locationName'],
+      geocode: json['geocode'],
+      lat: json['lat'],
+      lon: json['lon'],
+      weatherElement: weatherElement,
     );
   }
 }
 
 class WeatherElement {
-  String elementName;
-  String description;
-  List<Time> time;
+  final String elementName;
+  final String description;
+  final List<Timeweather> time;
 
-  WeatherElement({this.elementName, this.description, this.time});
+  WeatherElement({
+     this.elementName,
+     this.description,
+     this.time,
+  });
 
   factory WeatherElement.fromJson(Map<String, dynamic> json) {
+    List<Timeweather> time = [];
+    for (var t in json['time']) {
+      time.add(Timeweather.fromJson(t));
+    }
+
     return WeatherElement(
-      elementName: json['elementName'] ?? '',
-      description: json['description'] ?? '',
-      time: List<Time>.from(json['time'].map((x) => Time.fromJson(x))),
+      elementName: json['elementName'],
+      description: json['description'],
+      time: time,
     );
   }
 }
 
-class Time {
-  DateTime startTime;
-  DateTime endTime;
-  List<ElementValue> elementValue;
+class Timeweather {
+  final DateTime startTime;
+  final DateTime endTime;
+  final List<ElementValue> elementValue;
 
-  Time({this.startTime, this.endTime, this.elementValue});
+  Timeweather({
+     this.startTime,
+     this.endTime,
+     this.elementValue,
+  });
 
-  factory Time.fromJson(Map<String, dynamic> json) {
-    return Time(
-      startTime: json['startTime'] ?? '',
-      endTime: json['endTime'] ?? '',
-      elementValue: List<ElementValue>.from(
-          json['elementValue'].map((x) => ElementValue.fromJson(x))),
+  factory Timeweather.fromJson(Map<String, dynamic> json) {
+    List<ElementValue> elementValue = [];
+    for (var v in json['elementValue']) {
+      elementValue.add(ElementValue.fromJson(v));
+    }
+
+    return Timeweather(
+      startTime: DateTime.parse(json['startTime']),
+      endTime: DateTime.parse(json['endTime']),
+      elementValue: elementValue,
     );
   }
 }
 
 class ElementValue {
-  String value;
-  String measures;
+  final String value;
+  final String measures;
 
-  ElementValue({this.value, this.measures});
+  ElementValue({
+     this.value,
+     this.measures,
+  });
 
   factory ElementValue.fromJson(Map<String, dynamic> json) {
     return ElementValue(
-      value: json['value'] ?? '',
-      measures: json['measures'] ?? '',
+      value: json['value'],
+      measures: json['measures'],
     );
   }
 }
-
-
-
 
 
 
