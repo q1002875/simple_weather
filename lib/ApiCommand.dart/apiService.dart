@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:simple_weahter/ExtensionToolClass/HttpServer/Httpserver.dart';
 import '../ApiModel.dart/weathersModel.dart';
 import '../Cloud/Cloud.dart';
+import '../Home/homeWidget.dart/ListWidget/UVIwidget.dart';
 import '../Home/homeWidget.dart/ListWidget/weatherHourItem.dart';
 
 //ignore: camel_case_types
@@ -81,6 +82,72 @@ class apiService {
         .toList();
 
     return [wxItems, minTandMaxT];
+  }
+
+///////////////////////cloudpage api
+  ///
+  Future<List<Widget>> getCloudData(String country) async {
+    final api =
+        'https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-091?Authorization=$authkey&format=JSON&locationName=$country&elementName=UVI,WS,WD,Td,RH,T';
+    print('getWeecloudkApi:$api');
+    final weekWeatherData = HttpService(baseUrl: api);
+    final response = await weekWeatherData.getJson();
+    // // print('getWeecloudkApi response:$response');
+    DateTime now = DateTime.now();
+
+    final weathers = Weathers.fromJson(response);
+    final www = weathers.locations[0].weatherElement;
+
+    final List<Widget> cloudwidgets = [];
+
+    www.forEach((element) {
+      switch (element.description) {
+        case '紫外線指數':
+          element.time.forEach(
+            (element) => {
+              if (now.day == element.endTime.day || now.day+1  == element.endTime.day)
+                {
+                  ////今日資料
+                  print(element.elementValue[0].value),
+                  print(element.elementValue[0].measures),
+                  print(element.elementValue[1].value),
+                  print(element.elementValue[1].measures),
+
+                  // cloudwidgets.add(element.elementValue[1].value),
+                  // cloudwidgets.add(element.elementValue[0].measures +':'+ element.elementValue[0].value),
+                  // cloudwidgets.add(element.elementValue[0].value)
+
+                  cloudwidgets.add(UVIWidget(
+                      textfirst: element.elementValue[1].value,
+                      textsecond: element.elementValue[0].measures +
+                          ':' +
+                          element.elementValue[0].value,
+                      uviLevel: element.elementValue[0].value))
+                }
+            },
+          );
+          break;
+        case '平均溫度':
+          break;
+        case '平均相對濕度':
+          print(element.elementName);
+          break;
+        case '最大風速':
+          print(element.elementName);
+          break;
+        case '風向':
+          print(element.elementName);
+          break;
+        case '紫外線指數':
+          print(element.elementName);
+          break;
+        case '平均露點':
+          print(element.elementName);
+          break;
+      }
+    });
+
+    return cloudwidgets;
   }
 }
 

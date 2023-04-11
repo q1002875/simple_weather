@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:simple_weahter/ExtensionToolClass/CustomText.dart';
+import 'package:simple_weahter/Home/homeWidget.dart/ListWidget/weatherHourItem.dart';
 
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import '../ApiCommand.dart/apiService.dart';
+import '../Home/homeWidget.dart/ListWidget/UVIwidget.dart';
 
 class WeatherData {
   String _datasetDescription;
@@ -145,149 +147,152 @@ class Timeweek {
 }
 ///////////////////////result week get
 
-Future<http.Response> fetchWeatherData(String country) async {
-  final String apiUrl =
-      'https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-C0032-001?Authorization=CWB-95C4A955-4E38-4B86-92B4-2F1E71669956&limit=7&format=JSON&locationName=$country&elementName=&sort=time&timeTo=2023-04-03T20%3A00%3A00';
-// final httpService  = HttpService(baseUrl: apiUrl);
-
-// final response = await httpService.getJson();
-// final usersJson = response['data'] as List<dynamic>;
-// final users = usersJson.map((userJson) => User.fromJson(userJson)).toList();
-
-  try {
-    return await http.get(Uri.parse(apiUrl));
-  } catch (e) {
-    // Handle the exception
-    print('Failed to fetch weather data: $e');
-    rethrow;
-  }
-}
-
-class Cloud extends StatelessWidget {
-  const Cloud();
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Weather App',
-      home: Scaffold(
-        body: Center(
-          child: FutureBuilder<http.Response>(
-            future: fetchWeatherData('嘉義縣'),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                var jsonData = jsonDecode(snapshot.data.body);
-                print(jsonData.toString());
-                var weatherData = WeatherData.fromJson(jsonData);
-                print(weatherData.toString());
-                return ListView.builder(
-                  itemCount: weatherData.locations.length,
-                  itemBuilder: (context, index) {
-                    var location = weatherData.locations[index];
-                    return ListTile(
-                      title: Text(location._locationName ?? ""),
-                      subtitle: Text(location
-                              .weatherElements[index]._elementName
-                              .toString() ??
-                          ""),
-                    );
-                  },
-                );
-              } else if (snapshot.hasError) {
-                return Text("Error: ${snapshot.error}");
-              } else {
-                return CircularProgressIndicator();
-              }
-            },
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class CloudPage extends StatefulWidget {
   const CloudPage();
   @override
   _CloudPageState createState() => _CloudPageState();
 }
 
+final api = apiService();
+// ignore: missing_return
+Future<List<Widget>> getData(String country) async {
+  final countrydata = await api.getCloudData(country);
+  print(countrydata.toString());
+  return countrydata;
+}
+
 class _CloudPageState extends State<CloudPage> {
+  @override
+  initState() {
+    super.initState();
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('新竹縣')),
-      body: Center(
-        child: Flex(
-          direction: Axis.horizontal,
-          children: [
-            Expanded(
-              child: Column(
-                children: [
-                  MyItem(
-                    text: '1',
-                    left: true,
-                  ),
-                  MyItem(
-                    text: '1',
-                    left: true,
-                  ),
-                  MyItem(
-                    text: '1',
-                    left: true,
-                  ),
-                  MyItem(
-                    text: '1',
-                    left: true,
-                  )
-                ],
-              ),
+      body: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/homeBackground.png'),
+              fit: BoxFit.cover,
             ),
-            Expanded(
-              child: Column(
-                children: [
-                  MyItem(
-                    text: '1',
-                    left: false,
-                  ),
-                  MyItem(
-                    text: '1',
-                    left: false,
-                  ),
-                  MyItem(
-                    text: '1',
-                    left: false,
-                  ),
-                  MyItem(
-                    text: '1',
-                    left: false,
-                  )
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+          child: FutureBuilder<List<Widget>>(
+            future: getData('新竹縣'),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+
+
+                return ListView(
+                  scrollDirection: Axis.vertical,
+                  children: [
+                    Container(
+                      width: 100,
+                      height: 100,
+                      child: ImageTextWidget(
+                        text: '23123123123',
+                        textcolor: Colors.black12,
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        MyItem(
+                          text: '紫外線UVI',
+                          view: 
+                          snapshot.data[0]
+                          // UVIWidget(textfirst:snapshot.data[0],textsecond: snapshot.data[1],uviLevel: snapshot.data[2]),
+                        ),
+                        MyItem(
+                          text: '日出',
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        MyItem(
+                          text: '風向風速WD,WS',
+                        ),
+                        MyItem(
+                          text: '露點Td',
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        MyItem(
+                          text: '體感溫度AT',
+                        ),
+                        MyItem(
+                          text: '濕度RH',
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            },
+          )),
     );
   }
 }
 
 class MyItem extends StatelessWidget {
   final String text;
-  final bool left;
-  const MyItem({Key key, this.text, this.left}) : super(key: key);
+  final Icon icon;
+  final Widget view;
+  const MyItem({Key key, this.text, this.icon, this.view}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight =
+        MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
+
     return Expanded(
       child: Container(
-        margin: left
-            ? const EdgeInsets.fromLTRB(30, 10, 5, 10)
-            : const EdgeInsets.fromLTRB(5, 10, 30, 10),
+        width: screenWidth / 3,
+        height: screenHeight / 4,
+        margin: const EdgeInsets.all(15),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8.0),
-          color: Color.fromARGB(255, 74, 57, 131),
+          color: Color.fromARGB(120, 74, 57, 131),
         ),
-        child: Center(child: Text(text)),
+        child: Column(
+          children: [
+            Container(
+              // color: Colors.blueGrey,
+              height: 30,
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Icon(icon != null ? icon : Icons.volume_up),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  CustomText(textContent: text, textColor: Colors.white)
+                ],
+              ),
+            ),
+            Expanded(
+                child: Container(
+                    // color: Colors.blue,
+                    width: screenWidth,
+                    // height: (screenHeight / 4) - 30,
+                    child: view
+                    //  UVIWidget(textfirst: '曝曬級數:中量級',textsecond: '紫外線指數:6',uviLevel: int.parse('5'),),
+                    ))
+          ],
+        ),
+
+        //  Center(child: CustomText(textContent: text,textColor: Colors.white,fontSize: 20,)),
       ),
     );
   }

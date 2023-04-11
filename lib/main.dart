@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:simple_weahter/Home/homePage.dart';
 import 'Cloud/Cloud.dart';
 
+
 void main() {
   runApp(MyApp());
 }
@@ -31,13 +32,13 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
-    HomePage(title: "1"),
     CloudPage(),
+    HomePage(title: "1"),
     Text(
       'Favorites Page',
     ),
-    Text(
-      'Settings Page',
+   Text(
+      'Fs Page',
     ),
   ];
 
