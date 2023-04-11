@@ -165,11 +165,14 @@ class _CloudPageState extends State<CloudPage> {
   @override
   initState() {
     super.initState();
-
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight =
+        MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
+
     return Scaffold(
       appBar: AppBar(title: Text('新竹縣')),
       body: Container(
@@ -183,8 +186,6 @@ class _CloudPageState extends State<CloudPage> {
             future: getData('花蓮縣'),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-
-
                 return ListView(
                   scrollDirection: Axis.vertical,
                   children: [
@@ -198,15 +199,15 @@ class _CloudPageState extends State<CloudPage> {
                     ),
                     Row(
                       children: [
+                        MyItem(text: '紫外線UVI', view: snapshot.data[0]
+                            // UVIWidget(textfirst:snapshot.data[0],textsecond: snapshot.data[1],uviLevel: snapshot.data[2]),
+                            ),
                         MyItem(
-                          text: '紫外線UVI',
-                          view: 
-                          snapshot.data[0]
-                          // UVIWidget(textfirst:snapshot.data[0],textsecond: snapshot.data[1],uviLevel: snapshot.data[2]),
-                        ),
-                        MyItem(
-                          text: '日出',
-                        ),
+                            text: '日出',
+                            view: CompassWidget(
+                              size: screenHeight / 4,
+                              direction: CompassDirection.E,
+                            )),
                       ],
                     ),
                     Row(
@@ -295,5 +296,126 @@ class MyItem extends StatelessWidget {
         //  Center(child: CustomText(textContent: text,textColor: Colors.white,fontSize: 20,)),
       ),
     );
+  }
+}
+
+enum CompassDirection { N, NE, E, SE, S, SW, W, NW }
+
+class CompassWidget extends StatelessWidget {
+  final CompassDirection direction;
+  final double size;
+
+  CompassWidget({this.direction, this.size}) : assert(size > 0);
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = size / 2;
+    final textSize = radius / 3;
+    final pointerSize = radius / 3;
+
+    return Center(
+      child: Container(
+        width: size,
+        height: size,
+        child: Stack(
+          children: [
+            Container(
+              width: size,
+              height: size,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.grey[300],
+              ),
+            ),
+            Positioned(
+              left: radius - textSize / 2,
+              top: 0,
+              child: Text(
+                'N',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: textSize,
+                ),
+              ),
+            ),
+            Positioned(
+              left: radius - textSize / 2,
+              bottom: 0,
+              child: Text(
+                'S',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: textSize,
+                ),
+              ),
+            ),
+            Positioned(
+              left: textSize / 2,
+              top: radius - textSize,
+              child: Text(
+                'W',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: textSize,
+                ),
+              ),
+            ),
+            Positioned(
+              right: textSize / 2,
+              top: radius - textSize,
+              child: Text(
+                'E',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: textSize,
+                ),
+              ),
+            ),
+            Positioned(
+              left: radius - pointerSize,
+              top: radius - pointerSize / 2,
+              child: Transform.rotate(
+                angle: 95,
+                child: Container(
+                  width: 10,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.red[400],
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Colors.black,
+                      width: 1,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  double _getPointerAngle() {
+    switch (direction) {
+      case CompassDirection.N:
+        return 0;
+      case CompassDirection.NE:
+        return -45;
+      case CompassDirection.E:
+        return -90;
+      case CompassDirection.SE:
+        return -135;
+      case CompassDirection.S:
+        return 180;
+      case CompassDirection.SW:
+        return 135;
+      case CompassDirection.W:
+        return 90;
+      case CompassDirection.NW:
+        return 45;
+      default:
+        return 0;
+    }
   }
 }
