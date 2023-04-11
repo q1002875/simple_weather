@@ -180,7 +180,7 @@ class _CloudPageState extends State<CloudPage> {
             ),
           ),
           child: FutureBuilder<List<Widget>>(
-            future: getData('新竹縣'),
+            future: getData('花蓮縣'),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
 
