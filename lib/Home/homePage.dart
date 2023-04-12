@@ -14,7 +14,7 @@ enum WeaterStatusType {
   Wx, //天氣狀態
   MaxT //最低溫
 }
-
+String selectedOption = '新竹縣'; //預設
 class HomePage extends StatefulWidget {
   const HomePage({this.title});
   final String title;
@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage> {
     '金門縣',
     '連江縣',
   ];
-  String selectedOption = '新竹縣'; //預設
+ 
   @override
   initState() {
     super.initState();

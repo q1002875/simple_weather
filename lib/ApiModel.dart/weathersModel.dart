@@ -86,11 +86,14 @@ class Timeweather {
   final DateTime startTime;
   final DateTime endTime;
   final List<ElementValue> elementValue;
-
+  final String sunriseTime;
+  final String sunsetTime;
   Timeweather({
     this.startTime,
     this.endTime,
     this.elementValue,
+    this.sunriseTime,
+    this.sunsetTime
   });
 
   factory Timeweather.fromJson(Map<String, dynamic> json) {

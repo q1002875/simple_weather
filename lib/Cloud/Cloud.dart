@@ -3,7 +3,9 @@ import 'package:simple_weahter/ExtensionToolClass/CustomText.dart';
 import 'package:simple_weahter/Home/homeWidget.dart/ListWidget/weatherHourItem.dart';
 
 import '../ApiCommand.dart/apiService.dart';
-import '../Home/homeWidget.dart/ListWidget/UVIwidget.dart';
+import '../Home/homePage.dart';
+import '../Home/homeWidget.dart/ListWidget/BodyTempwidget.dart';
+import '../Home/homeWidget.dart/ListWidget/Compass.dart';
 
 class WeatherData {
   String _datasetDescription;
@@ -145,18 +147,29 @@ class Timeweek {
     return 'Timeweek(startTime: $startTime, endTime: $endTime,parameterValue:$parameterValue,imageValue:$imageValue)';
   }
 }
+
 ///////////////////////result week get
+enum cloudType { T, Td, RH }
 
 class CloudPage extends StatefulWidget {
-  const CloudPage();
+  const CloudPage({this.title});
+  final String title;
   @override
   _CloudPageState createState() => _CloudPageState();
 }
 
 final api = apiService();
 // ignore: missing_return
-Future<List<Widget>> getData(String country) async {
+Future<Map<String, dynamic>> getData(String country) async {
   final countrydata = await api.getCloudData(country);
+  print(countrydata.toString());
+  return countrydata;
+}
+
+// getSunRiseSetTime
+
+Future<List<String>> getSunRiseSetData(String country) async {
+  final countrydata = await api.getSunRiseSetTime(country);
   print(countrydata.toString());
   return countrydata;
 }
@@ -174,7 +187,7 @@ class _CloudPageState extends State<CloudPage> {
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
 
     return Scaffold(
-      appBar: AppBar(title: Text('新竹縣')),
+      appBar: AppBar(title: Text(selectedOption)),
       body: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -182,10 +195,15 @@ class _CloudPageState extends State<CloudPage> {
               fit: BoxFit.cover,
             ),
           ),
-          child: FutureBuilder<List<Widget>>(
-            future: getData('花蓮縣'),
+          child: FutureBuilder<Map<String, dynamic>>(
+            future: getData(selectedOption),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
+                final uviData = snapshot.data['UVI'];
+                final wdData = snapshot.data['WD'];
+                final rhData = snapshot.data['RH'];
+                final tdData = snapshot.data['Td'];
+                final tData = snapshot.data['T'];
                 return ListView(
                   scrollDirection: Axis.vertical,
                   children: [
@@ -199,35 +217,117 @@ class _CloudPageState extends State<CloudPage> {
                     ),
                     Row(
                       children: [
-                        MyItem(text: '紫外線UVI', view: snapshot.data[0]
-                            // UVIWidget(textfirst:snapshot.data[0],textsecond: snapshot.data[1],uviLevel: snapshot.data[2]),
-                            ),
                         MyItem(
-                            text: '日出',
+                          text: '紫外線UVI', view: uviData,
+                          // icon: Icon(Icons.sunny),
+                        ),
+                        MyItem(
+                          text: '日出及日落時間',
+                          // icon: Icon(Icons.sunny_snowing),
+                          // ignore: missing_return
+                          view: FutureBuilder<List<String>>(
+                            future: getSunRiseSetData(selectedOption),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                               final rise = snapshot.data[0];
+                               final set  = snapshot.data[1];
+
+                                return Column(
+                                  children: [
+                                    Container(
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                            Image(
+                                              height: 70,
+                                              width: 80,
+                                              image: AssetImage(
+                                                  'assets/sunrise.png')),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          CustomText(
+                                              textContent: rise,
+                                              textColor: Colors.white,fontSize: 24,)
+                                        ],
+                                      ),
+                                    ),
+                                     Container(
+                                      // height: 30,
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Image(
+                                           height: 70,
+                                              width: 80,
+                                              image:
+                                                  AssetImage('assets/sunset.png')),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          CustomText(
+                                              textContent:set,
+                                              textColor: Colors.white,
+                                            fontSize: 24,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                 
+                                  ],
+                                );
+                              } else if (snapshot.hasError) {
+                                return Text('Error: ${snapshot.error}');
+                              } else {
+                                return Center(
+                                    child: CircularProgressIndicator());
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        MyItem(
+                            // icon: Icon(Icons.wind_power_outlined),
+                            text: '風向$wdData',
                             view: CompassWidget(
-                              size: screenHeight / 4,
-                              direction: CompassDirection.E,
+                                size: screenHeight / 4,
+                                direction:
+                                    ParseCompassDirection.fromString(wdData ?? '偏北風'))),
+                        MyItem(
+                            text: '露點溫度',
+                            view: RHTdwidget(
+                              text: tdData + '℃',
+                              value: tdData,
+                              type: cloudType.Td,
+                            )
+                            //  一般都會在露點到達15℃至20℃時開始感到不適；而當露點越過21℃時更會感到悶熱。
+                            ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        MyItem(
+                            //  icon: Icon(Icons.temple_buddhist),
+                            text: '體感溫度AT',
+                            view: RHTdwidget(
+                              text: tData + '℃',
+                              value: tData,
+                              type: cloudType.T,
                             )),
-                      ],
-                    ),
-                    Row(
-                      children: [
                         MyItem(
-                          text: '風向風速WD,WS',
-                        ),
-                        MyItem(
-                          text: '露點Td',
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        MyItem(
-                          text: '體感溫度AT',
-                        ),
-                        MyItem(
-                          text: '濕度RH',
-                        ),
+                            text: '濕度RH',
+                            view: RHTdwidget(
+                              text: rhData + '%',
+                              value: rhData,
+                              type: cloudType.RH,
+                            )),
                       ],
                     ),
                   ],
@@ -247,6 +347,7 @@ class MyItem extends StatelessWidget {
   final String text;
   final Icon icon;
   final Widget view;
+
   const MyItem({Key key, this.text, this.icon, this.view}) : super(key: key);
 
   @override
@@ -274,7 +375,7 @@ class MyItem extends StatelessWidget {
                   SizedBox(
                     width: 5,
                   ),
-                  Icon(icon != null ? icon : Icons.volume_up),
+                  // Icon(icon != null ? icon : Icons.circle),
                   SizedBox(
                     width: 5,
                   ),
@@ -299,123 +400,88 @@ class MyItem extends StatelessWidget {
   }
 }
 
-enum CompassDirection { N, NE, E, SE, S, SW, W, NW }
+// ignore: missing_return
+class RHTdwidget extends StatelessWidget {
+  final String text;
+  final String Detaltext;
+  final String value;
+  final cloudType type;
+  // ignore: non_constant_identifier_names
+  const RHTdwidget({this.text, this.Detaltext, this.value, this.type});
+  // ignore: missing_return
+  String getrh(String value, cloudType type) {
+    // 一般都會在露點到達15℃至20℃時開始感到不適；而當露點越過21℃時更會感到悶熱。
+    final temp = int.parse(value);
+    switch (type) {
+      case cloudType.T:
+        if (temp <= 25) {
+          return '舒適溫度，感到涼爽舒適。';
+        } else if (temp >= 26 && temp <= 29) {
+          return '略微悶熱，需要注意保持適當的水分補充。';
+        } else if (temp >= 30 && temp <= 34) {
+          return '明顯的悶熱，出汗增加，需加強水分補充。';
+        } else if (temp >= 35 && temp <= 39) {
+          return '非常悶熱，易出現中暑等問題，需及時休息和補充水分。';
+        } else if (temp >= 40) {
+          return '極度炎熱，容易導致中暑，避免長時間暴露在高溫環境中。';
+        } else {
+          return '';
+        }
+        break;
+      case cloudType.Td:
+        if (temp < 15) {
+          return '相對濕度較低，感覺較為乾燥，不太容易出現露水現象。';
+        } else if (temp >= 16 && temp <= 18) {
+          return '相對濕度適中，感覺比較舒適，不易出現露水現象。';
+        } else if (temp >= 19 && temp <= 22) {
+          return '相對濕度較高，感覺比較悶熱，容易出現露水現象。';
+        } else if (temp >= 23 && temp <= 25) {
+          return '相對濕度高，感覺非常悶熱，容易出現露水現象。';
+        } else if (temp >= 26) {
+          return '相對濕度極高，感覺非常悶熱，露水現象明顯。';
+        } else {
+          return '';
+        }
 
-class CompassWidget extends StatelessWidget {
-  final CompassDirection direction;
-  final double size;
-
-  CompassWidget({this.direction, this.size}) : assert(size > 0);
+        break;
+      case cloudType.RH:
+        if (temp < 30) {
+          return '相對濕度過低，空氣比較乾燥，可能會引起喉嚨不適或皮膚乾燥。';
+        } else if (temp >= 30 && temp <= 60) {
+          return '相對濕度適中，感覺比較舒適。';
+        } else {
+          return '相對濕度過高，空氣比較悶熱，可能會引起暑熱不適或增加病毒等病害的傳播。';
+        }
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final radius = size / 2;
-    final textSize = radius / 3;
-    final pointerSize = radius / 3;
-
-    return Center(
-      child: Container(
-        width: size,
-        height: size,
-        child: Stack(
-          children: [
-            Container(
-              width: size,
-              height: size,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.grey[300],
-              ),
-            ),
-            Positioned(
-              left: radius - textSize / 2,
-              top: 0,
-              child: Text(
-                'N',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: textSize,
-                ),
-              ),
-            ),
-            Positioned(
-              left: radius - textSize / 2,
-              bottom: 0,
-              child: Text(
-                'S',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: textSize,
-                ),
-              ),
-            ),
-            Positioned(
-              left: textSize / 2,
-              top: radius - textSize,
-              child: Text(
-                'W',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: textSize,
-                ),
-              ),
-            ),
-            Positioned(
-              right: textSize / 2,
-              top: radius - textSize,
-              child: Text(
-                'E',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: textSize,
-                ),
-              ),
-            ),
-            Positioned(
-              left: radius - pointerSize,
-              top: radius - pointerSize / 2,
-              child: Transform.rotate(
-                angle: 95,
-                child: Container(
-                  width: 10,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.red[400],
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 1,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+    final screenWidth = MediaQuery.of(context).size.width;
+    // final screenHeight =
+    // MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
+    return Column(
+      children: [
+        SizedBox(
+          width: 5,
         ),
-      ),
+        Container(
+          width: screenWidth / 3 - 5,
+          //  color: Colors.yellow,
+          child: CustomText(
+              textContent: text ?? '', fontSize: 55, align: TextAlign.left),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Expanded(
+          child: CustomText(
+              textContent: getrh(value, type) ?? ' ',
+              fontSize: 15,
+              align: TextAlign.left),
+        )
+      ],
     );
-  }
-
-  double _getPointerAngle() {
-    switch (direction) {
-      case CompassDirection.N:
-        return 0;
-      case CompassDirection.NE:
-        return -45;
-      case CompassDirection.E:
-        return -90;
-      case CompassDirection.SE:
-        return -135;
-      case CompassDirection.S:
-        return 180;
-      case CompassDirection.SW:
-        return 135;
-      case CompassDirection.W:
-        return 90;
-      case CompassDirection.NW:
-        return 45;
-      default:
-        return 0;
-    }
   }
 }

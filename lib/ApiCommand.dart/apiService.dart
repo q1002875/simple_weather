@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_weahter/ExtensionToolClass/HttpServer/Httpserver.dart';
+import '../ApiModel.dart/sunRiseSetModel.dart';
 import '../ApiModel.dart/weathersModel.dart';
 import '../Cloud/Cloud.dart';
 import '../Home/homeWidget.dart/ListWidget/UVIwidget.dart';
@@ -29,6 +30,23 @@ class apiService {
     // print('response:$response');
 
     return WeatherWeekData.fromJson(response as Map<String, dynamic>);
+  }
+
+  Future<List<String>> getSunRiseSetTime(String country) async {
+    DateTime now = DateTime.now();
+    String formattedFromDate = DateFormat('yyyy-MM-dd').format(now); // 格式化日期時間
+    DateTime tomorrow = now.add(Duration(days: 1));
+    String formattedtoDate = DateFormat('yyyy-MM-dd').format(tomorrow);
+    final api =
+        'https://opendata.cwb.gov.tw/api/v1/rest/datastore/A-B0062-001?Authorization=$authkey&CountyName=$country&parameter=SunRiseTime,SunSetTime&timeFrom=$formattedFromDate&timeTo=$formattedtoDate';
+    print('getSunRiseSetTime:$api');
+        final sunData = HttpService(baseUrl: api);
+    final response = await sunData.getJson();
+     print('sun response:$response');
+     final suntimes = SunData.fromJson(response);
+     final suntime = suntimes.records.locations.location[0].time[0];
+     print('sunnnn$suntime');
+     return [suntime.sunRiseTime ,suntime.sunSetTime];
   }
 
   Future<List<List<Widget>>> getWeekData(String country) async {
@@ -86,7 +104,7 @@ class apiService {
 
 ///////////////////////cloudpage api
   ///
-  Future<List<Widget>> getCloudData(String country) async {
+  Future<Map<String, dynamic>> getCloudData(String country) async {
     final api =
         'https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-091?Authorization=$authkey&format=JSON&locationName=$country&elementName=UVI,WS,WD,Td,RH,T';
     print('getWeecloudkApi:$api');
@@ -97,57 +115,108 @@ class apiService {
 
     final weathers = Weathers.fromJson(response);
     final www = weathers.locations[0].weatherElement;
-
-    final List<Widget> cloudwidgets = [];
+    final Map<String, dynamic> cloudforwidgets = {};
 
     www.forEach((element) {
       switch (element.description) {
         case '紫外線指數':
           element.time.forEach(
             (element) => {
-              if (now.day == element.endTime.day || now.day+1  == element.endTime.day)
+              if (now.day == element.endTime.day ||
+                  now.day + 1 == element.endTime.day)
                 {
                   ////今日資料
-                  print(element.elementValue[0].value),
-                  print(element.elementValue[0].measures),
-                  print(element.elementValue[1].value),
-                  print(element.elementValue[1].measures),
-
-                  // cloudwidgets.add(element.elementValue[1].value),
-                  // cloudwidgets.add(element.elementValue[0].measures +':'+ element.elementValue[0].value),
-                  // cloudwidgets.add(element.elementValue[0].value)
-
-                  cloudwidgets.add(UVIWidget(
+                  // print(element.elementValue[0].value),
+                  // print(element.elementValue[0].measures),
+                  // print(element.elementValue[1].value),
+                  // print(element.elementValue[1].measures),
+                  cloudforwidgets['UVI'] = UVIWidget(
                       textfirst: element.elementValue[1].value,
                       textsecond: element.elementValue[0].measures +
                           ':' +
                           element.elementValue[0].value,
-                      uviLevel: element.elementValue[0].value))
+                      uviLevel: element.elementValue[0].value)
+                  // cloudwidgets.add()
                 }
             },
           );
           break;
         case '平均溫度':
+          element.time.forEach(
+            (element) => {
+              if (now.day == element.endTime.day ||
+                  now.day == element.startTime.day)
+                {
+                  ////今日資料
+                  print(element.elementValue[0].value),
+                  print(element.elementValue[0].measures),
+                  // print(element.elementValue[1].value),
+                  // print(element.elementValue[1].measures),
+                  cloudforwidgets['T'] = element.elementValue[0].value
+                }
+            },
+          );
           break;
         case '平均相對濕度':
           print(element.elementName);
+          element.time.forEach(
+            (element) => {
+              if (now.day == element.endTime.day ||
+                  now.day == element.startTime.day)
+                {
+                  ////今日資料
+                  print(element.elementValue[0].value),
+                  print(element.elementValue[0].measures),
+                  // print(element.elementValue[1].value),
+                  // print(element.elementValue[1].measures),
+                  cloudforwidgets['RH'] = element.elementValue[0].value
+                }
+            },
+          );
           break;
         case '最大風速':
           print(element.elementName);
           break;
         case '風向':
           print(element.elementName);
+          element.time.forEach(
+            (element) => {
+              if (now.day == element.endTime.day ||
+                  now.day == element.startTime.day)
+                {
+                  ////今日資料
+                  print(element.elementValue[0].value),
+                  print(element.elementValue[0].measures),
+                  // print(element.elementValue[1].value),
+                  // print(element.elementValue[1].measures),
+                  cloudforwidgets['WD'] = element.elementValue[0].value
+                }
+            },
+          );
+
           break;
-        case '紫外線指數':
+
+        case '平均露點溫度':
           print(element.elementName);
-          break;
-        case '平均露點':
-          print(element.elementName);
+          element.time.forEach(
+            (element) => {
+              if (now.day == element.endTime.day ||
+                  now.day == element.startTime.day)
+                {
+                  ////今日資料
+                  print(element.elementValue[0].value),
+                  print(element.elementValue[0].measures),
+                  // print(element.elementValue[1].value),
+                  // print(element.elementValue[1].measures),
+                  cloudforwidgets['Td'] = element.elementValue[0].value
+                }
+            },
+          );
           break;
       }
     });
 
-    return cloudwidgets;
+    return cloudforwidgets;
   }
 }
 

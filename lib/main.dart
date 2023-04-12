@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:simple_weahter/Home/homePage.dart';
 import 'Cloud/Cloud.dart';
+import 'Home/homeWidget.dart/ListWidget/BodyTempwidget.dart';
 
 
 void main() {
@@ -32,14 +33,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
-    CloudPage(),
+    CloudPage(title: '' ),
     HomePage(title: "1"),
     Text(
       'Favorites Page',
     ),
-   Text(
-      'Fs Page',
-    ),
+  Thermometer(temperature: 20,)
   ];
 
   void _onItemTapped(int index) {
