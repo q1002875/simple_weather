@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:simple_weahter/ExtensionToolClass/CustomText.dart';
-import 'package:simple_weahter/Home/homeWidget.dart/ListWidget/weatherHourItem.dart';
-
 import '../ApiCommand.dart/apiService.dart';
 import '../Home/homePage.dart';
-import '../Home/homeWidget.dart/ListWidget/BodyTempwidget.dart';
 import '../Home/homeWidget.dart/ListWidget/Compass.dart';
 
 class WeatherData {
@@ -227,12 +224,9 @@ class _CloudPageState extends State<CloudPage> {
                       children: [
                         MyItem(
                           text: '紫外線UVI', view: uviData,
-                          // icon: Icon(Icons.sunny),
                         ),
                         MyItem(
-                          text: '日出及日落時間',
-                          // icon: Icon(Icons.sunny_snowing),
-                          // ignore: missing_return
+                          text: '日出及日落時間',        
                           view: FutureBuilder<List<String>>(
                             future: getSunRiseSetData(selectedOption),
                             builder: (context, snapshot) {
