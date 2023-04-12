@@ -40,13 +40,13 @@ class apiService {
     final api =
         'https://opendata.cwb.gov.tw/api/v1/rest/datastore/A-B0062-001?Authorization=$authkey&CountyName=$country&parameter=SunRiseTime,SunSetTime&timeFrom=$formattedFromDate&timeTo=$formattedtoDate';
     print('getSunRiseSetTime:$api');
-        final sunData = HttpService(baseUrl: api);
+    final sunData = HttpService(baseUrl: api);
     final response = await sunData.getJson();
-     print('sun response:$response');
-     final suntimes = SunData.fromJson(response);
-     final suntime = suntimes.records.locations.location[0].time[0];
-     print('sunnnn$suntime');
-     return [suntime.sunRiseTime ,suntime.sunSetTime];
+    print('sun response:$response');
+    final suntimes = SunData.fromJson(response);
+    final suntime = suntimes.records.locations.location[0].time[0];
+    print('sunnnn$suntime');
+    return [suntime.sunRiseTime, suntime.sunSetTime];
   }
 
   Future<List<List<Widget>>> getWeekData(String country) async {
@@ -89,7 +89,7 @@ class apiService {
     List<String> match = [];
 
     atItems.asMap().forEach((key, value) {
-      match.add(value.text + '℃' + '~' + matItem[key].text + '℃');
+      match.add(value.text + '°' + '~' + matItem[key].text + '°');
     });
 
     final minTandMaxT = match

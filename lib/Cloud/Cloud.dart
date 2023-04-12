@@ -187,7 +187,9 @@ class _CloudPageState extends State<CloudPage> {
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
 
     return Scaffold(
-      appBar: AppBar(title: Text(selectedOption)),
+      appBar: AppBar(
+          backgroundColor: Color.fromARGB(255, 74, 57, 131),
+          title: Text(selectedOption)),
       body: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -207,13 +209,19 @@ class _CloudPageState extends State<CloudPage> {
                 return ListView(
                   scrollDirection: Axis.vertical,
                   children: [
-                    Container(
-                      width: 100,
-                      height: 100,
-                      child: ImageTextWidget(
-                        text: '23123123123',
-                        textcolor: Colors.black12,
-                      ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CustomText(
+                          textContent: '22° | 多雲時陰',
+                          align: TextAlign.center,
+                          fontSize: 20,
+                          textColor: Colors.white,
+                        )
+                      ],
                     ),
                     Row(
                       children: [
@@ -229,32 +237,35 @@ class _CloudPageState extends State<CloudPage> {
                             future: getSunRiseSetData(selectedOption),
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {
-                               final rise = snapshot.data[0];
-                               final set  = snapshot.data[1];
-
-                                return Column(
+                                final rise = snapshot.data[0];
+                                final set = snapshot.data[1];
+                                return Container(
+                                    // width: screenWidth / 3,
+                                    child: Column(
                                   children: [
-                                    Container(
+                                    Expanded(
                                       child: Row(
                                         children: [
                                           SizedBox(
                                             width: 5,
                                           ),
-                                            Image(
+                                          Image(
                                               height: 70,
-                                              width: 80,
+                                              width: screenWidth / 8,
                                               image: AssetImage(
                                                   'assets/sunrise.png')),
                                           SizedBox(
                                             width: 5,
                                           ),
                                           CustomText(
-                                              textContent: rise,
-                                              textColor: Colors.white,fontSize: 24,)
+                                            textContent: rise,
+                                            textColor: Colors.white,
+                                            fontSize: 24,
+                                          )
                                         ],
                                       ),
                                     ),
-                                     Container(
+                                    Container(
                                       // height: 30,
                                       child: Row(
                                         children: [
@@ -262,24 +273,23 @@ class _CloudPageState extends State<CloudPage> {
                                             width: 5,
                                           ),
                                           Image(
-                                           height: 70,
-                                              width: 80,
-                                              image:
-                                                  AssetImage('assets/sunset.png')),
+                                              height: 70,
+                                              width: screenWidth / 8,
+                                              image: AssetImage(
+                                                  'assets/sunset.png')),
                                           SizedBox(
                                             width: 5,
                                           ),
                                           CustomText(
-                                              textContent:set,
-                                              textColor: Colors.white,
+                                            textContent: set,
+                                            textColor: Colors.white,
                                             fontSize: 24,
                                           )
                                         ],
                                       ),
                                     ),
-                                 
                                   ],
-                                );
+                                ));
                               } else if (snapshot.hasError) {
                                 return Text('Error: ${snapshot.error}');
                               } else {
@@ -298,8 +308,8 @@ class _CloudPageState extends State<CloudPage> {
                             text: '風向$wdData',
                             view: CompassWidget(
                                 size: screenHeight / 4,
-                                direction:
-                                    ParseCompassDirection.fromString(wdData ?? '偏北風'))),
+                                direction: ParseCompassDirection.fromString(
+                                    wdData ?? '偏北風'))),
                         MyItem(
                             text: '露點溫度',
                             view: RHTdwidget(
@@ -358,7 +368,7 @@ class MyItem extends StatelessWidget {
 
     return Expanded(
       child: Container(
-        width: screenWidth / 3,
+        width: screenHeight / 4,
         height: screenHeight / 4,
         margin: const EdgeInsets.all(15),
         decoration: BoxDecoration(
@@ -375,7 +385,6 @@ class MyItem extends StatelessWidget {
                   SizedBox(
                     width: 5,
                   ),
-                  // Icon(icon != null ? icon : Icons.circle),
                   SizedBox(
                     width: 5,
                   ),
@@ -383,18 +392,9 @@ class MyItem extends StatelessWidget {
                 ],
               ),
             ),
-            Expanded(
-                child: Container(
-                    // color: Colors.blue,
-                    width: screenWidth,
-                    // height: (screenHeight / 4) - 30,
-                    child: view
-                    //  UVIWidget(textfirst: '曝曬級數:中量級',textsecond: '紫外線指數:6',uviLevel: int.parse('5'),),
-                    ))
+            Expanded(child: Container(width: screenWidth, child: view))
           ],
         ),
-
-        //  Center(child: CustomText(textContent: text,textColor: Colors.white,fontSize: 20,)),
       ),
     );
   }
@@ -470,7 +470,7 @@ class RHTdwidget extends StatelessWidget {
           width: screenWidth / 3 - 5,
           //  color: Colors.yellow,
           child: CustomText(
-              textContent: text ?? '', fontSize: 55, align: TextAlign.left),
+              textContent: text ?? '', fontSize: 40, align: TextAlign.left),
         ),
         SizedBox(
           height: 10,

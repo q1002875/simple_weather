@@ -112,9 +112,6 @@ class CountryWeather extends StatelessWidget {
   }
 }
 
-
-
-
 class InfoContainer extends StatelessWidget {
   const InfoContainer({
     Key key,
@@ -147,7 +144,3 @@ class InfoContainer extends StatelessWidget {
     );
   }
 }
-
-
-
-

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:simple_weahter/ExtensionToolClass/CustomText.dart';
 
@@ -11,6 +10,7 @@ class UVIWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('uviLevel=' + uviLevel);
+
     return Column(
       //
       children: [
@@ -47,7 +47,9 @@ class GradientBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return Container(
+      width: screenWidth / 3,
       height: 10.0,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.0),
@@ -70,7 +72,7 @@ class GradientBar extends StatelessWidget {
         children: [
           for (int i = 1; i <= 10; i++)
             Container(
-              width: 20.0,
+              width: (screenWidth / 3) / 10,
               height: 20.0,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -84,4 +86,3 @@ class GradientBar extends StatelessWidget {
     );
   }
 }
-

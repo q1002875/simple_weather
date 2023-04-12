@@ -3,7 +3,6 @@ import 'package:simple_weahter/Home/homePage.dart';
 import 'Cloud/Cloud.dart';
 import 'Home/homeWidget.dart/ListWidget/BodyTempwidget.dart';
 
-
 void main() {
   runApp(MyApp());
 }
@@ -33,12 +32,14 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
-    CloudPage(title: '' ),
     HomePage(title: "1"),
+    CloudPage(title: ''),
     Text(
       'Favorites Page',
     ),
-  Thermometer(temperature: 20,)
+    Thermometer(
+      temperature: 20,
+    )
   ];
 
   void _onItemTapped(int index) {
