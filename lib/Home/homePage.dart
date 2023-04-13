@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
 import 'package:simple_weahter/ApiCommand.dart/apiService.dart';
 import 'package:simple_weahter/Cloud/Cloud.dart';
-import '../ApiModel.dart/weathersModel.dart';
+import '../ApiModel.dart/weathersModel2.dart';
 import '../ExtensionToolClass/CustomText.dart';
 import '../ExtensionToolClass/StorageService.dart';
-import 'homeWidget.dart/ListWidget/weatherHourItem.dart';
 import 'homeWidget.dart/countryWeatherHourType.dart';
 import 'homeWidget.dart/countryWeatherState.dart';
 
@@ -136,7 +134,7 @@ class _HomePageState extends State<HomePage> {
                                 )),
                                 Container(
                                     width: screenWidth / 1.6,
-                                    height: screenHeight / 2.2,
+                                    height: screenHeight / 1.8,
                                     child: FutureBuilder<WeatherData>(
                                       future: getcountryData(selectedOption),
                                       builder: (context, snapshot) {
@@ -144,7 +142,7 @@ class _HomePageState extends State<HomePage> {
                                           final weatherData = snapshot.data;
                                           return Container(
                                             child: CountryWeather(
-                                                height: screenHeight / 2.4,
+                                                height: screenHeight / 1.8,
                                                 width: screenWidth / 1.6,
                                                 weatherData: weatherData),
                                           );

@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_weahter/Cloud/Cloud.dart';
+import '../../ApiModel.dart/weathersModel2.dart';
 import '../../ExtensionToolClass/CustomText.dart';
 import 'ListWidget/weatherHourItem.dart';
 
@@ -33,8 +34,6 @@ class CountryWeather extends StatelessWidget {
         weatherData.locations[0].weatherElements[1].times[0].parameterName;
     final temperature =
         weatherData.locations[0].weatherElements[2].times[0].parameterName;
-    final tt =
-        weatherData.locations[0].weatherElements[0].times[0].parameterName;
     final conforStatus =
         weatherData.locations[0].weatherElements[3].times[0].parameterName;
     print('天氣狀態:$weatherStatus');
@@ -43,71 +42,42 @@ class CountryWeather extends StatelessWidget {
     print('降雨機率:$rain');
 
     return Container(
-        child: ListView.builder(
-      itemCount: 4,
-      // ignore: missing_return
-      itemBuilder: (context, index) {
-        if (index == 0) {
-          // 顯示天氣狀態和溫度
-          return Container(
-            width: 200,
-            height: height / 2.5,
-            child: Image(
-              image: AssetImage('assets/$weatherimage.png'),
-            ),
-          );
-        } else if (index == 1) {
-          // 顯示溫度
-          return Container(
-            width: 200,
-            height: height / 8,
-            child: Center(
-              child: CustomText(
-                textContent: '$temperature℃',
-                textColor: Colors.yellow,
-                fontSize: 40,
-              ),
-            ),
-          );
-        } else if (index == 2) {
-          // 顯示日期
-          return Container(
-            width: 200,
-            height: height / 9.5,
-            child: Center(
-              child: CustomText(
-                textContent: '$formattedDate',
-                fontSize: 18,
-              ),
-            ),
-          );
-        } else if (index == 3) {
-          // 顯示三個資訊欄位
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              InfoContainer(
+        child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Image.asset('assets/$weatherimage.png', width: 200, height: height / 3),
+        CustomText(
+          textContent: '$temperature℃',
+          textColor: Colors.yellow,
+          fontSize: 40,
+        ),
+        CustomText(
+          textContent: formattedDate,
+          textColor: Colors.white,
+          fontSize: 18,
+        ),
+        SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            InfoContainer(
                 image: Image.asset('assets/$weatherimage.png'),
                 text: '$weatherStatus',
-                width: width / 3.3,
-                height: height / 3.4,
-              ),
-              InfoContainer(
+                width: width / 2.8,
+                height: height / 3.5),
+            InfoContainer(
                 image: Image.asset('assets/bodytemp.png'),
                 text: '$conforStatus',
-                width: width / 3.3,
-                height: height / 3.4,
-              ),
-              InfoContainer(
+                width: width / 2.8,
+                height: height / 3.5),
+            InfoContainer(
                 image: Image.asset('assets/raining.png'),
                 text: '降雨機率$rain%',
-                width: width / 3.3,
-                height: height / 3.4,
-              ),
-            ],
-          );
-        }
-      },
+                width: width / 2.8,
+                height: height / 3.3),
+          ],
+        ),
+      ],
     ));
   }
 }

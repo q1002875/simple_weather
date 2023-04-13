@@ -11,14 +11,12 @@ class ImageTextWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      //
+        mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          padding: EdgeInsets.all(8),
             height: 50,
             width: 50,
             child: image != null ? image : Image.asset('assets/raining.png')),
-        // Image(width: 60, height: 40, image: AssetImage('assets/菜單.jpg')),
         SizedBox(height: 5.0),
         CustomText(textContent: text, fontSize: 14,textColor: textcolor!= null ?textcolor :Color.fromARGB(255, 255, 255, 255)  ,),
       ],

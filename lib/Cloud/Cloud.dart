@@ -1,152 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:simple_weahter/ExtensionToolClass/CustomText.dart';
 import '../ApiCommand.dart/apiService.dart';
+import '../ApiModel.dart/weathersModel2.dart';
 import '../Home/homePage.dart';
 import '../Home/homeWidget.dart/ListWidget/Compass.dart';
-
-class WeatherData {
-  String _datasetDescription;
-  List<Location> _locations;
-
-  String get datasetDescription => _datasetDescription;
-  List<Location> get locations => _locations;
-
-  WeatherData.fromJson(Map<String, dynamic> json) {
-    _datasetDescription = json['records']['datasetDescription'];
-    _locations = List<Location>.from(json['records']['location']
-        .map((location) => Location.fromJson(location)));
-  }
-}
-
-class Location {
-  String _locationName;
-  List<Weather> _weatherElements;
-
-  String get locationName => _locationName;
-  List<Weather> get weatherElements => _weatherElements;
-
-  Location.fromJson(Map<String, dynamic> json) {
-    _locationName = json['locationName'];
-    _weatherElements = List<Weather>.from(
-        json['weatherElement'].map((element) => Weather.fromJson(element)));
-  }
-}
-
-class Weather {
-  String _elementName;
-  List<Time> _times;
-
-  String get elementName => _elementName;
-  List<Time> get times => _times;
-
-  Weather.fromJson(Map<String, dynamic> json) {
-    _elementName = json['elementName'];
-    _times = List<Time>.from(json['time'].map((time) => Time.fromJson(time)));
-  }
-}
-
-class Time {
-  DateTime _startTime;
-  DateTime _endTime;
-  String _parameterName;
-  String _parameterValue;
-  String _parameterUnit;
-
-  DateTime get startTime => _startTime;
-  DateTime get endTime => _endTime;
-  String get parameterName => _parameterName;
-  String get parameterValue => _parameterValue;
-  String get parameterUnit => _parameterUnit;
-
-  Time.fromJson(Map<String, dynamic> json) {
-    _startTime = DateTime.parse(json['startTime']);
-    _endTime = DateTime.parse(json['endTime']);
-    _parameterName = json['parameter']['parameterName'];
-    _parameterValue = json['parameter']['parameterValue'];
-    _parameterUnit = json['parameter']['parameterUnit'] ?? '';
-  }
-}
-
-///////////////week data
-
-class WeatherWeekData {
-  String _datasetDescription;
-  List<Locationweek> _locations;
-
-  String get datasetDescription => _datasetDescription;
-  List<Locationweek> get locations => _locations;
-
-  WeatherWeekData.fromJson(Map<String, dynamic> json) {
-    _datasetDescription = json['records']['datasetDescription'];
-    _locations = List<Locationweek>.from(json['records']['locations'][0]
-            ['location']
-        .map((location) => Locationweek.fromJson(location)));
-  }
-  @override
-  String toString() {
-    return 'WeatherWeekData(datasetDescription: $datasetDescription, locations: $locations)';
-  }
-}
-
-class Locationweek {
-  String _locationName;
-  List<Weatherweek> _weatherElements;
-
-  String get locationName => _locationName;
-  List<Weatherweek> get weatherElements => _weatherElements;
-
-  Locationweek.fromJson(Map<String, dynamic> json) {
-    _locationName = json['locationName'];
-    _weatherElements = List<Weatherweek>.from(
-        json['weatherElement'].map((element) => Weatherweek.fromJson(element)));
-  }
-  @override
-  String toString() {
-    return 'Locationweek(locationName: $locationName, weatherElements: $weatherElements)';
-  }
-}
-
-class Weatherweek {
-  String _elementName;
-  List<Timeweek> _times;
-
-  String get elementName => _elementName;
-  List<Timeweek> get times => _times;
-
-  Weatherweek.fromJson(Map<String, dynamic> json) {
-    _elementName = json['elementName'];
-    _times = List<Timeweek>.from(
-        json['time'].map((time) => Timeweek.fromJson(time)));
-  }
-  @override
-  String toString() {
-    return 'Weatherweek(elementName: $elementName, times: $times)';
-  }
-}
-
-class Timeweek {
-  DateTime _startTime;
-  DateTime _endTime;
-  String _parameterValue;
-  String _imageValue;
-  DateTime get startTime => _startTime;
-  DateTime get endTime => _endTime;
-  String get parameterValue => _parameterValue;
-  String get imageValue => _imageValue;
-  Timeweek.fromJson(Map<String, dynamic> json) {
-    _startTime = DateTime.parse(json['startTime']);
-    _endTime = DateTime.parse(json['endTime']);
-    _parameterValue = json['elementValue'][0]['value'];
-    _imageValue = json['elementValue'][1]['value'];
-  }
-  @override
-  String toString() {
-    return 'Timeweek(startTime: $startTime, endTime: $endTime,parameterValue:$parameterValue,imageValue:$imageValue)';
-  }
-}
+import 'TypeDetailWidget.dart';
 
 ///////////////////////result week get
 enum cloudType { T, Td, RH }
+
+// ignore: camel_case_types
+enum cloudAllType {
+  UVI,
+  SUN,
+  WD,
+  T,
+  Td,
+  RH,
+}
+
+extension cloudAllTypeExtension on cloudAllType {
+  String get name {
+    switch (this) {
+      case cloudAllType.UVI:
+        return '紫外線';
+        break;
+      case cloudAllType.SUN:
+        return '日出日落';
+        break;
+      case cloudAllType.WD:
+        return '風向';
+        break;
+      case cloudAllType.T:
+        return '平均溫度';
+        break;
+      case cloudAllType.Td:
+        return '露點溫度';
+        break;
+      case cloudAllType.RH:
+        return '濕度';
+        break;
+    }
+  }
+}
 
 class CloudPage extends StatefulWidget {
   const CloudPage({this.title});
@@ -164,7 +60,6 @@ Future<Map<String, dynamic>> getData(String country) async {
 }
 
 // getSunRiseSetTime
-
 Future<List<String>> getSunRiseSetData(String country) async {
   final countrydata = await api.getSunRiseSetTime(country);
   print(countrydata.toString());
@@ -203,6 +98,7 @@ class _CloudPageState extends State<CloudPage> {
                 final rhData = snapshot.data['RH'];
                 final tdData = snapshot.data['Td'];
                 final tData = snapshot.data['T'];
+                final wind = cloudAllType.UVI.name;
                 return ListView(
                   scrollDirection: Axis.vertical,
                   children: [
@@ -212,21 +108,48 @@ class _CloudPageState extends State<CloudPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CustomText(
-                          textContent: '22° | 多雲時陰',
-                          align: TextAlign.center,
-                          fontSize: 20,
-                          textColor: Colors.white,
+                        GestureDetector(
+                          onTap: () {
+                            print('object');
+                            Navigator.of(context).push(CustomPageRoute(
+                              builder: (_) =>  MyModalPage(),
+                            ));
+                          },
+                          child: FutureBuilder<WeatherData>(
+                            future: getcountryData(selectedOption),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                final weatherData = snapshot.data;
+                                final weatherStatus = weatherData.locations[0]
+                                    .weatherElements[0].times[0].parameterName;
+                                final temperature = weatherData.locations[0]
+                                    .weatherElements[2].times[0].parameterName;
+                                return Container(
+                                    child: CustomText(
+                                  textContent: '$temperature° | $weatherStatus',
+                                  align: TextAlign.center,
+                                  fontSize: 20,
+                                  textColor: Colors.white,
+                                ));
+                              } else if (snapshot.hasError) {
+                                return Text("${snapshot.error}");
+                              }
+                              return CircularProgressIndicator();
+                            },
+                          ),
                         )
                       ],
                     ),
                     Row(
                       children: [
                         MyItem(
-                          text: '紫外線UVI', view: uviData,
+                          text: cloudAllType.UVI.name,
+                          view: uviData,
+                          types: cloudAllType.UVI,
                         ),
                         MyItem(
-                          text: '日出及日落時間',        
+                          types: cloudAllType.SUN,
+                          text: cloudAllType.SUN.name,
                           view: FutureBuilder<List<String>>(
                             future: getSunRiseSetData(selectedOption),
                             builder: (context, snapshot) {
@@ -236,51 +159,49 @@ class _CloudPageState extends State<CloudPage> {
                                 return Container(
                                     // width: screenWidth / 3,
                                     child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Expanded(
-                                      child: Row(
-                                        children: [
-                                          SizedBox(
-                                            width: 5,
-                                          ),
-                                          Image(
-                                              height: 70,
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Flexible(
+                                          flex: 1,
+                                          child: Image(
+                                              height: screenWidth / 8,
                                               width: screenWidth / 8,
                                               image: AssetImage(
                                                   'assets/sunrise.png')),
-                                          SizedBox(
-                                            width: 5,
-                                          ),
-                                          CustomText(
-                                            textContent: rise,
-                                            textColor: Colors.white,
-                                            fontSize: 24,
-                                          )
-                                        ],
-                                      ),
+                                        ),
+                                        Flexible(
+                                            flex: 2,
+                                            child: CustomText(
+                                              textContent: rise,
+                                              textColor: Colors.white,
+                                              fontSize: 21,
+                                            ))
+                                      ],
                                     ),
-                                    Container(
-                                      // height: 30,
-                                      child: Row(
-                                        children: [
-                                          SizedBox(
-                                            width: 5,
-                                          ),
-                                          Image(
-                                              height: 70,
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Flexible(
+                                          flex: 1,
+                                          child: Image(
+                                              height: screenWidth / 8,
                                               width: screenWidth / 8,
                                               image: AssetImage(
                                                   'assets/sunset.png')),
-                                          SizedBox(
-                                            width: 5,
-                                          ),
-                                          CustomText(
-                                            textContent: set,
-                                            textColor: Colors.white,
-                                            fontSize: 24,
-                                          )
-                                        ],
-                                      ),
+                                        ),
+                                        Flexible(
+                                            flex: 2,
+                                            child: CustomText(
+                                              textContent: set,
+                                              textColor: Colors.white,
+                                              fontSize: 22,
+                                            ))
+                                      ],
                                     ),
                                   ],
                                 ));
@@ -298,35 +219,35 @@ class _CloudPageState extends State<CloudPage> {
                     Row(
                       children: [
                         MyItem(
-                            // icon: Icon(Icons.wind_power_outlined),
-                            text: '風向$wdData',
+                            types: cloudAllType.WD,
+                            text: '$wind' + '$wdData',
                             view: CompassWidget(
                                 size: screenHeight / 4,
                                 direction: ParseCompassDirection.fromString(
                                     wdData ?? '偏北風'))),
                         MyItem(
-                            text: '露點溫度',
+                            types: cloudAllType.Td,
+                            text: cloudAllType.Td.name,
                             view: RHTdwidget(
-                              text: tdData + '℃',
+                              text: tdData + '°',
                               value: tdData,
                               type: cloudType.Td,
-                            )
-                            //  一般都會在露點到達15℃至20℃時開始感到不適；而當露點越過21℃時更會感到悶熱。
-                            ),
+                            )),
                       ],
                     ),
                     Row(
                       children: [
                         MyItem(
-                            //  icon: Icon(Icons.temple_buddhist),
-                            text: '體感溫度AT',
+                            types: cloudAllType.T,
+                            text: cloudAllType.T.name,
                             view: RHTdwidget(
-                              text: tData + '℃',
+                              text: tData + '°',
                               value: tData,
                               type: cloudType.T,
                             )),
                         MyItem(
-                            text: '濕度RH',
+                            types: cloudAllType.RH,
+                            text: cloudAllType.RH.name,
                             view: RHTdwidget(
                               text: rhData + '%',
                               value: rhData,
@@ -351,19 +272,26 @@ class MyItem extends StatelessWidget {
   final String text;
   final Icon icon;
   final Widget view;
-
-  const MyItem({Key key, this.text, this.icon, this.view}) : super(key: key);
+  final cloudAllType types;
+  const MyItem(
+      {Key key, this.text, this.icon, this.view, this.types = cloudAllType.UVI})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight =
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
-
     return Expanded(
+        child: GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(CustomPageRoute(
+          builder: (_) => MyModalPage(type: types),
+        ));
+      },
       child: Container(
         width: screenHeight / 4,
-        height: screenHeight / 4,
+        height: screenHeight / 3.5,
         margin: const EdgeInsets.all(15),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8.0),
@@ -390,7 +318,7 @@ class MyItem extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ));
   }
 }
 
@@ -456,6 +384,7 @@ class RHTdwidget extends StatelessWidget {
     // final screenHeight =
     // MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
           width: 5,
@@ -478,4 +407,38 @@ class RHTdwidget extends StatelessWidget {
       ],
     );
   }
+}
+
+class CustomPageRoute<T> extends PageRoute<T> {
+  CustomPageRoute({
+    this.builder,
+    RouteSettings settings,
+    bool fullscreenDialog = false,
+  }) : super(settings: settings, fullscreenDialog: fullscreenDialog);
+
+  final WidgetBuilder builder;
+
+  @override
+  Color get barrierColor => Colors.black.withOpacity(0.5);
+
+  @override
+  bool get opaque => false;
+
+  @override
+  bool get barrierDismissible => true;
+
+  @override
+  String get barrierLabel => null;
+
+  @override
+  Widget buildPage(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation) {
+    return builder(context);
+  }
+
+  @override
+  bool get maintainState => true;
+
+  @override
+  Duration get transitionDuration => const Duration(milliseconds: 400);
 }

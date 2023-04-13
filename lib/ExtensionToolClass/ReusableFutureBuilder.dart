@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:simple_weahter/Cloud/Cloud.dart';
+import '../ApiModel.dart/weathersModel2.dart';
 
 class ReusableFutureBuilder extends StatefulWidget {
   final Future<dynamic> future;

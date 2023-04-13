@@ -11,26 +11,35 @@ class UVIWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     print('uviLevel=' + uviLevel);
 
-    return Column(
-      //
+    return 
+    Container( child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SizedBox(height: 5.0),
-        CustomText(
-          textContent: textfirst,
-          fontSize: 20,
+        Flexible(
+          flex: 3,
+          child: CustomText(
+            textContent: textfirst,
+            fontSize: 20,
+          ),
         ),
-        SizedBox(height: 15.0),
-        CustomText(
-          textContent: textsecond,
-          fontSize: 20,
+        Flexible(
+          flex: 3,
+          child: CustomText(
+            textContent: textsecond,
+            fontSize: 20,
+          ),
         ),
-        SizedBox(height: 20.0),
-        Container(
-          margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
-          child: GradientBar(whiteDotPositions: int.parse(uviLevel)),
-        ),
+        Flexible(
+          flex: 2,
+          child: Container(
+            margin: EdgeInsets.fromLTRB(10, 15, 10, 0),
+            child: GradientBar(whiteDotPositions: int.parse(uviLevel)),
+          ),
+        )
       ],
-    );
+    ));
+    
+    
   }
 }
 

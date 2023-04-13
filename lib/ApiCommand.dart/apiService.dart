@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:simple_weahter/ExtensionToolClass/HttpServer/Httpserver.dart';
 import '../ApiModel.dart/sunRiseSetModel.dart';
 import '../ApiModel.dart/weathersModel.dart';
+import '../ApiModel.dart/weathersModel2.dart';
 import '../Cloud/Cloud.dart';
 import '../Home/homeWidget.dart/ListWidget/UVIwidget.dart';
 import '../Home/homeWidget.dart/ListWidget/weatherHourItem.dart';

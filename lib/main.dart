@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:simple_weahter/Home/homePage.dart';
 import 'Cloud/Cloud.dart';
+import 'Cloud/TypeDetailWidget.dart';
 import 'Home/homeWidget.dart/ListWidget/BodyTempwidget.dart';
 
 void main() {
@@ -32,7 +33,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
-    HomePage(title: "1"),
+    // HomePage(title: "1"),
+    const MyModalPage(),
     CloudPage(title: ''),
     Text(
       'Favorites Page',
@@ -47,6 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _selectedIndex = index;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -89,3 +92,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
