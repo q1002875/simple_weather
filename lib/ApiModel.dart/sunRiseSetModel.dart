@@ -1,8 +1,6 @@
-
 class SunData {
- 
   SunDataRecords records;
-  SunData({ this.records});
+  SunData({this.records});
 
   factory SunData.fromJson(Map<String, dynamic> json) {
     return SunData(
@@ -16,8 +14,7 @@ class SunDataRecords {
   String note;
   SunDataLocations locations;
 
-  SunDataRecords(
-      { this.dataId,  this.note,  this.locations});
+  SunDataRecords({this.dataId, this.note, this.locations});
 
   factory SunDataRecords.fromJson(Map<String, dynamic> json) {
     return SunDataRecords(
@@ -31,7 +28,7 @@ class SunDataRecords {
 class SunDataLocations {
   List<SunDataLocation> location;
 
-  SunDataLocations({ this.location});
+  SunDataLocations({this.location});
 
   factory SunDataLocations.fromJson(Map<String, dynamic> json) {
     return SunDataLocations(
@@ -45,7 +42,7 @@ class SunDataLocation {
   List<SunDataTime> time;
   String countyName;
 
-  SunDataLocation({ this.time,  this.countyName});
+  SunDataLocation({this.time, this.countyName});
 
   factory SunDataLocation.fromJson(Map<String, dynamic> json) {
     return SunDataLocation(
@@ -61,10 +58,7 @@ class SunDataTime {
   String sunRiseTime;
   String sunSetTime;
 
-  SunDataTime(
-      { this.date,
-       this.sunRiseTime,
-       this.sunSetTime});
+  SunDataTime({this.date, this.sunRiseTime, this.sunSetTime});
 
   factory SunDataTime.fromJson(Map<String, dynamic> json) {
     return SunDataTime(
