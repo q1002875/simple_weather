@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -65,8 +67,6 @@ class _MyModalPageState extends State<MyModalPage> {
       }
     }
 
-   
-
     setState(() {
       data = filteredDatacloud;
     });
@@ -76,12 +76,14 @@ class _MyModalPageState extends State<MyModalPage> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     List<ChartData> chartdata = [];
-    data.forEach(
-      (element) {
-        print('vvalue'+element.value.toString());
-        chartdata.add(ChartData(element.weekday,int.parse(element.value)));
-      },
-    );
+
+    data.asMap().forEach((key, value) {
+      if (value.select) {
+        chartdata.add(ChartData(value.weekday, int.parse(value.value), key));
+      } else {
+        chartdata.add(ChartData(value.weekday, int.parse(value.value), null));
+      }
+    });
 
     return Scaffold(
         appBar: AppBar(
@@ -96,7 +98,7 @@ class _MyModalPageState extends State<MyModalPage> {
               ),
             ),
             child: data == []
-                ? SizedBox()
+                ? CircularProgressIndicator()
                 : ListView(
                     scrollDirection: Axis.vertical,
                     children: [
@@ -176,7 +178,7 @@ class _MyModalPageState extends State<MyModalPage> {
                             borderRadius: BorderRadius.circular(20),
                             color: Color.fromARGB(174, 139, 98, 162),
                           ),
-                          child: SimpleLineChart(chartdata,cloudAllType.UVI)),
+                          child: SimpleLineChart(chartdata, cloudAllType.UVI)),
                       Container(
                         margin: EdgeInsets.all(12),
                         width: double.infinity,
@@ -205,7 +207,7 @@ class _MyModalPageState extends State<MyModalPage> {
 class SimpleLineChart extends StatelessWidget {
   final List<ChartData> data;
   final cloudAllType type;
-  SimpleLineChart(this.data,this.type);
+  SimpleLineChart(this.data, this.type);
 
   @override
   Widget build(BuildContext context) {
@@ -213,7 +215,7 @@ class SimpleLineChart extends StatelessWidget {
       plotAreaBorderColor: Colors.white.withOpacity(0.2), // 設置繪圖區域邊框顏色和透明度
       backgroundColor: Colors.transparent, // 設置背景為透明
       title: ChartTitle(
-        text: type != null ?type.name : cloudAllType.UVI.name, // 設置圖表標題
+        text: type != null ? type.name : cloudAllType.UVI.name, // 設置圖表標題
         textStyle: TextStyle(
           color: Colors.white.withOpacity(0.7), // 設置標題文字顏色和透明度
           fontWeight: FontWeight.bold,
@@ -242,23 +244,31 @@ class SimpleLineChart extends StatelessWidget {
           color: Colors.white.withOpacity(0.2), // 設置次要網格線顏色和透明度
         ),
       ),
+      onMarkerRender: (MarkerRenderArgs args) {
+        data.forEach((element) {
+          if (element.select != null && element.select == args.pointIndex) {
+            args.color = Colors.red;
+          }
+        });
+      },
+
       series: <LineSeries<ChartData, String>>[
         LineSeries<ChartData, String>(
           color: Color.fromARGB(255, 73, 14, 145), // 設置折線顏色
-
+          width: 8,
           dataSource: data,
           xValueMapper: (ChartData sales, _) => sales.day,
-          yValueMapper: (ChartData sales, _) => sales.value,
+          yValueMapper: (ChartData sales, int index) => sales.value,
+
           markerSettings: MarkerSettings(
-            
             isVisible: true,
-            color:
-             Colors.white, // 設置標記顏色
+            color: Colors.white, // 設置標記顏色
+            width: 12,
             borderColor: Color.fromARGB(255, 73, 14, 145), // 設置標記邊框顏色
             borderWidth: 2, // 設置標記邊框寬度
           ),
+
           dataLabelSettings: DataLabelSettings(
-            
             isVisible: true,
             labelAlignment: ChartDataLabelAlignment.top,
             textStyle: TextStyle(
@@ -275,6 +285,6 @@ class SimpleLineChart extends StatelessWidget {
 class ChartData {
   final String day;
   final int value;
-
-  ChartData(this.day, this.value);
+  final int select;
+  ChartData(this.day, this.value, this.select);
 }
