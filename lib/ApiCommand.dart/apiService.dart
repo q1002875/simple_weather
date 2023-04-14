@@ -4,7 +4,6 @@ import 'package:simple_weahter/ExtensionToolClass/HttpServer/Httpserver.dart';
 import '../ApiModel.dart/sunRiseSetModel.dart';
 import '../ApiModel.dart/weathersModel.dart';
 import '../ApiModel.dart/weathersModel2.dart';
-import '../Cloud/Cloud.dart';
 import '../Home/homeWidget.dart/ListWidget/UVIwidget.dart';
 import '../Home/homeWidget.dart/ListWidget/weatherHourItem.dart';
 
@@ -105,6 +104,22 @@ class apiService {
 
 ///////////////////////cloudpage api
   ///
+  ///
+  ///
+  Future<List<Timeweather>> getCloudWeekDetailData(
+      String country, String type) async {
+    final api =
+        'https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-091?Authorization=$authkey&format=JSON&locationName=$country&elementName=$type';
+    print('getCloudWeekDetailData:$api');
+    final weekWeatherDetailData = HttpService(baseUrl: api);
+    final response = await weekWeatherDetailData.getJson();
+    final weathers = Weathers.fromJson(response);
+    final elementName = weathers.locations[0].weatherElement[0].elementName;
+    final www = weathers.locations[0].weatherElement[0].time;
+    print('weekclouddata:' + elementName + www.toString());
+    return www;
+  }
+
   Future<Map<String, dynamic>> getCloudData(String country) async {
     final api =
         'https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-091?Authorization=$authkey&format=JSON&locationName=$country&elementName=UVI,WS,WD,Td,RH,T';
@@ -123,22 +138,22 @@ class apiService {
         case '紫外線指數':
           element.time.forEach(
             (element) => {
+              //  element.elementValue.forEach((datas) {print
+              //  ('紫外線資料'+ element.startTime.toString()+ element.endTime.toString()+
+              //   datas.value + datas.measures
+              //  ); }),
               if (now.day == element.endTime.day ||
                   now.day + 1 == element.endTime.day)
                 {
-                  ////今日資料
-                  // print(element.elementValue[0].value),
-                  // print(element.elementValue[0].measures),
-                  // print(element.elementValue[1].value),
-                  // print(element.elementValue[1].measures),
+                  //今日資料
                   cloudforwidgets['UVI'] = UVIWidget(
                       textfirst: element.elementValue[1].value,
                       textsecond: element.elementValue[0].measures +
                           ':' +
                           element.elementValue[0].value,
                       uviLevel: element.elementValue[0].value)
-                  // cloudwidgets.add()
                 }
+              //do week dats
             },
           );
           break;
@@ -151,8 +166,6 @@ class apiService {
                   ////今日資料
                   print(element.elementValue[0].value),
                   print(element.elementValue[0].measures),
-                  // print(element.elementValue[1].value),
-                  // print(element.elementValue[1].measures),
                   cloudforwidgets['T'] = element.elementValue[0].value
                 }
             },
@@ -168,8 +181,6 @@ class apiService {
                   ////今日資料
                   print(element.elementValue[0].value),
                   print(element.elementValue[0].measures),
-                  // print(element.elementValue[1].value),
-                  // print(element.elementValue[1].measures),
                   cloudforwidgets['RH'] = element.elementValue[0].value
                 }
             },
@@ -188,8 +199,6 @@ class apiService {
                   ////今日資料
                   print(element.elementValue[0].value),
                   print(element.elementValue[0].measures),
-                  // print(element.elementValue[1].value),
-                  // print(element.elementValue[1].measures),
                   cloudforwidgets['WD'] = element.elementValue[0].value
                 }
             },
@@ -207,8 +216,6 @@ class apiService {
                   ////今日資料
                   print(element.elementValue[0].value),
                   print(element.elementValue[0].measures),
-                  // print(element.elementValue[1].value),
-                  // print(element.elementValue[1].measures),
                   cloudforwidgets['Td'] = element.elementValue[0].value
                 }
             },

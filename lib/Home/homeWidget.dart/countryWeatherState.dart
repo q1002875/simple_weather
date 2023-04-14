@@ -1,6 +1,5 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_weahter/Cloud/Cloud.dart';
 import '../../ApiModel.dart/weathersModel2.dart';
 import '../../ExtensionToolClass/CustomText.dart';
 import 'ListWidget/weatherHourItem.dart';

@@ -20,6 +20,28 @@ enum cloudAllType {
 }
 
 extension cloudAllTypeExtension on cloudAllType {
+   String get Englishname {
+    switch (this) {
+      case cloudAllType.UVI:
+        return 'UVI';
+        break;
+      case cloudAllType.SUN:
+        return '日出日落';
+        break;
+      case cloudAllType.WD:
+        return 'WD';
+        break;
+      case cloudAllType.T:
+        return 'T';
+        break;
+      case cloudAllType.Td:
+        return 'Td';
+        break;
+      case cloudAllType.RH:
+        return 'RH';
+        break;
+    }
+  }
   String get name {
     switch (this) {
       case cloudAllType.UVI:
@@ -51,7 +73,7 @@ class CloudPage extends StatefulWidget {
   _CloudPageState createState() => _CloudPageState();
 }
 
-final api = apiService();
+final api =  apiService();
 // ignore: missing_return
 Future<Map<String, dynamic>> getData(String country) async {
   final countrydata = await api.getCloudData(country);
