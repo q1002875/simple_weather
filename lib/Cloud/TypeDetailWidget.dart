@@ -1,15 +1,13 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_weahter/Cloud/Cloud.dart';
+import 'package:simple_weahter/Cloud/simplelinecahrt_widget.dart';
 import 'package:simple_weahter/ExtensionToolClass/CustomText.dart';
 import 'package:simple_weahter/Home/homePage.dart';
-
 import '../ApiCommand.dart/apiService.dart';
-import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
+import '../Home/homeWidget.dart/ListWidget/Compass.dart';
+import '../Home/homeWidget.dart/ListWidget/UVIwidget.dart';
 
 class cloudDetailItem {
   String daynumber;
@@ -39,6 +37,7 @@ class _MyModalPageState extends State<MyModalPage> {
 
   Future<void> getCloudWeekDetailData(String country, String type) async {
     List<cloudDetailItem> datacloud = [];
+
     final api = apiService();
     final clouddata = await api.getCloudWeekDetailData(country, type);
     print(clouddata.toString());
@@ -50,6 +49,7 @@ class _MyModalPageState extends State<MyModalPage> {
         DateTime now = element.startTime;
         String formattedDate =
             DateFormat('EEEE', 'zh_Hant').format(now).replaceAll('星期', '');
+
         datacloud.add(cloudDetailItem(
             value: e.value,
             daynumber: '$formattedDate',
@@ -69,26 +69,32 @@ class _MyModalPageState extends State<MyModalPage> {
 
     setState(() {
       data = filteredDatacloud;
+      wdString = data[0].value;
+      print(data.toString());
     });
   }
 
+  String wdString;
   @override
   Widget build(BuildContext context) {
+    // String wdString;
     final screenWidth = MediaQuery.of(context).size.width;
     List<ChartData> chartdata = [];
-
+//////風向資料
     data.asMap().forEach((key, value) {
-      if (value.select) {
-        chartdata.add(ChartData(value.weekday, int.parse(value.value), key));
+      if (widget.type != cloudAllType.WD) if (value.select) {
+        chartdata
+            .add(ChartData(value.weekday, int.parse(value.value ?? '0'), key));
       } else {
-        chartdata.add(ChartData(value.weekday, int.parse(value.value), null));
+        chartdata
+            .add(ChartData(value.weekday, int.parse(value.value ?? '0'), null));
       }
     });
 
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Color.fromARGB(255, 74, 57, 131),
-          title: Text(widget.type.name),
+          title: Text(selectedOption + ' ' + widget.type.name),
         ),
         body: Container(
             decoration: BoxDecoration(
@@ -123,7 +129,7 @@ class _MyModalPageState extends State<MyModalPage> {
                                   });
                                   setState(() {
                                     data[index].select = true;
-
+                                    wdString = data[index].value;
                                     print(data[index].value);
                                   });
                                 },
@@ -178,7 +184,12 @@ class _MyModalPageState extends State<MyModalPage> {
                             borderRadius: BorderRadius.circular(20),
                             color: Color.fromARGB(174, 139, 98, 162),
                           ),
-                          child: SimpleLineChart(chartdata, cloudAllType.UVI)),
+                          child: widget.type == cloudAllType.WD
+                              ? CompassWidget(
+                                  size: screenWidth / 2,
+                                  direction: ParseCompassDirection.fromString(
+                                      wdString ?? '偏北風'))
+                              : SimpleLineChart(chartdata, widget.type)),
                       Container(
                         margin: EdgeInsets.all(12),
                         width: double.infinity,
@@ -189,12 +200,12 @@ class _MyModalPageState extends State<MyModalPage> {
                         ),
                         child: ListView.builder(
                           itemBuilder: (BuildContext context, int index) {
-                            return CustomText(
-                              textContent: data[index].value,
-                              textColor: data[index].select
-                                  ? Colors.black
-                                  : Colors.white,
-                            );
+                            return cloudDetailText(
+                                data: data[index],
+                                select: data[index].select,
+                                type: widget.type,
+                                screenheight:
+                                    ((screenWidth / 1.3) / data.length));
                           },
                           itemCount: data.length,
                         ),
@@ -204,87 +215,159 @@ class _MyModalPageState extends State<MyModalPage> {
   }
 }
 
-class SimpleLineChart extends StatelessWidget {
-  final List<ChartData> data;
+// ignore: camel_case_types
+class cloudDetailText extends StatelessWidget {
+  // final List<cloudDetailItem> data;
+  final cloudDetailItem data;
+  final bool select;
   final cloudAllType type;
-  SimpleLineChart(this.data, this.type);
+  final double screenheight;
+  cloudDetailText(
+      {this.data,
+      this.select,
+      this.type = cloudAllType.UVI,
+      this.screenheight});
 
   @override
   Widget build(BuildContext context) {
-    return SfCartesianChart(
-      plotAreaBorderColor: Colors.white.withOpacity(0.2), // 設置繪圖區域邊框顏色和透明度
-      backgroundColor: Colors.transparent, // 設置背景為透明
-      title: ChartTitle(
-        text: type != null ? type.name : cloudAllType.UVI.name, // 設置圖表標題
-        textStyle: TextStyle(
-          color: Colors.white.withOpacity(0.7), // 設置標題文字顏色和透明度
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      legend: Legend(
-        isVisible: false, // 隱藏圖例
-      ),
-      primaryXAxis: CategoryAxis(
-        labelStyle: TextStyle(
-          color: Colors.white.withOpacity(0.5), // 設置標籤文字顏色和透明度
-          fontWeight: FontWeight.bold,
-        ),
-        majorGridLines: MajorGridLines(
-          width: 0, // 隱藏主要網格線
-        ),
-      ),
-      primaryYAxis: NumericAxis(
-        labelStyle: TextStyle(
-          color: Colors.white.withOpacity(0.5), // 設置標籤文字顏色和透明度
-          fontWeight: FontWeight.bold,
-        ),
-        axisLine: AxisLine(width: 0), // 隱藏y軸線
-        majorTickLines: MajorTickLines(width: 0), // 隱藏y軸刻度線
-        majorGridLines: MajorGridLines(
-          color: Colors.white.withOpacity(0.2), // 設置次要網格線顏色和透明度
-        ),
-      ),
-      onMarkerRender: (MarkerRenderArgs args) {
-        data.forEach((element) {
-          if (element.select != null && element.select == args.pointIndex) {
-            args.color = Colors.red;
-          }
-        });
-      },
+    final day = data.daynumber;
+    final week = data.weekday;
+    final value = data.value;
+    final property = type.property;
+    final detailtext =
+        returnCloudDataText(type: type, value: value).showDetailtext();
+    // ignore: missing_return
+    String showTypetext() {
+      switch (type) {
+        case cloudAllType.UVI:
+          return '$property: $value';
+        case cloudAllType.SUN:
+          // TODO: Handle this case.
+          break;
+        case cloudAllType.WD:
+          return value;
+          break;
+        case cloudAllType.T:
+          return '$value° $property';
+        case cloudAllType.Td:
+          return '$value° $property';
+        case cloudAllType.RH:
+          return '$value $property';
+      }
+    }
 
-      series: <LineSeries<ChartData, String>>[
-        LineSeries<ChartData, String>(
-          color: Color.fromARGB(255, 73, 14, 145), // 設置折線顏色
-          width: 8,
-          dataSource: data,
-          xValueMapper: (ChartData sales, _) => sales.day,
-          yValueMapper: (ChartData sales, int index) => sales.value,
-
-          markerSettings: MarkerSettings(
-            isVisible: true,
-            color: Colors.white, // 設置標記顏色
-            width: 12,
-            borderColor: Color.fromARGB(255, 73, 14, 145), // 設置標記邊框顏色
-            borderWidth: 2, // 設置標記邊框寬度
-          ),
-
-          dataLabelSettings: DataLabelSettings(
-            isVisible: true,
-            labelAlignment: ChartDataLabelAlignment.top,
-            textStyle: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+    return Column(
+      children: [
+        SizedBox(
+          height: 3,
+        ),
+        Container(
+            height: screenheight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Flexible(
+                  flex: 3,
+                  child: CustomText(
+                    // align: TextAlign.left,
+                    textColor: select ? Colors.yellow : Colors.white,
+                    textContent: '週$day',
+                    fontSize: 22,
+                  ),
+                ),
+                Flexible(
+                  flex: 3,
+                  child: CustomText(
+                    textColor: select ? Colors.yellow : Colors.white,
+                    textContent: showTypetext(),
+                    fontSize: 20,
+                  ),
+                ),
+                Expanded(
+                  flex: type == cloudAllType.UVI ? 5 : 3,
+                  child: type == cloudAllType.UVI
+                      ? Container(
+                          margin: EdgeInsets.fromLTRB(10, 15, 10, 0),
+                          child:
+                              GradientBar(whiteDotPositions: int.parse(value)),
+                        )
+                      : CustomText(
+                          textColor: select ? Colors.yellow : Colors.white,
+                          textContent: detailtext,
+                          fontSize: 22,
+                        ),
+                ),
+              ],
+            )),
+        SizedBox(
+          height: 3,
+        ),
+        Container(
+          height: 2,
+          width: screenheight * 8.5,
+          color: Colors.white,
         )
       ],
     );
   }
 }
 
-class ChartData {
-  final String day;
-  final int value;
-  final int select;
-  ChartData(this.day, this.value, this.select);
+class returnCloudDataText {
+  final cloudAllType type;
+  final String value;
+  returnCloudDataText({this.type, this.value});
+
+  String showDetailtext() {
+    int temp;
+    try {
+      temp = int.parse(value);
+    } on FormatException catch (e) {
+      print('Failed to parse: ${e.message}');
+    }
+    switch (type) {
+      case cloudAllType.WD:
+        return value;
+
+      case cloudAllType.T:
+        if (temp <= 25) {
+          return '舒適溫度';
+        } else if (temp >= 26 && temp <= 29) {
+          return '略微悶熱';
+        } else if (temp >= 30 && temp <= 34) {
+          return '明顯的悶熱';
+        } else if (temp >= 35 && temp <= 39) {
+          return '非常悶熱';
+        } else if (temp >= 40) {
+          return '極度炎熱';
+        } else {
+          return '';
+        }
+        break;
+      case cloudAllType.Td:
+        if (temp <= 15) {
+          return '相對濕度較低';
+        } else if (temp >= 16 && temp <= 18) {
+          return '相對濕度適中';
+        } else if (temp >= 19 && temp <= 22) {
+          return '相對濕度較高';
+        } else if (temp >= 23 && temp <= 25) {
+          return '相對濕度高';
+        } else if (temp >= 26) {
+          return '相對濕度極高';
+        } else {
+          return '';
+        }
+
+        break;
+      case cloudAllType.RH:
+        if (temp <= 30) {
+          return '相對濕度過低';
+        } else if (temp >= 30 && temp <= 60) {
+          return '相對濕度適中';
+        } else {
+          return '相對濕度過高';
+        }
+        break;
+    }
+  }
 }

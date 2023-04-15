@@ -20,7 +20,7 @@ enum cloudAllType {
 }
 
 extension cloudAllTypeExtension on cloudAllType {
-   String get Englishname {
+  String get Englishname {
     switch (this) {
       case cloudAllType.UVI:
         return 'UVI';
@@ -42,6 +42,7 @@ extension cloudAllTypeExtension on cloudAllType {
         break;
     }
   }
+
   String get name {
     switch (this) {
       case cloudAllType.UVI:
@@ -64,6 +65,29 @@ extension cloudAllTypeExtension on cloudAllType {
         break;
     }
   }
+
+  String get property {
+    switch (this) {
+      case cloudAllType.UVI:
+        return '紫外線指數';
+        break;
+      case cloudAllType.SUN:
+        return '攝氏度';
+        break;
+      case cloudAllType.WD:
+        return '風向';
+        break;
+      case cloudAllType.T:
+        return '攝氏度';
+        break;
+      case cloudAllType.Td:
+        return '攝氏度';
+        break;
+      case cloudAllType.RH:
+        return '%';
+        break;
+    }
+  }
 }
 
 class CloudPage extends StatefulWidget {
@@ -73,7 +97,7 @@ class CloudPage extends StatefulWidget {
   _CloudPageState createState() => _CloudPageState();
 }
 
-final api =  apiService();
+final api = apiService();
 // ignore: missing_return
 Future<Map<String, dynamic>> getData(String country) async {
   final countrydata = await api.getCloudData(country);
@@ -134,7 +158,7 @@ class _CloudPageState extends State<CloudPage> {
                           onTap: () {
                             print('object');
                             Navigator.of(context).push(CustomPageRoute(
-                              builder: (_) =>  MyModalPage(),
+                              builder: (_) => MyModalPage(),
                             ));
                           },
                           child: FutureBuilder<WeatherData>(
@@ -373,7 +397,7 @@ class RHTdwidget extends StatelessWidget {
         }
         break;
       case cloudType.Td:
-        if (temp < 15) {
+        if (temp <= 15) {
           return '相對濕度較低，感覺較為乾燥，不太容易出現露水現象。';
         } else if (temp >= 16 && temp <= 18) {
           return '相對濕度適中，感覺比較舒適，不易出現露水現象。';
@@ -389,7 +413,7 @@ class RHTdwidget extends StatelessWidget {
 
         break;
       case cloudType.RH:
-        if (temp < 30) {
+        if (temp <= 30) {
           return '相對濕度過低，空氣比較乾燥，可能會引起喉嚨不適或皮膚乾燥。';
         } else if (temp >= 30 && temp <= 60) {
           return '相對濕度適中，感覺比較舒適。';
