@@ -49,6 +49,24 @@ class apiService {
     return [suntime.sunRiseTime, suntime.sunSetTime];
   }
 
+  Future<List<SunDataTime>> getSunWeekRiseSetTime(String country) async {
+    DateTime now = DateTime.now();
+    String formattedFromDate = DateFormat('yyyy-MM-dd').format(now); // 格式化日期時間
+    DateTime tomorrow = now.add(Duration(days: 7));
+    String formattedtoDate = DateFormat('yyyy-MM-dd').format(tomorrow);
+    final api =
+        'https://opendata.cwb.gov.tw/api/v1/rest/datastore/A-B0062-001?Authorization=$authkey&CountyName=$country&parameter=SunRiseTime,SunSetTime&timeFrom=$formattedFromDate&timeTo=$formattedtoDate';
+    print('getSunRiseSetTime:$api');
+    final sunData = HttpService(baseUrl: api);
+    final response = await sunData.getJson();
+    print('sun response:$response');
+    final suntimes = SunData.fromJson(response);
+    final suntime = suntimes.records.locations.location[0].time;
+    print('sunnnn$suntime');
+    return suntime;
+  }
+
+
   Future<List<List<Widget>>> getWeekData(String country) async {
     final api =
         'https://opendata.cwb.gov.tw/api/v1/rest/datastore/F-D0047-091?Authorization=$authkey&format=JSON&locationName=$country&elementName=Wx,MaxT,MinT';

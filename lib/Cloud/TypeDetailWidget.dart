@@ -6,6 +6,7 @@ import 'package:simple_weahter/Cloud/simplelinecahrt_widget.dart';
 import 'package:simple_weahter/ExtensionToolClass/CustomText.dart';
 import 'package:simple_weahter/Home/homePage.dart';
 import '../ApiCommand.dart/apiService.dart';
+import '../ApiModel.dart/sunRiseSetModel.dart';
 import '../Home/homeWidget.dart/ListWidget/Compass.dart';
 import '../Home/homeWidget.dart/ListWidget/UVIwidget.dart';
 
@@ -26,19 +27,48 @@ class MyModalPage extends StatefulWidget {
 }
 
 class _MyModalPageState extends State<MyModalPage> {
+  final api = apiService();
   List<cloudDetailItem> data = [];
   List<ChartData> chartdatas = [];
   @override
   void initState() {
     super.initState();
     initializeDateFormatting('zh_Hant');
-    getCloudWeekDetailData(selectedOption, widget.type.Englishname);
+
+    if (widget.type == cloudAllType.SUN) {
+      getCloudWeekSunDetailData(selectedOption);
+    } else {
+      getCloudWeekDetailData(selectedOption, widget.type.Englishname);
+    }
+  }
+
+  Future<void> getCloudWeekSunDetailData(String country) async {
+    List<cloudDetailItem> datacloud = [];
+
+    List<SunDataTime> rise = await api.getSunWeekRiseSetTime(country);
+
+    rise.forEach((element) {
+      DateTime date = DateTime.parse(element.date);
+      String formattedDate =
+          DateFormat('EEEE', 'zh_Hant').format(date).replaceAll('星期', '');
+
+      final sunrise = element.sunRiseTime;
+      final sunset = element.sunSetTime;
+      final day = date.day;
+      datacloud.add(cloudDetailItem(
+          value: sunrise,
+          daynumber: formattedDate,
+          weekday: '$day',
+          select: false));
+    });
+    setState(() {
+      data = datacloud;
+    });
   }
 
   Future<void> getCloudWeekDetailData(String country, String type) async {
     List<cloudDetailItem> datacloud = [];
 
-    final api = apiService();
     final clouddata = await api.getCloudWeekDetailData(country, type);
     print(clouddata.toString());
     clouddata.forEach((element) {
@@ -82,12 +112,15 @@ class _MyModalPageState extends State<MyModalPage> {
     List<ChartData> chartdata = [];
 //////風向資料
     data.asMap().forEach((key, value) {
-      if (widget.type != cloudAllType.WD) if (value.select) {
-        chartdata
-            .add(ChartData(value.weekday, int.parse(value.value ?? '0'), key));
-      } else {
+      if (widget.type == cloudAllType.WD) if (value.select) {
         chartdata
             .add(ChartData(value.weekday, int.parse(value.value ?? '0'), null));
+      } else if (widget.type == cloudAllType.SUN) {
+        chartdata
+            .add(ChartData(value.weekday, 0, null));
+      } else {
+        chartdata
+            .add(ChartData(value.weekday, int.parse(value.value ?? '0'), key));
       }
     });
 
@@ -242,11 +275,9 @@ class cloudDetailText extends StatelessWidget {
         case cloudAllType.UVI:
           return '$property: $value';
         case cloudAllType.SUN:
-          // TODO: Handle this case.
-          break;
+          return value;
         case cloudAllType.WD:
           return value;
-          break;
         case cloudAllType.T:
           return '$value° $property';
         case cloudAllType.Td:
@@ -325,6 +356,8 @@ class returnCloudDataText {
       print('Failed to parse: ${e.message}');
     }
     switch (type) {
+      case cloudAllType.SUN:
+        return value;
       case cloudAllType.WD:
         return value;
 
