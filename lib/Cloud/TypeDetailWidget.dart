@@ -29,7 +29,7 @@ class MyModalPage extends StatefulWidget {
 class _MyModalPageState extends State<MyModalPage> {
   final api = apiService();
   List<cloudDetailItem> data = [];
-  List<ChartData> chartdatas = [];
+  // List<ChartData> chartdatas = [];
   @override
   void initState() {
     super.initState();
@@ -56,7 +56,7 @@ class _MyModalPageState extends State<MyModalPage> {
       final sunset = element.sunSetTime;
       final day = date.day;
       datacloud.add(cloudDetailItem(
-          value: sunrise,
+          value: '$sunrise-$sunset',
           daynumber: formattedDate,
           weekday: '$day',
           select: false));
@@ -112,16 +112,21 @@ class _MyModalPageState extends State<MyModalPage> {
     List<ChartData> chartdata = [];
 //////風向資料
     data.asMap().forEach((key, value) {
-      if (widget.type == cloudAllType.WD) if (value.select) {
-        chartdata
-            .add(ChartData(value.weekday, int.parse(value.value ?? '0'), null));
-      } else if (widget.type == cloudAllType.SUN) {
-        chartdata
-            .add(ChartData(value.weekday, 0, null));
+      if (widget.type == cloudAllType.WD || widget.type == cloudAllType.SUN) {
+        chartdata.add(ChartData(value.weekday, 0, null));
       } else {
-        chartdata
-            .add(ChartData(value.weekday, int.parse(value.value ?? '0'), key));
+        if (value.select) {
+          chartdata
+              .add(ChartData(value.weekday, int.parse(value.value ?? 0), key));
+        } else {
+          chartdata
+              .add(ChartData(value.weekday, int.parse(value.value ?? 0), null));
+        }
       }
+    });
+
+    chartdata.forEach((element) {
+      print(element.value.toString());
     });
 
     return Scaffold(
@@ -139,6 +144,7 @@ class _MyModalPageState extends State<MyModalPage> {
             child: data == []
                 ? CircularProgressIndicator()
                 : ListView(
+                  
                     scrollDirection: Axis.vertical,
                     children: [
                       Container(
@@ -209,7 +215,8 @@ class _MyModalPageState extends State<MyModalPage> {
                               );
                             },
                           )),
-                      Container(
+
+                           widget.type != cloudAllType.SUN ?   Container(
                           margin: EdgeInsets.all(12),
                           width: double.infinity,
                           height: screenWidth / 2,
@@ -222,27 +229,73 @@ class _MyModalPageState extends State<MyModalPage> {
                                   size: screenWidth / 2,
                                   direction: ParseCompassDirection.fromString(
                                       wdString ?? '偏北風'))
-                              : SimpleLineChart(chartdata, widget.type)),
+                              : SimpleLineChart(chartdata, widget.type)) :
+                              Spacer(flex: 1,),
+                   
                       Container(
-                        margin: EdgeInsets.all(12),
-                        width: double.infinity,
-                        height: screenWidth,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Color.fromARGB(174, 139, 98, 162),
-                        ),
-                        child: ListView.builder(
-                          itemBuilder: (BuildContext context, int index) {
-                            return cloudDetailText(
-                                data: data[index],
-                                select: data[index].select,
-                                type: widget.type,
-                                screenheight:
-                                    ((screenWidth / 1.3) / data.length));
-                          },
-                          itemCount: data.length,
-                        ),
-                      )
+                          margin: EdgeInsets.all(12),
+                          width: double.infinity,
+                          height: screenWidth,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Color.fromARGB(174, 139, 98, 162),
+                          ),
+                          child: Flex(
+                            direction: Axis.vertical,
+                            children: [
+                              widget.type == cloudAllType.SUN
+                                  ? Flexible(flex: 1,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              Flexible(
+                                                flex: 3,
+                                                child: CustomText(
+                                                  textColor:Colors.white,
+                                                  textContent: '    ',
+                                                  fontSize: 22,
+                                                ),
+                                              ),
+                                              Flexible(
+                                                flex: 3,
+                                                child: CustomText(
+                                                  textColor: Colors.white,
+                                                  textContent: '  日出',
+                                                  fontSize: 22,
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex:  3,
+                                                child:  CustomText(
+                                                        textColor: Colors.white,
+                                                        textContent: ' 日落',
+                                                        fontSize: 22,
+                                                      ),
+                                              ),
+                                            ],
+                                          ),
+                                    )
+                                  : SizedBox(
+                                      height: 0,
+                                      width: 0,
+                                    ),
+                              Flexible(flex: 8,
+                                child: ListView.builder(
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return cloudDetailText(
+                                        data: data[index],
+                                        select: data[index].select,
+                                        type: widget.type,
+                                        screenheight: ((screenWidth / 1.3) /
+                                            data.length));
+                                  },
+                                  itemCount: data.length,
+                                ),
+                              ),
+                            ],
+                          ))
                     ],
                   )));
   }
@@ -275,7 +328,8 @@ class cloudDetailText extends StatelessWidget {
         case cloudAllType.UVI:
           return '$property: $value';
         case cloudAllType.SUN:
-          return value;
+          List<String> substrings = value.split("-");
+          return substrings[0];
         case cloudAllType.WD:
           return value;
         case cloudAllType.T:
@@ -294,7 +348,7 @@ class cloudDetailText extends StatelessWidget {
         ),
         Container(
             height: screenheight,
-            child: Row(
+            child:type != cloudAllType.WD ? Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Flexible(
@@ -311,7 +365,7 @@ class cloudDetailText extends StatelessWidget {
                   child: CustomText(
                     textColor: select ? Colors.yellow : Colors.white,
                     textContent: showTypetext(),
-                    fontSize: 20,
+                    fontSize: 22,
                   ),
                 ),
                 Expanded(
@@ -324,12 +378,36 @@ class cloudDetailText extends StatelessWidget {
                         )
                       : CustomText(
                           textColor: select ? Colors.yellow : Colors.white,
-                          textContent: detailtext,
+                          textContent:detailtext,
                           fontSize: 22,
                         ),
                 ),
               ],
-            )),
+            )
+            : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Flexible(
+                        flex: 3,
+                        child: CustomText(
+                          // align: TextAlign.left,
+                          textColor: select ? Colors.yellow : Colors.white,
+                          textContent: '週$day',
+                          fontSize: 22,
+                        ),
+                      ),
+                      Flexible(
+                        flex: 3,
+                        child: CustomText(
+                          textColor: select ? Colors.yellow : Colors.white,
+                          textContent: showTypetext(),
+                          fontSize: 22,
+                        ),
+                      ),
+                    ],
+                  )
+            
+            ),
         SizedBox(
           height: 3,
         ),
@@ -357,7 +435,8 @@ class returnCloudDataText {
     }
     switch (type) {
       case cloudAllType.SUN:
-        return value;
+        List<String> substrings = value.split("-");
+        return substrings[1];
       case cloudAllType.WD:
         return value;
 

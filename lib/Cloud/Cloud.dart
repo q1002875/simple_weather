@@ -101,14 +101,12 @@ final api = apiService();
 // ignore: missing_return
 Future<Map<String, dynamic>> getData(String country) async {
   final countrydata = await api.getCloudData(country);
-  print(countrydata.toString());
   return countrydata;
 }
 
 // getSunRiseSetTime
 Future<List<String>> getSunRiseSetData(String country) async {
   final countrydata = await api.getSunRiseSetTime(country);
-  print(countrydata.toString());
   return countrydata;
 }
 

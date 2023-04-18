@@ -14,13 +14,7 @@ class SimpleLineChart extends StatelessWidget {
     return SfCartesianChart(
       plotAreaBorderColor: Colors.white.withOpacity(0.2), // 設置繪圖區域邊框顏色和透明度
       backgroundColor: Colors.transparent, // 設置背景為透明
-      title: ChartTitle(
-        text: type != null ? type.name : cloudAllType.UVI.name, // 設置圖表標題
-        textStyle: TextStyle(
-          color: Colors.white.withOpacity(0.7), // 設置標題文字顏色和透明度
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+      
       legend: Legend(
         isVisible: false, // 隱藏圖例
       ),
@@ -58,7 +52,7 @@ class SimpleLineChart extends StatelessWidget {
           width: 8,
           dataSource: data,
           xValueMapper: (ChartData sales, _) => sales.day,
-          yValueMapper: (ChartData sales, int index) => sales.value,
+          yValueMapper: (ChartData sales, _) => sales.value,
 
           markerSettings: MarkerSettings(
             isVisible: true,

@@ -13,7 +13,6 @@ class SunDataRecords {
   String dataId;
   String note;
   SunDataLocations locations;
-
   SunDataRecords({this.dataId, this.note, this.locations});
 
   factory SunDataRecords.fromJson(Map<String, dynamic> json) {
@@ -41,7 +40,6 @@ class SunDataLocations {
 class SunDataLocation {
   List<SunDataTime> time;
   String countyName;
-
   SunDataLocation({this.time, this.countyName});
 
   factory SunDataLocation.fromJson(Map<String, dynamic> json) {

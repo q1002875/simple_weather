@@ -27,7 +27,6 @@ class apiService {
     print('getWeekApi:$api');
     final weekWeatherData = HttpService(baseUrl: api);
     final response = await weekWeatherData.getJson();
-    // print('response:$response');
 
     return WeatherWeekData.fromJson(response as Map<String, dynamic>);
   }
@@ -45,7 +44,6 @@ class apiService {
     print('sun response:$response');
     final suntimes = SunData.fromJson(response);
     final suntime = suntimes.records.locations.location[0].time[0];
-    print('sunnnn$suntime');
     return [suntime.sunRiseTime, suntime.sunSetTime];
   }
 
@@ -62,7 +60,6 @@ class apiService {
     print('sun response:$response');
     final suntimes = SunData.fromJson(response);
     final suntime = suntimes.records.locations.location[0].time;
-    print('sunnnn$suntime');
     return suntime;
   }
 
@@ -132,9 +129,7 @@ class apiService {
     final weekWeatherDetailData = HttpService(baseUrl: api);
     final response = await weekWeatherDetailData.getJson();
     final weathers = Weathers.fromJson(response);
-    final elementName = weathers.locations[0].weatherElement[0].elementName;
     final www = weathers.locations[0].weatherElement[0].time;
-    print('weekclouddata:' + elementName + www.toString());
     return www;
   }
 
@@ -144,7 +139,6 @@ class apiService {
     print('getWeecloudkApi:$api');
     final weekWeatherData = HttpService(baseUrl: api);
     final response = await weekWeatherData.getJson();
-    // // print('getWeecloudkApi response:$response');
     DateTime now = DateTime.now();
 
     final weathers = Weathers.fromJson(response);
@@ -156,10 +150,6 @@ class apiService {
         case '紫外線指數':
           element.time.forEach(
             (element) => {
-              //  element.elementValue.forEach((datas) {print
-              //  ('紫外線資料'+ element.startTime.toString()+ element.endTime.toString()+
-              //   datas.value + datas.measures
-              //  ); }),
               if (now.day == element.endTime.day ||
                   now.day + 1 == element.endTime.day)
                 {
@@ -171,7 +161,6 @@ class apiService {
                           element.elementValue[0].value,
                       uviLevel: element.elementValue[0].value)
                 }
-              //do week dats
             },
           );
           break;
@@ -181,9 +170,6 @@ class apiService {
               if (now.day == element.endTime.day ||
                   now.day == element.startTime.day)
                 {
-                  ////今日資料
-                  print(element.elementValue[0].value),
-                  print(element.elementValue[0].measures),
                   cloudforwidgets['T'] = element.elementValue[0].value
                 }
             },
@@ -196,9 +182,6 @@ class apiService {
               if (now.day == element.endTime.day ||
                   now.day == element.startTime.day)
                 {
-                  ////今日資料
-                  print(element.elementValue[0].value),
-                  print(element.elementValue[0].measures),
                   cloudforwidgets['RH'] = element.elementValue[0].value
                 }
             },
@@ -214,9 +197,6 @@ class apiService {
               if (now.day == element.endTime.day ||
                   now.day == element.startTime.day)
                 {
-                  ////今日資料
-                  print(element.elementValue[0].value),
-                  print(element.elementValue[0].measures),
                   cloudforwidgets['WD'] = element.elementValue[0].value
                 }
             },
@@ -231,9 +211,6 @@ class apiService {
               if (now.day == element.endTime.day ||
                   now.day == element.startTime.day)
                 {
-                  ////今日資料
-                  print(element.elementValue[0].value),
-                  print(element.elementValue[0].measures),
                   cloudforwidgets['Td'] = element.elementValue[0].value
                 }
             },

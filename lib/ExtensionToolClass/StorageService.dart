@@ -1,29 +1,14 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class StorageService {
-   SharedPreferences _prefs;
-
-  // 初始化 SharedPreferences 對象
-  Future<void> init() async {
-    _prefs = await SharedPreferences.getInstance();
+class SharedPreferencesHelper {
+  static Future<String> getString(String key,
+      {String defaultValue = ''}) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(key) ?? defaultValue;
   }
 
-  // 將數據儲存到 shared preferences 中
-  Future<void> saveData(String key, String value) async {
-    await _prefs.setString(key, value);
-  }
-
-  // 從 shared preferences 中讀取數據
-  Future<String> loadData(String key) async {
-    return _prefs.getString(key);
+  static Future<bool> setString(String key, String value) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.setString(key, value);
   }
 }
-
-// // final storage = StorageService();
-// // await storage.init();
-
-// // // 將數據儲存到 shared preferences 中
-// // await storage.saveData('key', 'value');
-
-// // // 從 shared preferences 中讀取數據
-// // final data = await storage.loadData('key');
