@@ -89,10 +89,12 @@ class _MyModalPageState extends State<MyModalPage> {
     });
     //去除重複的值
     List<cloudDetailItem> filteredDatacloud = [];
-    Set<String> daynumbers = {};
+    Set<String> weeknumbers = {};
     for (cloudDetailItem item in datacloud) {
-      if (!daynumbers.contains(item.daynumber)) {
-        daynumbers.add(item.daynumber);
+      if (!weeknumbers.contains(item.weekday)) {
+        final iii = item.daynumber;
+        print('itme$iii');
+        weeknumbers.add(item.weekday);
         filteredDatacloud.add(item);
       }
     }
@@ -144,7 +146,6 @@ class _MyModalPageState extends State<MyModalPage> {
             child: data == []
                 ? CircularProgressIndicator()
                 : ListView(
-                  
                     scrollDirection: Axis.vertical,
                     children: [
                       Container(
@@ -215,23 +216,23 @@ class _MyModalPageState extends State<MyModalPage> {
                               );
                             },
                           )),
-
-                           widget.type != cloudAllType.SUN ?   Container(
-                          margin: EdgeInsets.all(12),
-                          width: double.infinity,
-                          height: screenWidth / 2,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Color.fromARGB(174, 139, 98, 162),
-                          ),
-                          child: widget.type == cloudAllType.WD
-                              ? CompassWidget(
-                                  size: screenWidth / 2,
-                                  direction: ParseCompassDirection.fromString(
-                                      wdString ?? '偏北風'))
-                              : SimpleLineChart(chartdata, widget.type)) :
-                              Spacer(flex: 1,),
-                   
+                      widget.type != cloudAllType.SUN
+                          ? Container(
+                              margin: EdgeInsets.all(12),
+                              width: double.infinity,
+                              height: screenWidth / 2,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: Color.fromARGB(174, 139, 98, 162),
+                              ),
+                              child: widget.type == cloudAllType.WD
+                                  ? CompassWidget(
+                                      size: screenWidth / 2,
+                                      direction:
+                                          ParseCompassDirection.fromString(
+                                              wdString ?? '偏北風'))
+                                  : SimpleLineChart(chartdata, widget.type))
+                          : Container(),
                       Container(
                           margin: EdgeInsets.all(12),
                           width: double.infinity,
@@ -244,43 +245,42 @@ class _MyModalPageState extends State<MyModalPage> {
                             direction: Axis.vertical,
                             children: [
                               widget.type == cloudAllType.SUN
-                                  ? Flexible(flex: 1,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              Flexible(
-                                                flex: 3,
-                                                child: CustomText(
-                                                  textColor:Colors.white,
-                                                  textContent: '    ',
-                                                  fontSize: 22,
-                                                ),
-                                              ),
-                                              Flexible(
-                                                flex: 3,
-                                                child: CustomText(
-                                                  textColor: Colors.white,
-                                                  textContent: '  日出',
-                                                  fontSize: 22,
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex:  3,
-                                                child:  CustomText(
-                                                        textColor: Colors.white,
-                                                        textContent: ' 日落',
-                                                        fontSize: 22,
-                                                      ),
-                                              ),
-                                            ],
+                                  ? Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Flexible(
+                                          flex: 3,
+                                          child: CustomText(
+                                            textColor: Colors.white,
+                                            textContent: '    ',
+                                            fontSize: 22,
                                           ),
+                                        ),
+                                        Flexible(
+                                          flex: 3,
+                                          child: CustomText(
+                                            textColor: Colors.white,
+                                            textContent: '  日出',
+                                            fontSize: 22,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 3,
+                                          child: CustomText(
+                                            textColor: Colors.white,
+                                            textContent: ' 日落',
+                                            fontSize: 22,
+                                          ),
+                                        ),
+                                      ],
                                     )
                                   : SizedBox(
-                                      height: 0,
-                                      width: 0,
+                                      height: 1,
+                                      width: 1,
                                     ),
-                              Flexible(flex: 8,
+                              Flexible(
+                                flex: 8,
                                 child: ListView.builder(
                                   itemBuilder:
                                       (BuildContext context, int index) {
@@ -348,43 +348,45 @@ class cloudDetailText extends StatelessWidget {
         ),
         Container(
             height: screenheight,
-            child:type != cloudAllType.WD ? Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Flexible(
-                  flex: 3,
-                  child: CustomText(
-                    // align: TextAlign.left,
-                    textColor: select ? Colors.yellow : Colors.white,
-                    textContent: '週$day',
-                    fontSize: 22,
-                  ),
-                ),
-                Flexible(
-                  flex: 3,
-                  child: CustomText(
-                    textColor: select ? Colors.yellow : Colors.white,
-                    textContent: showTypetext(),
-                    fontSize: 22,
-                  ),
-                ),
-                Expanded(
-                  flex: type == cloudAllType.UVI ? 5 : 3,
-                  child: type == cloudAllType.UVI
-                      ? Container(
-                          margin: EdgeInsets.fromLTRB(10, 15, 10, 0),
-                          child:
-                              GradientBar(whiteDotPositions: int.parse(value)),
-                        )
-                      : CustomText(
+            child: type != cloudAllType.WD
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Flexible(
+                        flex: 3,
+                        child: CustomText(
+                          // align: TextAlign.left,
                           textColor: select ? Colors.yellow : Colors.white,
-                          textContent:detailtext,
+                          textContent: '週$day',
                           fontSize: 22,
                         ),
-                ),
-              ],
-            )
-            : Row(
+                      ),
+                      Flexible(
+                        flex: 3,
+                        child: CustomText(
+                          textColor: select ? Colors.yellow : Colors.white,
+                          textContent: showTypetext(),
+                          fontSize: 22,
+                        ),
+                      ),
+                      Expanded(
+                        flex: type == cloudAllType.UVI ? 5 : 3,
+                        child: type == cloudAllType.UVI
+                            ? Container(
+                                margin: EdgeInsets.fromLTRB(10, 15, 10, 0),
+                                child: GradientBar(
+                                    whiteDotPositions: int.parse(value)),
+                              )
+                            : CustomText(
+                                textColor:
+                                    select ? Colors.yellow : Colors.white,
+                                textContent: detailtext,
+                                fontSize: 22,
+                              ),
+                      ),
+                    ],
+                  )
+                : Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Flexible(
@@ -405,9 +407,7 @@ class cloudDetailText extends StatelessWidget {
                         ),
                       ),
                     ],
-                  )
-            
-            ),
+                  )),
         SizedBox(
           height: 3,
         ),
