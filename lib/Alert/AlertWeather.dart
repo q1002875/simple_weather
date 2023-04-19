@@ -46,9 +46,17 @@ class AlertPage extends StatefulWidget {
 
 Future<Records> getAlertReport() async {
   final api = apiService();
-  final data = api.getAlertReport();
+  final jsonMap = api.getAlertReport();
+  // print(data.toString());
+//  final descrption = jsonMap[];
+//     final detailcontent = jsonMap.record[0].contents.content.contentText;
+//     final info = jsonMap.record[0].hazardConditions.hazards.hazard[0].info;
+//     final nameList = info.affectedAreas.location;
 
-  return data;
+//     print(descrption);
+//     print(detailcontent);
+//     print(nameList);
+  return jsonMap;
 }
 
 class _AlertPageState extends State<AlertPage> {
@@ -89,15 +97,22 @@ class _AlertPageState extends State<AlertPage> {
                         scrollDirection: Axis.vertical,
                         itemCount: weatherReport.length,
                         itemBuilder: (BuildContext context, int index) {
-                          final descrption =
-                              weatherReport[index].datasetInfo.datasetDescription;
+                          final descrption = weatherReport[index]
+                              .datasetInfo
+                              .datasetDescription;
+                          final issueTime =
+                              weatherReport[index].datasetInfo.issueTime;
                           final detailcontent =
                               weatherReport[index].contents.content.contentText;
-
-                           final info = weatherReport[index].hazardConditions.hazards.hazard[0].info;
-                           final nameList = info.affectedAreas.location;
+                          final info = weatherReport[index]
+                              .hazardConditions
+                              .hazards
+                              .hazard[0]
+                              .info;
+                          final nameList = info.affectedAreas.location;
 
                           return Container(
+                              height: (screenHeight / 7.5) * nameList.length,
                               margin: EdgeInsets.all(15),
                               decoration: BoxDecoration(
                                 color: Color.fromARGB(255, 18, 54, 96),
@@ -118,8 +133,8 @@ class _AlertPageState extends State<AlertPage> {
                                       ),
                                   Container(
                                       width: screenWidth,
-                                      height: (screenHeight / 8) *
-                                          weatherReport.length,
+                                      height:
+                                          (screenHeight / 8) * nameList.length,
                                       child: ListView.builder(
                                           scrollDirection: Axis.vertical,
                                           itemCount: nameList.length,
@@ -130,7 +145,8 @@ class _AlertPageState extends State<AlertPage> {
                                                 showCustomDialog(
                                                     context,
                                                     '警示特報',
-                                                    detailcontent.replaceAll('\\n', ''),
+                                                    detailcontent.replaceAll(
+                                                        '\\n', ''),
                                                     Colors.yellow,
                                                     Colors.white);
                                                 print(index);
@@ -146,9 +162,13 @@ class _AlertPageState extends State<AlertPage> {
                                                 height: screenHeight / 8,
                                                 width: screenWidth,
                                                 child: AlertItemWidget(
+                                                  localname: nameList[index]
+                                                      .locationName,
+                                                  issueTime: issueTime,
                                                   data: info,
                                                   height: screenHeight,
-                                                  width: screenWidth,index: index,
+                                                  width: screenWidth,
+                                                  index: index,
                                                 ),
                                               ),
                                             );
@@ -184,12 +204,21 @@ class _AlertPageState extends State<AlertPage> {
 }
 
 class AlertItemWidget extends StatelessWidget {
+  String localname;
+  String issueTime;
+
   final Info data;
-  final int index;
+  int index;
   final double width;
   final double height;
 
-  AlertItemWidget({this.data, this.height, this.width,this.index});
+  AlertItemWidget(
+      {this.data,
+      this.height,
+      this.width,
+      this.index,
+      this.localname,
+      this.issueTime});
 
   // ignore: missing_return
   WeatherCondition showImage(String state) {
@@ -212,9 +241,9 @@ class AlertItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // final issue = data.;
-    // String formattedDate =
-        // DateFormat('yyyy-MM-dd hh:mm').format(DateTime.parse(issue));
-    final localname = data.affectedAreas.location[index].locationName;
+    String formattedDate =
+        DateFormat('yyyy-MM-dd hh:mm').format(DateTime.parse(issueTime));
+    // final localname = data.affectedAreas.location[index].locationName;
     final state = data.phenomena;
     return Flex(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -237,7 +266,7 @@ class AlertItemWidget extends StatelessWidget {
               Flexible(
                   flex: 1,
                   child: CustomText(
-                    textContent: 'formattedDate',
+                    textContent: formattedDate,
                     textColor: Colors.white,
                     fontSize: 18,
                   ))
