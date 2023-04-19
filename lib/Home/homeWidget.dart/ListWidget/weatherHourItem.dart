@@ -6,20 +6,29 @@ class ImageTextWidget extends StatelessWidget {
   final String text;
   final Color textcolor;
   final Image image;
-  ImageTextWidget({this.imageUrl, this.text, this.image,this.textcolor});
+  ImageTextWidget({this.imageUrl, this.text, this.image, this.textcolor});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+    return Flex(
+      direction: Axis.vertical,
       children: [
-        Container(
-            height: 50,
-            width: 50,
-            child: image != null ? image : Image.asset('assets/raining.png')),
         SizedBox(height: 5.0),
-        CustomText(textContent: text, fontSize: 14,textColor: textcolor!= null ?textcolor :Color.fromARGB(255, 255, 255, 255)  ,),
+        Expanded(flex: 1, child:  image != null ? image : Image.asset('assets/raining.png')),
+        Expanded(flex: 1, child:  CustomText(textContent: text, fontSize: 14,textColor: textcolor!= null ?textcolor :Color.fromARGB(255, 255, 255, 255) ))
       ],
     );
+
+    // Column(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //   children: [
+    //     Container(
+    //         height: 50,
+    //         width: 50,
+    //         child: image != null ? image : Image.asset('assets/raining.png')),
+    //     SizedBox(height: 5.0),
+    //     CustomText(textContent: text, fontSize: 14,textColor: textcolor!= null ?textcolor :Color.fromARGB(255, 255, 255, 255)  ,),
+    //   ],
+    // );
   }
 }

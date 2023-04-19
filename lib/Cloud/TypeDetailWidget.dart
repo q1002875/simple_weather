@@ -109,7 +109,6 @@ class _MyModalPageState extends State<MyModalPage> {
   String wdString;
   @override
   Widget build(BuildContext context) {
-    // String wdString;
     final screenWidth = MediaQuery.of(context).size.width;
     List<ChartData> chartdata = [];
 //////風向資料

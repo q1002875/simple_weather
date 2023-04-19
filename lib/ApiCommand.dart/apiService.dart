@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_weahter/ExtensionToolClass/HttpServer/Httpserver.dart';
 import '../ApiModel.dart/sunRiseSetModel.dart';
+import '../ApiModel.dart/weatherAlertModel.dart';
 import '../ApiModel.dart/weathersModel.dart';
 import '../ApiModel.dart/weathersModel2.dart';
 import '../Home/homeWidget.dart/ListWidget/UVIwidget.dart';
@@ -95,7 +98,7 @@ class apiService {
     final atItems = maxT.time
         .where((t) => t.startTime.hour == 18 && t.endTime.hour == 6)
         .map((t) => ImageTextWidget(
-            image: Image.asset('assets/bodytemp.png'),
+            image:  Image.asset('assets/bodytemp.png'),
             text:
                 '${DateFormat('EEEE', 'zh_Hant').format(t.startTime)}\n${t.elementValue[0].value}',
             textcolor: Colors.yellow))
@@ -221,6 +224,36 @@ class apiService {
 
     return cloudforwidgets;
   }
+
+
+/////////////////////Alertpage使用
+
+
+  Future<Records> getAlertReport() async {
+ String jsonString = '{"records":{"record":[{"datasetInfo":{"datasetDescription":"大雨特報","datasetLanguage":"zh-TW","validTime":{"startTime":"2023-04-19 16:15:00","endTime":"2023-04-20 11:00:00"},"issueTime":"2023-04-19 16:15:00","update":"2023-04-19 16:21:08"},"contents":{"content":{"contentLanguage":"zh-TW","contentText":"\n                鋒面接近影響，易有短延時強降雨，今（１９）日臺中以北地區及澎湖有局部大雨發生的機率，請注意雷擊、強陣風。\n                "}},"hazardConditions":{"hazards":{"hazard":[{"info":{"language":"zh-TW","phenomena":"大雨","significance":"特報","affectedAreas":{"location":[{"locationName":"基隆北海岸"},{"locationName":"臺北市"},{"locationName":"新北市"},{"locationName":"桃園市"},{"locationName":"新竹市"},{"locationName":"新竹縣"},{"locationName":"苗栗縣"},{"locationName":"臺中市"},{"locationName":"澎湖縣"}]}}}]}}},{"datasetInfo":{"datasetDescription":"濃霧特報","datasetLanguage":"zh-TW","validTime":{"startTime":"2023-04-19 08:44:00","endTime":"2023-04-19 11:00:00"},"issueTime":"2023-04-19 08:40:00","update":"2023-04-19 08:50:01"},"contents":{"content":{"contentLanguage":"zh-TW","contentText":"\\n                今(19)日金門及馬祖易有局部霧或低雲影響能見度，金門已出現能見度不足200公尺的現象，請注意。\\n                "}},"hazardConditions":{"hazards":{"hazard":[{"info":{"language":"zh-TW","phenomena":"濃霧","significance":"特報","affectedAreas":{"location":[{"locationName":"金門縣"}]}}}]}}}]}}';
+
+    final api =
+        'https://opendata.cwb.gov.tw/api/v1/rest/datastore/W-C0033-002?Authorization=$authkey&phenomena=';
+    print('getAlertReport:$api');
+    ////release data
+    // final data = HttpService(baseUrl: api);
+    // final response = await data.getJson();
+    // final jsonMap = WeatherReport.fromJson(response as Map<String, dynamic>);
+ 
+    //fake data
+    var jsonMap = json.decode(jsonString);
+
+print('WeatherReport$jsonMap');
+    final resultdata = Records.fromJson(jsonMap as Map<String, dynamic>);
+    return resultdata;
+  }
+
+
+
+
+
+
+
 }
 
 // final users = await httpService.get('users', (json) {
