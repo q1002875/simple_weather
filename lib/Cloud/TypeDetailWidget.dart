@@ -5,6 +5,7 @@ import 'package:simple_weahter/Cloud/Cloud.dart';
 import 'package:simple_weahter/Cloud/simplelinecahrt_widget.dart';
 import 'package:simple_weahter/ExtensionToolClass/CustomText.dart';
 import 'package:simple_weahter/Home/homePage.dart';
+
 import '../ApiCommand.dart/apiService.dart';
 import '../ApiModel.dart/sunRiseSetModel.dart';
 import '../Home/homeWidget.dart/ListWidget/Compass.dart';
@@ -19,6 +20,126 @@ class cloudDetailItem {
       {this.daynumber, this.weekday, this.select = false, this.value = ''});
 }
 
+// ignore: camel_case_types
+class cloudDetailText extends StatelessWidget {
+  // final List<cloudDetailItem> data;
+  final cloudDetailItem data;
+  final bool select;
+  final cloudAllType type;
+  final double screenheight;
+  cloudDetailText(
+      {this.data,
+      this.select,
+      this.type = cloudAllType.UVI,
+      this.screenheight});
+
+  @override
+  Widget build(BuildContext context) {
+    final day = data.daynumber;
+    final week = data.weekday;
+    final value = data.value;
+    final property = type.property;
+    final detailtext =
+        returnCloudDataText(type: type, value: value).showDetailtext();
+    // ignore: missing_return
+    String showTypetext() {
+      switch (type) {
+        case cloudAllType.UVI:
+          return '$property: $value';
+        case cloudAllType.SUN:
+          List<String> substrings = value.split("-");
+          return substrings[0];
+        case cloudAllType.WD:
+          return value;
+        case cloudAllType.T:
+          return '$value° $property';
+        case cloudAllType.Td:
+          return '$value° $property';
+        case cloudAllType.RH:
+          return '$value $property';
+      }
+    }
+
+    return Column(
+      children: [
+        SizedBox(
+          height: 3,
+        ),
+        Container(
+            height: screenheight,
+            child: type != cloudAllType.WD
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Flexible(
+                        flex: 3,
+                        child: CustomText(
+                          // align: TextAlign.left,
+                          textColor: select ? Colors.yellow : Colors.white,
+                          textContent: '週$day',
+                          fontSize: 22,
+                        ),
+                      ),
+                      Flexible(
+                        flex: 3,
+                        child: CustomText(
+                          textColor: select ? Colors.yellow : Colors.white,
+                          textContent: showTypetext(),
+                          fontSize: 22,
+                        ),
+                      ),
+                      Expanded(
+                        flex: type == cloudAllType.UVI ? 5 : 3,
+                        child: type == cloudAllType.UVI
+                            ? Container(
+                                margin: EdgeInsets.fromLTRB(10, 15, 10, 0),
+                                child: GradientBar(
+                                    whiteDotPositions: int.parse(value)),
+                              )
+                            : CustomText(
+                                textColor:
+                                    select ? Colors.yellow : Colors.white,
+                                textContent: detailtext,
+                                fontSize: 22,
+                              ),
+                      ),
+                    ],
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Flexible(
+                        flex: 3,
+                        child: CustomText(
+                          // align: TextAlign.left,
+                          textColor: select ? Colors.yellow : Colors.white,
+                          textContent: '週$day',
+                          fontSize: 22,
+                        ),
+                      ),
+                      Flexible(
+                        flex: 3,
+                        child: CustomText(
+                          textColor: select ? Colors.yellow : Colors.white,
+                          textContent: showTypetext(),
+                          fontSize: 22,
+                        ),
+                      ),
+                    ],
+                  )),
+        SizedBox(
+          height: 3,
+        ),
+        Container(
+          height: 2,
+          width: screenheight * 8.5,
+          color: Colors.white,
+        )
+      ],
+    );
+  }
+}
+
 class MyModalPage extends StatefulWidget {
   final cloudAllType type;
   const MyModalPage({Key key, this.type = cloudAllType.UVI}) : super(key: key);
@@ -26,87 +147,74 @@ class MyModalPage extends StatefulWidget {
   _MyModalPageState createState() => _MyModalPageState();
 }
 
+class returnCloudDataText {
+  final cloudAllType type;
+  final String value;
+  returnCloudDataText({this.type, this.value});
+
+  String showDetailtext() {
+    int temp;
+    try {
+      temp = int.parse(value);
+    } on FormatException catch (e) {
+      print('Failed to parse: ${e.message}');
+    }
+    switch (type) {
+      case cloudAllType.SUN:
+        List<String> substrings = value.split("-");
+        return substrings[1];
+      case cloudAllType.WD:
+        return value;
+
+      case cloudAllType.T:
+        if (temp <= 25) {
+          return '舒適溫度';
+        } else if (temp >= 26 && temp <= 29) {
+          return '略微悶熱';
+        } else if (temp >= 30 && temp <= 34) {
+          return '明顯的悶熱';
+        } else if (temp >= 35 && temp <= 39) {
+          return '非常悶熱';
+        } else if (temp >= 40) {
+          return '極度炎熱';
+        } else {
+          return '';
+        }
+        break;
+      case cloudAllType.Td:
+        if (temp <= 15) {
+          return '相對濕度較低';
+        } else if (temp >= 16 && temp <= 18) {
+          return '相對濕度適中';
+        } else if (temp >= 19 && temp <= 22) {
+          return '相對濕度較高';
+        } else if (temp >= 23 && temp <= 25) {
+          return '相對濕度高';
+        } else if (temp >= 26) {
+          return '相對濕度極高';
+        } else {
+          return '';
+        }
+
+        break;
+      case cloudAllType.RH:
+        if (temp <= 30) {
+          return '相對濕度過低';
+        } else if (temp >= 30 && temp <= 60) {
+          return '相對濕度適中';
+        } else {
+          return '相對濕度過高';
+        }
+        break;
+    }
+  }
+}
+
 class _MyModalPageState extends State<MyModalPage> {
   final api = apiService();
   List<cloudDetailItem> data = [];
-  // List<ChartData> chartdatas = [];
-  @override
-  void initState() {
-    super.initState();
-    initializeDateFormatting('zh_Hant');
-
-    if (widget.type == cloudAllType.SUN) {
-      getCloudWeekSunDetailData(selectedOption);
-    } else {
-      getCloudWeekDetailData(selectedOption, widget.type.Englishname);
-    }
-  }
-
-  Future<void> getCloudWeekSunDetailData(String country) async {
-    List<cloudDetailItem> datacloud = [];
-
-    List<SunDataTime> rise = await api.getSunWeekRiseSetTime(country);
-
-    rise.forEach((element) {
-      DateTime date = DateTime.parse(element.date);
-      String formattedDate =
-          DateFormat('EEEE', 'zh_Hant').format(date).replaceAll('星期', '');
-
-      final sunrise = element.sunRiseTime;
-      final sunset = element.sunSetTime;
-      final day = date.day;
-      datacloud.add(cloudDetailItem(
-          value: '$sunrise-$sunset',
-          daynumber: formattedDate,
-          weekday: '$day',
-          select: false));
-    });
-    setState(() {
-      data = datacloud;
-    });
-  }
-
-  Future<void> getCloudWeekDetailData(String country, String type) async {
-    List<cloudDetailItem> datacloud = [];
-
-    final clouddata = await api.getCloudWeekDetailData(country, type);
-    print(clouddata.toString());
-    clouddata.forEach((element) {
-      element.elementValue.forEach((e) {
-        print(e.value + e.measures);
-        final daystartTime = element.startTime.day;
-        final dayendTime = element.endTime.day;
-        DateTime now = element.startTime;
-        String formattedDate =
-            DateFormat('EEEE', 'zh_Hant').format(now).replaceAll('星期', '');
-
-        datacloud.add(cloudDetailItem(
-            value: e.value,
-            daynumber: '$formattedDate',
-            weekday: '$dayendTime',
-            select: false));
-      });
-    });
-    //去除重複的值
-    List<cloudDetailItem> filteredDatacloud = [];
-    Set<String> weeknumbers = {};
-    for (cloudDetailItem item in datacloud) {
-      if (!weeknumbers.contains(item.weekday)) {
-        final iii = item.daynumber;
-        print('itme$iii');
-        weeknumbers.add(item.weekday);
-        filteredDatacloud.add(item);
-      }
-    }
-
-    setState(() {
-      data = filteredDatacloud;
-      wdString = data[0].value;
-      print(data.toString());
-    });
-  }
-
   String wdString;
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -298,187 +406,81 @@ class _MyModalPageState extends State<MyModalPage> {
                     ],
                   )));
   }
-}
 
-// ignore: camel_case_types
-class cloudDetailText extends StatelessWidget {
-  // final List<cloudDetailItem> data;
-  final cloudDetailItem data;
-  final bool select;
-  final cloudAllType type;
-  final double screenheight;
-  cloudDetailText(
-      {this.data,
-      this.select,
-      this.type = cloudAllType.UVI,
-      this.screenheight});
+  Future<void> getCloudWeekDetailData(String country, String type) async {
+    List<cloudDetailItem> datacloud = [];
 
-  @override
-  Widget build(BuildContext context) {
-    final day = data.daynumber;
-    final week = data.weekday;
-    final value = data.value;
-    final property = type.property;
-    final detailtext =
-        returnCloudDataText(type: type, value: value).showDetailtext();
-    // ignore: missing_return
-    String showTypetext() {
-      switch (type) {
-        case cloudAllType.UVI:
-          return '$property: $value';
-        case cloudAllType.SUN:
-          List<String> substrings = value.split("-");
-          return substrings[0];
-        case cloudAllType.WD:
-          return value;
-        case cloudAllType.T:
-          return '$value° $property';
-        case cloudAllType.Td:
-          return '$value° $property';
-        case cloudAllType.RH:
-          return '$value $property';
+    final clouddata = await api.getCloudWeekDetailData(country, type);
+    print(clouddata.toString());
+    clouddata.forEach((element) {
+      element.elementValue.forEach((e) {
+        print(e.value + e.measures);
+        final daystartTime = element.startTime.day;
+        final dayendTime = element.endTime.day;
+        DateTime now = element.startTime;
+        String formattedDate =
+            DateFormat('EEEE', 'zh_Hant').format(now).replaceAll('星期', '');
+
+        datacloud.add(cloudDetailItem(
+            value: e.value,
+            daynumber: '$formattedDate',
+            weekday: '$dayendTime',
+            select: false));
+      });
+    });
+    //去除重複的值
+    List<cloudDetailItem> filteredDatacloud = [];
+    Set<String> weeknumbers = {};
+    for (cloudDetailItem item in datacloud) {
+      if (!weeknumbers.contains(item.weekday)) {
+        final iii = item.daynumber;
+        print('itme$iii');
+        weeknumbers.add(item.weekday);
+        filteredDatacloud.add(item);
       }
     }
 
-    return Column(
-      children: [
-        SizedBox(
-          height: 3,
-        ),
-        Container(
-            height: screenheight,
-            child: type != cloudAllType.WD
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Flexible(
-                        flex: 3,
-                        child: CustomText(
-                          // align: TextAlign.left,
-                          textColor: select ? Colors.yellow : Colors.white,
-                          textContent: '週$day',
-                          fontSize: 22,
-                        ),
-                      ),
-                      Flexible(
-                        flex: 3,
-                        child: CustomText(
-                          textColor: select ? Colors.yellow : Colors.white,
-                          textContent: showTypetext(),
-                          fontSize: 22,
-                        ),
-                      ),
-                      Expanded(
-                        flex: type == cloudAllType.UVI ? 5 : 3,
-                        child: type == cloudAllType.UVI
-                            ? Container(
-                                margin: EdgeInsets.fromLTRB(10, 15, 10, 0),
-                                child: GradientBar(
-                                    whiteDotPositions: int.parse(value)),
-                              )
-                            : CustomText(
-                                textColor:
-                                    select ? Colors.yellow : Colors.white,
-                                textContent: detailtext,
-                                fontSize: 22,
-                              ),
-                      ),
-                    ],
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Flexible(
-                        flex: 3,
-                        child: CustomText(
-                          // align: TextAlign.left,
-                          textColor: select ? Colors.yellow : Colors.white,
-                          textContent: '週$day',
-                          fontSize: 22,
-                        ),
-                      ),
-                      Flexible(
-                        flex: 3,
-                        child: CustomText(
-                          textColor: select ? Colors.yellow : Colors.white,
-                          textContent: showTypetext(),
-                          fontSize: 22,
-                        ),
-                      ),
-                    ],
-                  )),
-        SizedBox(
-          height: 3,
-        ),
-        Container(
-          height: 2,
-          width: screenheight * 8.5,
-          color: Colors.white,
-        )
-      ],
-    );
+    setState(() {
+      data = filteredDatacloud;
+      wdString = data[0].value;
+      print(data.toString());
+    });
   }
-}
 
-class returnCloudDataText {
-  final cloudAllType type;
-  final String value;
-  returnCloudDataText({this.type, this.value});
+  Future<void> getCloudWeekSunDetailData(String country) async {
+    List<cloudDetailItem> datacloud = [];
 
-  String showDetailtext() {
-    int temp;
-    try {
-      temp = int.parse(value);
-    } on FormatException catch (e) {
-      print('Failed to parse: ${e.message}');
-    }
-    switch (type) {
-      case cloudAllType.SUN:
-        List<String> substrings = value.split("-");
-        return substrings[1];
-      case cloudAllType.WD:
-        return value;
+    List<SunDataTime> rise = await api.getSunWeekRiseSetTime(country);
 
-      case cloudAllType.T:
-        if (temp <= 25) {
-          return '舒適溫度';
-        } else if (temp >= 26 && temp <= 29) {
-          return '略微悶熱';
-        } else if (temp >= 30 && temp <= 34) {
-          return '明顯的悶熱';
-        } else if (temp >= 35 && temp <= 39) {
-          return '非常悶熱';
-        } else if (temp >= 40) {
-          return '極度炎熱';
-        } else {
-          return '';
-        }
-        break;
-      case cloudAllType.Td:
-        if (temp <= 15) {
-          return '相對濕度較低';
-        } else if (temp >= 16 && temp <= 18) {
-          return '相對濕度適中';
-        } else if (temp >= 19 && temp <= 22) {
-          return '相對濕度較高';
-        } else if (temp >= 23 && temp <= 25) {
-          return '相對濕度高';
-        } else if (temp >= 26) {
-          return '相對濕度極高';
-        } else {
-          return '';
-        }
+    rise.forEach((element) {
+      DateTime date = DateTime.parse(element.date);
+      String formattedDate =
+          DateFormat('EEEE', 'zh_Hant').format(date).replaceAll('星期', '');
 
-        break;
-      case cloudAllType.RH:
-        if (temp <= 30) {
-          return '相對濕度過低';
-        } else if (temp >= 30 && temp <= 60) {
-          return '相對濕度適中';
-        } else {
-          return '相對濕度過高';
-        }
-        break;
+      final sunrise = element.sunRiseTime;
+      final sunset = element.sunSetTime;
+      final day = date.day;
+      datacloud.add(cloudDetailItem(
+          value: '$sunrise-$sunset',
+          daynumber: formattedDate,
+          weekday: '$day',
+          select: false));
+    });
+    setState(() {
+      data = datacloud;
+    });
+  }
+
+  // List<ChartData> chartdatas = [];
+  @override
+  void initState() {
+    super.initState();
+    initializeDateFormatting('zh_Hant');
+
+    if (widget.type == cloudAllType.SUN) {
+      getCloudWeekSunDetailData(selectedOption);
+    } else {
+      getCloudWeekDetailData(selectedOption, widget.type.Englishname);
     }
   }
 }
