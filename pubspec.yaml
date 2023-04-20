@@ -38,6 +38,9 @@ dependencies:
   flutter_svg: ^0.22.0
   syncfusion_flutter_charts: ^21.1.39
   json_annotation: ^4.8.0
+  geocoding: ^2.1.0
+  geolocator: ^9.0.2
+  icon: ^2.2.1
 
 dev_dependencies:
   flutter_test:

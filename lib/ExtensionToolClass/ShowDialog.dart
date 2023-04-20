@@ -34,7 +34,7 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
       ),
       child: Container(
         width: screenWidth/1.5,
-        color: Color.fromARGB(255, 48, 44, 44),
+        color: Color.fromARGB(255, 255, 255, 255),
         padding: EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -49,7 +49,7 @@ class _CustomDialogBoxState extends State<CustomDialogBox> {
             CustomText(
               textContent: widget.content,
               textColor: widget.contentColor,
-              fontSize: 20,
+              fontSize: 14,
               align: TextAlign.left,
             ),
             SizedBox(height: 20),

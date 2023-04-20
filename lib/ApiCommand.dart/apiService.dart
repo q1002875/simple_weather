@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -220,7 +219,7 @@ class apiService {
 
   Future<Records> getAlertReport() async {
     String jsonString =
-        '{"records":{"record":[{"datasetInfo":{"datasetDescription":"大雨特報","datasetLanguage":"zh-TW","validTime":{"startTime":"2023-04-19 16:15:00","endTime":"2023-04-20 11:00:00"},"issueTime":"2023-04-19 16:15:00","update":"2023-04-19 16:21:08"},"contents":{"content":{"contentLanguage":"zh-TW","contentText":"\n                鋒面接近影響，易有短延時強降雨，今（１９）日臺中以北地區及澎湖有局部大雨發生的機率，請注意雷擊、強陣風。\n                "}},"hazardConditions":{"hazards":{"hazard":[{"info":{"language":"zh-TW","phenomena":"大雨","significance":"特報","affectedAreas":{"location":[{"locationName":"基隆北海岸"},{"locationName":"臺北市"},{"locationName":"新北市"},{"locationName":"桃園市"},{"locationName":"新竹市"},{"locationName":"新竹縣"},{"locationName":"苗栗縣"},{"locationName":"臺中市"},{"locationName":"澎湖縣"}]}}}]}}},{"datasetInfo":{"datasetDescription":"濃霧特報","datasetLanguage":"zh-TW","validTime":{"startTime":"2023-04-19 08:44:00","endTime":"2023-04-19 11:00:00"},"issueTime":"2023-04-19 08:40:00","update":"2023-04-19 08:50:01"},"contents":{"content":{"contentLanguage":"zh-TW","contentText":"\\n                今(19)日金門及馬祖易有局部霧或低雲影響能見度，金門已出現能見度不足200公尺的現象，請注意。\\n                "}},"hazardConditions":{"hazards":{"hazard":[{"info":{"language":"zh-TW","phenomena":"濃霧","significance":"特報","affectedAreas":{"location":[{"locationName":"金門縣"}]}}}]}}}]}}';
+        '{"records":{"record":[{"datasetInfo":{"datasetDescription":"豪雨特報","datasetLanguage":"zh-TW","validTime":{"startTime":"2023-04-20 08:37:00","endTime":"2023-04-20 17:00:00"},"issueTime":"2023-04-20 08:35:00","update":"2023-04-20 08:44:44"},"contents":{"content":{"contentLanguage":"zh-TW","contentText":"\n                鋒面影響，今（２０）日苗栗縣山區易有局部豪雨或大豪雨發生的機率，苗栗縣、臺中市、彰化縣亦有局部大雨或豪雨發生的機率，臺南以北地區及澎湖有局部大雨發生，請注意雷擊及強陣風，低窪地區請慎防積水。\n\n\n大豪雨地區：苗栗縣。\n                "}},"hazardConditions":{"hazards":{"hazard":[{"info":{"language":"zh-TW","phenomena":"大豪雨","significance":"特報","affectedAreas":{"location":[{"locationName":"苗栗縣山區"}]}}},{"info":{"language":"zh-TW","phenomena":"豪雨","significance":"特報","affectedAreas":{"location":[{"locationName":"苗栗縣"},{"locationName":"臺中市"},{"locationName":"彰化縣"}]}}},{"info":{"language":"zh-TW","phenomena":"大雨","significance":"特報","affectedAreas":{"location":[{"locationName":"基隆北海岸"},{"locationName":"臺北市"},{"locationName":"新北市"},{"locationName":"桃園市"},{"locationName":"新竹市"},{"locationName":"新竹縣"},{"locationName":"南投縣"},{"locationName":"雲林縣"},{"locationName":"嘉義市"},{"locationName":"嘉義縣"},{"locationName":"臺南市"},{"locationName":"澎湖縣"}]}}}]}}}]}}';
 
     final api =
         'https://opendata.cwb.gov.tw/api/v1/rest/datastore/W-C0033-002?Authorization=$authkey&phenomena=';
@@ -231,19 +230,9 @@ class apiService {
     final jsonMap = Records.fromJson(response);
 
     //fake data
-    // var jsonMap = json.decode(jsonString);
-
-    print('WeatherReport$jsonMap');
-    final descrption = jsonMap.record[0].datasetInfo.datasetDescription;
-    final detailcontent = jsonMap.record[0].contents.content.contentText;
-    final info = jsonMap.record[0].hazardConditions.hazards.hazard[0].info;
-    final nameList = info.affectedAreas.location;
-
-    print(descrption);
-    print(detailcontent);
-    print(nameList);
-
-    // final resultdata = Records.fromJson(jsonMap as Map<String, dynamic>);
+    // var jsons = json.decode(jsonString);
+    // final jsonMap = Records.fromJson(jsons);
+// 
     return jsonMap;
   }
 }

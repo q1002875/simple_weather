@@ -1,3 +1,5 @@
+// ignore_for_file: missing_return
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:simple_weahter/ApiCommand.dart/apiService.dart';
@@ -17,21 +19,20 @@ enum WeatherCondition {
 }
 
 extension WeatherConditionExtension on WeatherCondition {
-  // ignore: missing_return
   Image get conditionImage {
     switch (this) {
       case WeatherCondition.foggy:
         return Image.asset('assets/raining.png');
       case WeatherCondition.heavyRain:
-        return Image.asset('assets/01.png');
+        return Image.asset('assets/raining.png');
       case WeatherCondition.torrentialRain:
-        return Image.asset('assets/02.png');
+        return Image.asset('assets/raining.png');
       case WeatherCondition.heavyTorrentialRain:
-        return Image.asset('assets/03.png');
+        return Image.asset('assets/raining.png');
       case WeatherCondition.superTorrentialRain:
-        return Image.asset('assets/04.png');
+        return Image.asset('assets/raining.png');
       case WeatherCondition.strongWindOnLand:
-        return Image.asset('assets/05.png');
+        return Image.asset('assets/raining.png');
     }
   }
 }
@@ -47,15 +48,6 @@ class AlertPage extends StatefulWidget {
 Future<Records> getAlertReport() async {
   final api = apiService();
   final jsonMap = api.getAlertReport();
-  // print(data.toString());
-//  final descrption = jsonMap[];
-//     final detailcontent = jsonMap.record[0].contents.content.contentText;
-//     final info = jsonMap.record[0].hazardConditions.hazards.hazard[0].info;
-//     final nameList = info.affectedAreas.location;
-
-//     print(descrption);
-//     print(detailcontent);
-//     print(nameList);
   return jsonMap;
 }
 
@@ -63,17 +55,32 @@ class _AlertPageState extends State<AlertPage> {
   @override
   initState() {
     super.initState();
-// getAlertReport();
+    getAlertReport();
   }
 
+  String contentText = '';
+  int _currentIndex = -1;
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight =
         MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
+
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Color.fromARGB(255, 74, 57, 131),
+          actions: [
+            contentText != ''
+                ? IconButton(
+                    icon: Icon(Icons.warning),
+                    onPressed: () {
+                      showCustomDialog(context, '警示', contentText,
+                          Color.fromARGB(255, 255, 236, 67), Colors.black);
+                      // 在這裡添加按鈕點擊後的操作
+                    },
+                  )
+                : Container()
+          ],
           title: Text('各地特報')),
       body: Container(
           decoration: BoxDecoration(
@@ -89,93 +96,74 @@ class _AlertPageState extends State<AlertPage> {
               future: getAlertReport(),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
+                  List<Item> _items = [];
                   final weatherReport = snapshot.data.record;
-                  return Container(
-                    width: screenWidth,
-                    height: screenHeight,
-                    child: ListView.builder(
-                        scrollDirection: Axis.vertical,
-                        itemCount: weatherReport.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final descrption = weatherReport[index]
-                              .datasetInfo
-                              .datasetDescription;
-                          final issueTime =
-                              weatherReport[index].datasetInfo.issueTime;
-                          final detailcontent =
-                              weatherReport[index].contents.content.contentText;
-                          final info = weatherReport[index]
-                              .hazardConditions
-                              .hazards
-                              .hazard[0]
-                              .info;
-                          final nameList = info.affectedAreas.location;
+                  final datas =
+                      weatherReport[0].hazardConditions.hazards.hazard;
+                  final dataInfo = weatherReport[0].datasetInfo;
+                  contentText = weatherReport[0].contents.content.contentText;
+                  final issueTime = dataInfo.issueTime;
 
-                          return Container(
-                              height: (screenHeight / 7.5) * nameList.length,
-                              margin: EdgeInsets.all(15),
-                              decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 18, 54, 96),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Column(
-                                children: [
-                                  Container(
-                                      alignment: Alignment.centerLeft,
-                                      padding:
-                                          EdgeInsets.fromLTRB(20, 10, 0, 0),
-                                      height: screenHeight / 12, // 設置標題視圖的高度
-                                      child: CustomText(
-                                        textContent: descrption,
-                                        textColor: Colors.white,
-                                        fontSize: 22,
-                                      ) // 在這裡放置自定義的標題視圖
+                  datas.forEach((element) {
+                    final headerTitle = element.info.phenomena +
+                        '\n' +
+                        element.info.significance;
+                    final localtions = element.info.affectedAreas.location;
+                    AlertItemWidget alert = AlertItemWidget(
+                      headerTitle: headerTitle,
+                      issueTime: issueTime,
+                      state: element.info.phenomena,
+                    );
+                    WarpAreaWidget warp = WarpAreaWidget(localtions);
+                    Item save = Item(headerValue: alert, expandedValue: warp);
+                    _items.add(save);
+                  });
+                  return SingleChildScrollView(
+                    child: Container(
+                      child: ExpansionPanelList(
+                        animationDuration: Duration(milliseconds: 500),
+                        expansionCallback: (int index, bool isExpanded) {
+                          setState(() {
+                            _currentIndex = isExpanded ? -1 : index;
+                          });
+                        },
+                        children: _items.map<ExpansionPanel>((Item item) {
+                          return ExpansionPanel(
+                            headerBuilder:
+                                (BuildContext context, bool isExpanded) {
+                              return Container(
+                                  color: const Color.fromARGB(255, 74, 57, 131),
+                                  child: Container(
+                                      margin: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: Color.fromARGB(255, 18, 54, 96),
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
-                                  Container(
-                                      width: screenWidth,
-                                      height:
-                                          (screenHeight / 8) * nameList.length,
-                                      child: ListView.builder(
-                                          scrollDirection: Axis.vertical,
-                                          itemCount: nameList.length,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return GestureDetector(
-                                              onTap: () {
-                                                showCustomDialog(
-                                                    context,
-                                                    '警示特報',
-                                                    detailcontent.replaceAll(
-                                                        '\\n', ''),
-                                                    Colors.yellow,
-                                                    Colors.white);
-                                                print(index);
-                                              },
-                                              child: Container(
-                                                margin: EdgeInsets.all(15),
-                                                decoration: BoxDecoration(
-                                                  color: const Color.fromARGB(
-                                                      255, 74, 57, 131),
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                                height: screenHeight / 8,
-                                                width: screenWidth,
-                                                child: AlertItemWidget(
-                                                  localname: nameList[index]
-                                                      .locationName,
-                                                  issueTime: issueTime,
-                                                  data: info,
-                                                  height: screenHeight,
-                                                  width: screenWidth,
-                                                  index: index,
-                                                ),
-                                              ),
-                                            );
-                                          }))
-                                ],
-                              ));
-                        }),
+                                      child: Container(
+                                        height: screenHeight / 8,
+                                        width: screenWidth,
+                                        child: item.headerValue,
+                                      )));
+                            },
+                            body: Container(
+                              margin: EdgeInsets.all(8),
+                              height: (item.expandedValue.data.length) < 9
+                                  ? screenHeight / 10
+                                  : screenHeight / 8,
+                              //  (item.expandedValue.data.length) ,
+                              width: screenWidth,
+                              child: Flex(
+                                  direction: Axis.vertical,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Expanded(flex: 1, child: item.expandedValue)
+                                  ]),
+                            ),
+                            isExpanded: _currentIndex == _items.indexOf(item),
+                          );
+                        }).toList(),
+                      ),
+                    ),
                   );
                 } else if (snapshot.hasError) {
                   print("地方特報頁面錯誤:${snapshot.error}");
@@ -193,9 +181,14 @@ class _AlertPageState extends State<AlertPage> {
                         textColor: Colors.white,
                         fontSize: 22,
                       ));
-                  // Text()
+                }else{
+return Container(
+                      // color: Color.fromARGB(255, 246, 238, 217),
+                      width: screenHeight / 8,
+                      height: screenHeight / 8,
+                      child: CircularProgressIndicator());
                 }
-                return CircularProgressIndicator();
+                
               },
             ),
           )),
@@ -203,22 +196,26 @@ class _AlertPageState extends State<AlertPage> {
   }
 }
 
-class AlertItemWidget extends StatelessWidget {
-  String localname;
-  String issueTime;
+class Item {
+  AlertItemWidget headerValue;
+  WarpAreaWidget expandedValue;
+  Item({this.headerValue, this.expandedValue});
+}
 
-  final Info data;
-  int index;
+class AlertItemWidget extends StatelessWidget {
+  String headerTitle;
+  String issueTime;
+  String state ;
   final double width;
   final double height;
 
-  AlertItemWidget(
-      {this.data,
-      this.height,
-      this.width,
-      this.index,
-      this.localname,
-      this.issueTime});
+  AlertItemWidget({
+    this.headerTitle,
+    this.issueTime,
+    this.state,
+    this.height = 100,
+    this.width = 100,
+  });
 
   // ignore: missing_return
   WeatherCondition showImage(String state) {
@@ -242,9 +239,9 @@ class AlertItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     // final issue = data.;
     String formattedDate =
-        DateFormat('yyyy-MM-dd hh:mm').format(DateTime.parse(issueTime));
+        DateFormat('MM-dd hh:mm').format(DateTime.parse(issueTime));
     // final localname = data.affectedAreas.location[index].locationName;
-    final state = data.phenomena;
+
     return Flex(
       mainAxisAlignment: MainAxisAlignment.center,
       direction: Axis.horizontal,
@@ -257,14 +254,14 @@ class AlertItemWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Flexible(
-                  flex: 1,
+                  flex: 4,
                   child: CustomText(
-                    textContent: '事件時間',
+                    textContent: '時間',
                     textColor: Colors.white,
                     fontSize: 18,
                   )),
               Flexible(
-                  flex: 1,
+                  flex: 6,
                   child: CustomText(
                     textContent: formattedDate,
                     textColor: Colors.white,
@@ -279,7 +276,7 @@ class AlertItemWidget extends StatelessWidget {
           flex: 1,
           child: Container(
             child: CustomText(
-              textContent: localname,
+              textContent: headerTitle,
               textColor: Colors.white,
               fontSize: 20,
             ),
@@ -294,6 +291,36 @@ class AlertItemWidget extends StatelessWidget {
               image: showImage(state).conditionImage,
             ),
           ),
+        )
+      ],
+    );
+  }
+}
+
+class WarpAreaWidget extends StatelessWidget {
+  List<Location> data;
+  WarpAreaWidget(this.data);
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      scrollDirection: Axis.vertical,
+      children: [
+        Container(
+          color: Colors.white,
+          child: Wrap(
+              direction: Axis.horizontal,
+              spacing: 2.0,
+              runSpacing: 4.0,
+              children: data
+                  .map((e) => Chip(
+                        backgroundColor: const Color.fromARGB(255, 74, 57, 131),
+                        label: CustomText(
+                          textContent: e.locationName,
+                          fontSize: 20,
+                          textColor: Colors.white,
+                        ),
+                      ))
+                  .toList()),
         )
       ],
     );

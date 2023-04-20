@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_weahter/ApiCommand.dart/apiService.dart';
-import 'package:simple_weahter/Cloud/Cloud.dart';
+import 'package:simple_weahter/ExtensionToolClass/ShowDialog.dart';
 import '../ApiModel.dart/weathersModel2.dart';
 import '../ExtensionToolClass/CustomText.dart';
 import '../ExtensionToolClass/StorageService.dart';
 import 'homeWidget.dart/countryWeatherHourType.dart';
 import 'homeWidget.dart/countryWeatherState.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 enum WeaterStatusType {
   Wx, //天氣狀態
@@ -47,9 +48,9 @@ Future<List<List<Widget>>> getWeekData(String country) async {
 
 class _HomePageState extends State<HomePage> {
   Future<void> _onRefresh() async {
-    // setState() {
-    //   print('reflash');
-    // }
+    setState() {
+      print('object');
+    }
   }
 
   List<String> options = [
@@ -76,12 +77,42 @@ class _HomePageState extends State<HomePage> {
     '金門縣',
     '連江縣',
   ];
-
+  String local = '';
   @override
   initState() {
     super.initState();
     initializeDateFormatting('zh_Hant');
     _loadCountryName();
+    getLocation(options);
+  }
+
+// ignore: missing_return
+  Future<String> getLocation(List<String> options) async {
+    // 檢查權限
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission != LocationPermission.whileInUse &&
+          permission != LocationPermission.always) {
+        // 沒有權限，不能獲取位置信息
+        return '';
+      }
+    }
+
+    // 獲取當前位置
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    // 獲取地址信息
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
+    // 獲取縣市信息
+    String city = placemarks[0].subAdministrativeArea;
+    if (options.contains(city)) {
+      local = city;
+    } else {
+      return '';
+    }
   }
 
   void _loadCountryName() async {
@@ -118,24 +149,67 @@ class _HomePageState extends State<HomePage> {
                         children: [
                           Container(
                               child: Center(
-                            child: DropdownButton<String>(
-                              dropdownColor: Colors.black26,
-                              value: selectedOption,
-                              items: options.map((String option) {
-                                return DropdownMenuItem<String>(
-                                  value: option,
-                                  child: CustomText(
-                                      textContent: option, fontSize: 24),
-                                );
-                              }).toList(),
-                              onChanged: (String newValue) {
-                                setState(() {
-                                  _saveCountryName(newValue);
-                                  selectedOption = newValue;
-                                });
-                              },
-                            ),
-                          )),
+                                  child: Flex(
+                            direction: Axis.horizontal,
+                            children: [
+                              Stack(
+                                alignment: Alignment.centerRight,
+                                children: [
+                                  Container(
+                                    alignment: Alignment.center,
+                                    width: screenWidth,
+                                    height: 80,
+                                    child: DropdownButton<String>(
+                                      dropdownColor: Colors.black26,
+                                      value: selectedOption,
+                                      items: options.map((String option) {
+                                        return DropdownMenuItem<String>(
+                                          value: option,
+                                          child: CustomText(
+                                              textContent: option,
+                                              fontSize: 30),
+                                        );
+                                      }).toList(),
+                                      onChanged: (String newValue) {
+                                        setState(() {
+                                          _saveCountryName(newValue);
+                                          selectedOption = newValue;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  Positioned(
+                                      child: SizedBox(
+                                          width: 100,
+                                          height: 100,
+                                              child: GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                if (local != '') {
+                                                  _saveCountryName(local);
+                                                  selectedOption = local;
+                                                } else {
+                                                  showCustomDialog(
+                                                      context,
+                                                      '定位錯誤',
+                                                      '請重新檢查定位',
+                                                      Colors.black,
+                                                      Colors.black);
+                                                }
+                                              });
+                                            },
+                                            child: Image.asset(
+                                              'assets/location.png',
+                                              width: 150,
+                                              height: 150,
+                                            ),
+                                          )
+                                              
+                                          ))
+                                ],
+                              ),
+                            ],
+                          ))),
                           Container(
                               width: screenWidth / 1.6,
                               height: screenHeight / 1.8,

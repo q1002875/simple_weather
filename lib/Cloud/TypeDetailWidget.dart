@@ -206,6 +206,9 @@ class returnCloudDataText {
           return '相對濕度過高';
         }
         break;
+      case cloudAllType.UVI:
+        // TODO: Handle this case.
+        break;
     }
   }
 }
