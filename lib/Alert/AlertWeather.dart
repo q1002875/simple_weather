@@ -9,30 +9,103 @@ import 'package:simple_weahter/Home/homeWidget.dart/ListWidget/weatherHourItem.d
 
 import '../ExtensionToolClass/ShowDialog.dart';
 
-enum WeatherCondition {
-  foggy, //   濃霧
-  heavyRain, // 大雨
-  torrentialRain, // 豪雨
-  heavyTorrentialRain, // 大豪雨
-  superTorrentialRain, // 超大豪雨
-  strongWindOnLand, // 陸上強風
+Future<Records> getAlertReport() async {
+  final api = apiService();
+  final jsonMap = api.getAlertReport();
+  return jsonMap;
 }
 
-extension WeatherConditionExtension on WeatherCondition {
-  Image get conditionImage {
-    switch (this) {
-      case WeatherCondition.foggy:
-        return Image.asset('assets/raining.png');
-      case WeatherCondition.heavyRain:
-        return Image.asset('assets/raining.png');
-      case WeatherCondition.torrentialRain:
-        return Image.asset('assets/raining.png');
-      case WeatherCondition.heavyTorrentialRain:
-        return Image.asset('assets/raining.png');
-      case WeatherCondition.superTorrentialRain:
-        return Image.asset('assets/raining.png');
-      case WeatherCondition.strongWindOnLand:
-        return Image.asset('assets/raining.png');
+class AlertItemWidget extends StatelessWidget {
+  String headerTitle;
+  String issueTime;
+  String state;
+  final double width;
+  final double height;
+
+  AlertItemWidget({
+    this.headerTitle,
+    this.issueTime,
+    this.state,
+    this.height = 100,
+    this.width = 100,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // final issue = data.;
+    String formattedDate =
+        DateFormat('MM-dd hh:mm').format(DateTime.parse(issueTime));
+    // final localname = data.affectedAreas.location[index].locationName;
+
+    return Flex(
+      mainAxisAlignment: MainAxisAlignment.center,
+      direction: Axis.horizontal,
+      children: [
+        ///時間
+        Expanded(
+          flex: 1,
+          child: Flex(
+            direction: Axis.vertical,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Flexible(
+                  flex: 4,
+                  child: CustomText(
+                    textContent: '時間',
+                    textColor: Colors.white,
+                    fontSize: 18,
+                  )),
+              Flexible(
+                  flex: 6,
+                  child: CustomText(
+                    textContent: formattedDate,
+                    textColor: Colors.white,
+                    fontSize: 18,
+                  ))
+            ],
+          ),
+        ),
+
+        ///地區
+        Expanded(
+          flex: 1,
+          child: Container(
+            child: CustomText(
+              textContent: headerTitle,
+              textColor: Colors.white,
+              fontSize: 20,
+            ),
+          ),
+        ),
+        //特警狀態
+        Expanded(
+          flex: 1,
+          child: Container(
+            child: ImageTextWidget(
+              text: state,
+              image: showImage(state).conditionImage,
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  // ignore: missing_return
+  WeatherCondition showImage(String state) {
+    switch (state) {
+      case '濃霧':
+        return WeatherCondition.foggy;
+      case '大雨':
+        return WeatherCondition.heavyRain;
+      case '豪雨':
+        return WeatherCondition.torrentialRain;
+      case '大豪雨':
+        return WeatherCondition.heavyTorrentialRain;
+      case '超大豪雨':
+        return WeatherCondition.superTorrentialRain;
+      case '陸上強風':
+        return WeatherCondition.strongWindOnLand;
     }
   }
 }
@@ -45,20 +118,54 @@ class AlertPage extends StatefulWidget {
   _AlertPageState createState() => _AlertPageState();
 }
 
-Future<Records> getAlertReport() async {
-  final api = apiService();
-  final jsonMap = api.getAlertReport();
-  return jsonMap;
+class Item {
+  AlertItemWidget headerValue;
+  WarpAreaWidget expandedValue;
+  Item({this.headerValue, this.expandedValue});
+}
+
+class WarpAreaWidget extends StatelessWidget {
+  List<Location> data;
+  WarpAreaWidget(this.data);
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      scrollDirection: Axis.vertical,
+      children: [
+        Container(
+          color: Colors.white,
+          child: Wrap(
+              direction: Axis.horizontal,
+              spacing: 2.0,
+              runSpacing: 4.0,
+              children: data
+                  .map((e) => Chip(
+                        backgroundColor: const Color.fromARGB(255, 74, 57, 131),
+                        label: CustomText(
+                          textContent: e.locationName,
+                          fontSize: 20,
+                          textColor: Colors.white,
+                        ),
+                      ))
+                  .toList()),
+        )
+      ],
+    );
+  }
+}
+
+enum WeatherCondition {
+  foggy, //   濃霧
+  heavyRain, // 大雨
+  torrentialRain, // 豪雨
+  heavyTorrentialRain, // 大豪雨
+  superTorrentialRain, // 超大豪雨
+  strongWindOnLand, // 陸上強風
 }
 
 class _AlertPageState extends State<AlertPage> {
-  @override
-  initState() {
-    super.initState();
-    getAlertReport();
-  }
-
   String contentText = '';
+
   int _currentIndex = -1;
   @override
   Widget build(BuildContext context) {
@@ -181,148 +288,41 @@ class _AlertPageState extends State<AlertPage> {
                         textColor: Colors.white,
                         fontSize: 22,
                       ));
-                }else{
-return Container(
-                      // color: Color.fromARGB(255, 246, 238, 217),
-                      width: screenHeight / 8,
+                } else if (snapshot.connectionState ==
+                    ConnectionState.waiting) {
+                  return Container(
+                      width: 10,
                       height: screenHeight / 8,
                       child: CircularProgressIndicator());
                 }
-                
               },
             ),
           )),
     );
   }
+
+  @override
+  initState() {
+    super.initState();
+    getAlertReport();
+  }
 }
 
-class Item {
-  AlertItemWidget headerValue;
-  WarpAreaWidget expandedValue;
-  Item({this.headerValue, this.expandedValue});
-}
-
-class AlertItemWidget extends StatelessWidget {
-  String headerTitle;
-  String issueTime;
-  String state ;
-  final double width;
-  final double height;
-
-  AlertItemWidget({
-    this.headerTitle,
-    this.issueTime,
-    this.state,
-    this.height = 100,
-    this.width = 100,
-  });
-
-  // ignore: missing_return
-  WeatherCondition showImage(String state) {
-    switch (state) {
-      case '濃霧':
-        return WeatherCondition.foggy;
-      case '大雨':
-        return WeatherCondition.heavyRain;
-      case '豪雨':
-        return WeatherCondition.torrentialRain;
-      case '大豪雨':
-        return WeatherCondition.heavyTorrentialRain;
-      case '超大豪雨':
-        return WeatherCondition.superTorrentialRain;
-      case '陸上強風':
-        return WeatherCondition.strongWindOnLand;
+extension WeatherConditionExtension on WeatherCondition {
+  Image get conditionImage {
+    switch (this) {
+      case WeatherCondition.foggy:
+        return Image.asset('assets/raining.png');
+      case WeatherCondition.heavyRain:
+        return Image.asset('assets/raining.png');
+      case WeatherCondition.torrentialRain:
+        return Image.asset('assets/raining.png');
+      case WeatherCondition.heavyTorrentialRain:
+        return Image.asset('assets/raining.png');
+      case WeatherCondition.superTorrentialRain:
+        return Image.asset('assets/raining.png');
+      case WeatherCondition.strongWindOnLand:
+        return Image.asset('assets/raining.png');
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // final issue = data.;
-    String formattedDate =
-        DateFormat('MM-dd hh:mm').format(DateTime.parse(issueTime));
-    // final localname = data.affectedAreas.location[index].locationName;
-
-    return Flex(
-      mainAxisAlignment: MainAxisAlignment.center,
-      direction: Axis.horizontal,
-      children: [
-        ///時間
-        Expanded(
-          flex: 1,
-          child: Flex(
-            direction: Axis.vertical,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Flexible(
-                  flex: 4,
-                  child: CustomText(
-                    textContent: '時間',
-                    textColor: Colors.white,
-                    fontSize: 18,
-                  )),
-              Flexible(
-                  flex: 6,
-                  child: CustomText(
-                    textContent: formattedDate,
-                    textColor: Colors.white,
-                    fontSize: 18,
-                  ))
-            ],
-          ),
-        ),
-
-        ///地區
-        Expanded(
-          flex: 1,
-          child: Container(
-            child: CustomText(
-              textContent: headerTitle,
-              textColor: Colors.white,
-              fontSize: 20,
-            ),
-          ),
-        ),
-        //特警狀態
-        Expanded(
-          flex: 1,
-          child: Container(
-            child: ImageTextWidget(
-              text: state,
-              image: showImage(state).conditionImage,
-            ),
-          ),
-        )
-      ],
-    );
-  }
-}
-
-class WarpAreaWidget extends StatelessWidget {
-  List<Location> data;
-  WarpAreaWidget(this.data);
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      scrollDirection: Axis.vertical,
-      children: [
-        Container(
-          color: Colors.white,
-          child: Wrap(
-              direction: Axis.horizontal,
-              spacing: 2.0,
-              runSpacing: 4.0,
-              children: data
-                  .map((e) => Chip(
-                        backgroundColor: const Color.fromARGB(255, 74, 57, 131),
-                        label: CustomText(
-                          textContent: e.locationName,
-                          fontSize: 20,
-                          textColor: Colors.white,
-                        ),
-                      ))
-                  .toList()),
-        )
-      ],
-    );
   }
 }

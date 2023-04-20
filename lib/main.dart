@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:simple_weahter/Home/homePage.dart';
+
 import 'Alert/AlertWeather.dart';
 import 'Cloud/Cloud.dart';
-import 'Home/homeWidget.dart/ListWidget/BodyTempwidget.dart';
+import 'Setting/SettingPage.dart';
 
 void main() {
   runApp(MyApp());
@@ -22,16 +23,15 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
   final String title;
+
+  MyHomePage({Key key, this.title}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 0;
   static const List<Widget> _widgetOptions = <Widget>[
     HomePage(title: "1"),
     // const MyModalPage(),
@@ -39,14 +39,9 @@ class _MyHomePageState extends State<MyHomePage> {
     AlertPage(
       title: '',
     ),
-    MyExpansionPanel(),
+    SettingPage(),
   ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -87,5 +82,11 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 }
