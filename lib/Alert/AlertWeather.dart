@@ -202,7 +202,7 @@ class _AlertPageState extends State<AlertPage> {
             child: FutureBuilder<Records>(
               future: getAlertReport(),
               builder: (context, snapshot) {
-                if (snapshot.hasData) {
+                if (snapshot.hasData && snapshot.data.record.length != 0) {
                   List<Item> _items = [];
                   final weatherReport = snapshot.data.record;
                   final datas =
@@ -272,7 +272,7 @@ class _AlertPageState extends State<AlertPage> {
                       ),
                     ),
                   );
-                } else if (snapshot.hasError) {
+                } else if (snapshot.hasError ) {
                   print("地方特報頁面錯誤:${snapshot.error}");
                   return Container(
                       alignment: Alignment.center,
@@ -294,6 +294,21 @@ class _AlertPageState extends State<AlertPage> {
                       width: 10,
                       height: screenHeight / 8,
                       child: CircularProgressIndicator());
+                }else{
+                     return Container(
+                      alignment: Alignment.center,
+                      margin: EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 74, 57, 131),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      height: screenHeight / 8,
+                      width: screenWidth,
+                      child: CustomText(
+                        textContent: '今日無地方特報',
+                        textColor: Colors.white,
+                        fontSize: 22,
+                      ));
                 }
               },
             ),
@@ -304,7 +319,8 @@ class _AlertPageState extends State<AlertPage> {
   @override
   initState() {
     super.initState();
-    getAlertReport();
+    // getAlertReport();
+
   }
 }
 

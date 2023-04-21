@@ -46,7 +46,8 @@ class UVIWidget extends StatelessWidget {
 // ignore: must_be_immutable
 class GradientBar extends StatelessWidget {
   int whiteDotPositions;
-  GradientBar({this.whiteDotPositions}) {
+  double width ;
+  GradientBar({this.whiteDotPositions,this.width}) {
     if (whiteDotPositions < 1) {
       this.whiteDotPositions = 1;
     } else if (whiteDotPositions > 10) {
@@ -58,7 +59,7 @@ class GradientBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     return Container(
-      width: screenWidth / 3,
+      // width: width,
       height: 10.0,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.0),

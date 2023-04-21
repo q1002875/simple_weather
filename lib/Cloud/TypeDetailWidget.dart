@@ -27,11 +27,13 @@ class cloudDetailText extends StatelessWidget {
   final bool select;
   final cloudAllType type;
   final double screenheight;
+  final double screenwidth;
   cloudDetailText(
       {this.data,
       this.select,
       this.type = cloudAllType.UVI,
-      this.screenheight});
+      this.screenheight,
+      this.screenwidth});
 
   @override
   Widget build(BuildContext context) {
@@ -45,16 +47,16 @@ class cloudDetailText extends StatelessWidget {
     String showTypetext() {
       switch (type) {
         case cloudAllType.UVI:
-          return '$property: $value';
+          return '$value';
         case cloudAllType.SUN:
           List<String> substrings = value.split("-");
           return substrings[0];
         case cloudAllType.WD:
           return value;
         case cloudAllType.T:
-          return '$value° $property';
+          return '$value° ';
         case cloudAllType.Td:
-          return '$value° $property';
+          return '$value° ';
         case cloudAllType.RH:
           return '$value $property';
       }
@@ -62,77 +64,87 @@ class cloudDetailText extends StatelessWidget {
 
     return Column(
       children: [
-        SizedBox(
-          height: 3,
-        ),
         Container(
+            color: Color.fromARGB(255, 74, 57, 131),
+            width: double.infinity,
             height: screenheight,
             child: type != cloudAllType.WD
-                ? Row(
+                ? Flex(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    direction: Axis.horizontal,
                     children: [
                       Flexible(
-                        flex: 3,
-                        child: CustomText(
-                          // align: TextAlign.left,
-                          textColor: select ? Colors.yellow : Colors.white,
-                          textContent: '週$day',
-                          fontSize: 22,
-                        ),
-                      ),
+                          flex: 2,
+                          child: Container(
+                            width: double.maxFinite,
+                            child: CustomText(
+                              textColor: select ? Colors.yellow : Colors.white,
+                              textContent: '週$day',
+                              fontSize: 18,
+                            ),
+                          )),
                       Flexible(
-                        flex: 3,
-                        child: CustomText(
-                          textColor: select ? Colors.yellow : Colors.white,
-                          textContent: showTypetext(),
-                          fontSize: 22,
-                        ),
-                      ),
-                      Expanded(
-                        flex: type == cloudAllType.UVI ? 5 : 3,
-                        child: type == cloudAllType.UVI
-                            ? Container(
-                                margin: EdgeInsets.fromLTRB(10, 15, 10, 0),
-                                child: GradientBar(
-                                    whiteDotPositions: int.parse(value)),
-                              )
-                            : CustomText(
-                                textColor:
-                                    select ? Colors.yellow : Colors.white,
-                                textContent: detailtext,
-                                fontSize: 22,
-                              ),
-                      ),
+                          flex: 2,
+                          child: Container(
+                            width: double.maxFinite,
+                            child: CustomText(
+                              textColor: select ? Colors.yellow : Colors.white,
+                              textContent: showTypetext(),
+                              fontSize: 18,
+                            ),
+                          )),
+                      Flexible(
+                          flex: 4,
+                          child: Container(
+                            width: double.maxFinite,
+                            // color: Colors.amber,
+                            child: type == cloudAllType.UVI
+                                ? Container(
+                                    margin: EdgeInsets.fromLTRB(10, 15, 10, 0),
+                                    child: GradientBar(
+                                        whiteDotPositions: int.parse(value)),
+                                  )
+                                : CustomText(
+                                    textColor:
+                                        select ? Colors.yellow : Colors.white,
+                                    textContent: detailtext,
+                                    fontSize: 18,
+                                  ),
+                          )),
                     ],
                   )
-                : Row(
+                : Flex(
+                    direction: Axis.horizontal,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Flexible(
-                        flex: 3,
-                        child: CustomText(
-                          // align: TextAlign.left,
+                        flex: 1,
+                        child: 
+                        Container(
+                            width: double.maxFinite,
+                          child: CustomText(
                           textColor: select ? Colors.yellow : Colors.white,
                           textContent: '週$day',
-                          fontSize: 22,
-                        ),
+                          fontSize: 18,
+                        ),)
                       ),
                       Flexible(
-                        flex: 3,
-                        child: CustomText(
-                          textColor: select ? Colors.yellow : Colors.white,
-                          textContent: showTypetext(),
-                          fontSize: 22,
-                        ),
+                        flex: 1,
+                         child: Container(
+                          width: double.maxFinite,
+                          child: CustomText(
+                              textColor: select ? Colors.yellow : Colors.white,
+                              textContent: showTypetext(),
+                              fontSize: 18,
+                            ),
+                          )
+                        
                       ),
                     ],
                   )),
-        SizedBox(
-          height: 3,
-        ),
-        Container(
-          height: 2,
-          width: screenheight * 8.5,
+
+        Divider(
+          height: 5,
           color: Colors.white,
         )
       ],
@@ -227,18 +239,12 @@ class _MyModalPageState extends State<MyModalPage> {
       if (widget.type == cloudAllType.WD || widget.type == cloudAllType.SUN) {
         chartdata.add(ChartData(value.weekday, 0, null));
       } else {
-        if (value.select) {
-          chartdata
-              .add(ChartData(value.weekday, int.parse(value.value ?? 0), key));
-        } else {
-          chartdata
-              .add(ChartData(value.weekday, int.parse(value.value ?? 0), null));
-        }
+        value.select
+            ? chartdata
+                .add(ChartData(value.weekday, int.parse(value.value ?? 0), key))
+            : chartdata.add(
+                ChartData(value.weekday, int.parse(value.value ?? 0), null));
       }
-    });
-
-    chartdata.forEach((element) {
-      print(element.value.toString());
     });
 
     return Scaffold(
@@ -353,53 +359,95 @@ class _MyModalPageState extends State<MyModalPage> {
                           ),
                           child: Flex(
                             direction: Axis.vertical,
-                            children: [
-                              widget.type == cloudAllType.SUN
-                                  ? Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        Flexible(
-                                          flex: 3,
-                                          child: CustomText(
-                                            textColor: Colors.white,
-                                            textContent: '    ',
-                                            fontSize: 22,
-                                          ),
+                            children: [widget.type != cloudAllType.WD
+                              ?Flex(
+                                // mainAxisSize:MainAxisSize.max,
+                                direction: Axis.horizontal,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Flexible(
+                                      flex: 2,
+                                      child: Container(
+                                        width: double.maxFinite,
+                                        color: Color.fromARGB(0, 96, 125, 139),
+                                        child: CustomText(
+                                          textColor: Colors.white,
+                                          textContent: '',
+                                          fontSize: 20,
                                         ),
-                                        Flexible(
-                                          flex: 3,
-                                          child: CustomText(
-                                            textColor: Colors.white,
-                                            textContent: '  日出',
-                                            fontSize: 22,
-                                          ),
+                                      )),
+                                  Flexible(
+                                      flex: 2,
+                                      child: Container(
+                                        width: double.maxFinite,
+                                        color: Color.fromARGB(0, 176, 190, 197),
+                                        child: CustomText(
+                                          textColor: Colors.white,
+                                          textContent: widget
+                                              .type.detailHeaderFirstTitle,
+                                          fontSize: 20,
                                         ),
-                                        Expanded(
-                                          flex: 3,
-                                          child: CustomText(
-                                            textColor: Colors.white,
-                                            textContent: ' 日落',
-                                            fontSize: 22,
-                                          ),
+                                      )),
+                                  Expanded(
+                                      flex: 4,
+                                      child: Container(
+                                        width: double.maxFinite,
+                                        color: Color.fromARGB(0, 144, 164, 174),
+                                        child: CustomText(
+                                          textColor: Colors.white,
+                                          textContent: widget
+                                              .type.detailHeaderSecondTitle,
+                                          fontSize: 20,
                                         ),
-                                      ],
-                                    )
-                                  : SizedBox(
-                                      height: 1,
-                                      width: 1,
-                                    ),
+                                      )),
+                                ],
+                              )
+                              :Flex(
+                                // mainAxisSize:MainAxisSize.max,
+                                direction: Axis.horizontal,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Flexible(
+                                      flex: 1,
+                                      child: Container(
+                                        width: double.maxFinite,
+                                        color: Color.fromARGB(0, 96, 125, 139),
+                                        child: CustomText(
+                                          textColor: Colors.white,
+                                          textContent: '',
+                                          fontSize: 20,
+                                        ),
+                                      )),
+
+                                  Flexible(
+                                      flex: 1,
+                                      child: Container(
+                                        width: double.maxFinite,
+                                        color: Color.fromARGB(0, 144, 164, 174),
+                                        child: CustomText(
+                                          textColor: Colors.white,
+                                          textContent: widget
+                                              .type.detailHeaderSecondTitle,
+                                          fontSize: 20,
+                                        ),
+                                      )),
+                                ],
+                              ),
                               Flexible(
                                 flex: 8,
                                 child: ListView.builder(
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     return cloudDetailText(
-                                        data: data[index],
-                                        select: data[index].select,
-                                        type: widget.type,
-                                        screenheight: ((screenWidth / 1.3) /
-                                            data.length));
+                                      data: data[index],
+                                      select: data[index].select,
+                                      type: widget.type,
+                                      screenheight:
+                                          ((screenWidth / 1.3) / data.length),
+                                      screenwidth: double.infinity,
+                                    );
                                   },
                                   itemCount: data.length,
                                 ),
@@ -415,7 +463,7 @@ class _MyModalPageState extends State<MyModalPage> {
 
     final clouddata = await api.getCloudWeekDetailData(country, type);
     print(clouddata.toString());
-    clouddata.forEach((element) {
+    clouddata.asMap().forEach((key,element) {
       element.elementValue.forEach((e) {
         print(e.value + e.measures);
         final daystartTime = element.startTime.day;
@@ -428,7 +476,7 @@ class _MyModalPageState extends State<MyModalPage> {
             value: e.value,
             daynumber: '$formattedDate',
             weekday: '$dayendTime',
-            select: false));
+            select: key == 0 ? true:false));
       });
     });
     //去除重複的值
@@ -455,7 +503,7 @@ class _MyModalPageState extends State<MyModalPage> {
 
     List<SunDataTime> rise = await api.getSunWeekRiseSetTime(country);
 
-    rise.forEach((element) {
+    rise.asMap().forEach((key,element) {
       DateTime date = DateTime.parse(element.date);
       String formattedDate =
           DateFormat('EEEE', 'zh_Hant').format(date).replaceAll('星期', '');
@@ -467,7 +515,7 @@ class _MyModalPageState extends State<MyModalPage> {
           value: '$sunrise-$sunset',
           daynumber: formattedDate,
           weekday: '$day',
-          select: false));
+          select: key == 0 ?true :false));
     });
     setState(() {
       data = datacloud;

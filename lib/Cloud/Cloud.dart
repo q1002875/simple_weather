@@ -66,6 +66,52 @@ extension cloudAllTypeExtension on cloudAllType {
     }
   }
 
+   String get detailHeaderFirstTitle {
+    switch (this) {
+      case cloudAllType.UVI:
+        return '紫外線指數';
+        break;
+      case cloudAllType.SUN:
+        return '日出';
+        break;
+      case cloudAllType.WD:
+        return '';
+        break;
+      case cloudAllType.T:
+        return '攝氏度';
+        break;
+      case cloudAllType.Td:
+        return '攝氏度';
+        break;
+      case cloudAllType.RH:
+        return '百分比';
+        break;
+    }
+  }
+
+   String get detailHeaderSecondTitle {
+    switch (this) {
+      case cloudAllType.UVI:
+        return '詳細內容';
+        break;
+      case cloudAllType.SUN:
+        return '日落';
+        break;
+      case cloudAllType.WD:
+        return '風向';
+        break;
+      case cloudAllType.T:
+        return '詳細內容';
+        break;
+      case cloudAllType.Td:
+        return '詳細內容';
+        break;
+      case cloudAllType.RH:
+        return '詳細內容';
+        break;
+    }
+  }
+
   String get property {
     switch (this) {
       case cloudAllType.UVI:
@@ -142,7 +188,7 @@ class _CloudPageState extends State<CloudPage> {
                 final rhData = snapshot.data['RH'];
                 final tdData = snapshot.data['Td'];
                 final tData = snapshot.data['T'];
-                final wind = cloudAllType.UVI.name;
+                final wind = cloudAllType.WD.name;
                 return ListView(
                   scrollDirection: Axis.vertical,
                   children: [
@@ -264,7 +310,7 @@ class _CloudPageState extends State<CloudPage> {
                       children: [
                         MyItem(
                             types: cloudAllType.WD,
-                            text: '$wind' + '$wdData',
+                            text: '$wind ' + ' $wdData',
                             view: CompassWidget(
                                 size: screenHeight / 4,
                                 direction: ParseCompassDirection.fromString(
@@ -435,7 +481,6 @@ class RHTdwidget extends StatelessWidget {
         ),
         Container(
           width: screenWidth / 3 - 5,
-          //  color: Colors.yellow,
           child: CustomText(
               textContent: text ?? '', fontSize: 40, align: TextAlign.left),
         ),
@@ -443,10 +488,14 @@ class RHTdwidget extends StatelessWidget {
           height: 10,
         ),
         Expanded(
-          child: CustomText(
-              textContent: getrh(value, type) ?? ' ',
-              fontSize: 15,
-              align: TextAlign.left),
+          child: ListView(
+            scrollDirection: Axis.vertical,
+            children: [
+            CustomText(
+                textContent: getrh(value, type) ?? ' ',
+                fontSize: 15,
+                align: TextAlign.left),
+            ],)
         )
       ],
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:localization/localization.dart';
 import 'package:simple_weahter/ApiCommand.dart/apiService.dart';
 import 'package:simple_weahter/ExtensionToolClass/ShowDialog.dart';
 import '../ApiModel.dart/weathersModel2.dart';
@@ -47,6 +48,8 @@ Future<List<List<Widget>>> getWeekData(String country) async {
 // ignore: missing_return
 
 class _HomePageState extends State<HomePage> {
+
+
   Future<void> _onRefresh() async {
     setState() {
       print('object');
@@ -166,7 +169,7 @@ class _HomePageState extends State<HomePage> {
                                         return DropdownMenuItem<String>(
                                           value: option,
                                           child: CustomText(
-                                              textContent: option,
+                                              textContent: option.i18n(),
                                               fontSize: 30),
                                         );
                                       }).toList(),

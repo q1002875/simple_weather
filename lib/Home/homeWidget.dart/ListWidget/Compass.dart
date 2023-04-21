@@ -61,24 +61,24 @@ class CompassWidget extends StatelessWidget {
             ),
             Positioned(
               left: radius - textSize / 2,
-              top: 0,
+              top: 5,
               child: CustomText(textContent: '北',textColor: Colors.white,fontSize: 24,)
             ),
             Positioned(
               left: radius - textSize / 2,
-              bottom: 0,
+              bottom: 5,
               child: CustomText(textContent: '南',textColor: Colors.white,fontSize: 24,)
        
             ),
             Positioned(
-              left: textSize / 2,
-              top: radius - textSize,
+              left: 8,
+              top: radius - textSize / 2,
               child: CustomText(textContent: '西',textColor: Colors.white,fontSize: 24,)
    
             ),
             Positioned(
-              right: textSize / 2,
-              top: radius - textSize,
+              right:8,
+              top: radius - textSize / 2,
               child: CustomText(textContent: '東',textColor: Colors.white,fontSize: 24,)
             ),
             Container(
@@ -123,7 +123,7 @@ class ClockHand extends StatelessWidget {
   final double size;
   final Color color;
 
-  ClockHand({this.angle, this.size = 1, this.color = Colors.redAccent});
+  ClockHand({this.angle, this.size = 1, this.color = const Color.fromARGB(255, 147, 152, 187)});
 
   @override
   Widget build(BuildContext context) {
@@ -143,17 +143,30 @@ class _HandPainter extends CustomPainter {
   _HandPainter(this.color);
 
   @override
+ 
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final paint = Paint()
       ..color = color
-      ..strokeWidth = 8
-
+      ..strokeWidth = 12
       ..strokeCap = StrokeCap.round;
 
-    canvas.drawLine(center, center.translate(0, -size.width / 5), paint);
-  }
+    // 計算指針端點的位置
+    final endPoint = center.translate(0, -size.width / 5);
 
+    // 計算箭頭三角形的三個點的位置
+    final arrowWidth = size.width / 20;
+    final arrowHeight = size.width / 10;
+    final arrowPath = Path()
+      ..moveTo(endPoint.dx - arrowWidth / 2, endPoint.dy)
+      ..lineTo(endPoint.dx + arrowWidth / 2, endPoint.dy)
+      ..lineTo(endPoint.dx, endPoint.dy - arrowHeight)
+      ..close();
+
+    // 繪製指針和箭頭
+    canvas.drawLine(center, endPoint, paint);
+    canvas.drawPath(arrowPath, paint);
+  }
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => true;
 }

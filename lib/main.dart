@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:localization/localization.dart';
 import 'package:simple_weahter/Home/homePage.dart';
 
 import 'Alert/AlertWeather.dart';
@@ -45,7 +47,35 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    LocalJsonLocalization.delegate.directories = ['lib/i18n'];
+    return MaterialApp(
+        supportedLocales: [
+          Locale('en', 'US'),
+          Locale('zh', 'Hant'),
+        ],
+        localizationsDelegates: [
+          // delegate from flutter_localization
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          // delegate from localization package.
+          LocalJsonLocalization.delegate,
+        ],
+        localeResolutionCallback: (locale, supportedLocales) {
+          if (supportedLocales.contains(locale)) {
+          
+            return locale;
+          }
+          // define pt_BR as default when de language code is 'pt'
+          if (locale?.languageCode == 'zh') {
+            return Locale('zh', 'Hant');
+          }
+            print('語言' + locale?.languageCode);
+          //  return Locale('zh', 'Hant');
+          // default language
+          return Locale('en', 'US');
+        },
+      home:   Scaffold(
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
@@ -81,7 +111,11 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-    );
+    ));
+    
+    
+    
+   
   }
 
   void _onItemTapped(int index) {
