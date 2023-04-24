@@ -47,8 +47,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+   //  final localeProvider = Provider.of<LocaleProvider>(context);
     LocalJsonLocalization.delegate.directories = ['lib/i18n'];
-    return MaterialApp(
+    return 
+    
+  
+    MaterialApp(
         supportedLocales: [
           Locale('en', 'US'),
           Locale('zh', 'Hant'),
@@ -61,18 +65,15 @@ class _MyHomePageState extends State<MyHomePage> {
           // delegate from localization package.
           LocalJsonLocalization.delegate,
         ],
+        locale: Locale('zh', 'Hant'),
         localeResolutionCallback: (locale, supportedLocales) {
           if (supportedLocales.contains(locale)) {
-          
             return locale;
           }
-          // define pt_BR as default when de language code is 'pt'
           if (locale?.languageCode == 'zh') {
             return Locale('zh', 'Hant');
           }
             print('語言' + locale?.languageCode);
-          //  return Locale('zh', 'Hant');
-          // default language
           return Locale('en', 'US');
         },
       home:   Scaffold(

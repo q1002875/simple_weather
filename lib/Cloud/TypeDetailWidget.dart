@@ -193,6 +193,8 @@ class returnCloudDataText {
           return '';
         }
         break;
+
+
       case cloudAllType.Td:
         if (temp <= 15) {
           return '相對濕度較低';
@@ -207,6 +209,8 @@ class returnCloudDataText {
         } else {
           return '';
         }
+
+
 
         break;
       case cloudAllType.RH:

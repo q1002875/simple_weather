@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:localization/localization.dart';
 import 'package:simple_weahter/ExtensionToolClass/CustomText.dart';
 
 class ImageTextWidget extends StatelessWidget {
@@ -15,7 +16,7 @@ class ImageTextWidget extends StatelessWidget {
       children: [
         SizedBox(height: 5.0),
         Expanded(flex: 1, child:  image != null ? image : Image.asset('assets/raining.png')),
-        Expanded(flex: 1, child:  CustomText(textContent: text, fontSize: 14,textColor: textcolor!= null ?textcolor :Color.fromARGB(255, 255, 255, 255) ))
+        Expanded(flex: 1, child:  CustomText(textContent: text.i18n(), fontSize: 14,textColor: textcolor!= null ?textcolor :Color.fromARGB(255, 255, 255, 255) ))
       ],
     );
 

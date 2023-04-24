@@ -245,7 +245,7 @@ class _HomePageState extends State<HomePage> {
                               child: Column(
                                 children: [
                                   CustomText(
-                                    textContent: ' 一週天氣預報',
+                                    textContent:'一週天氣預報',
                                     fontSize: 20,
                                   ),
                                   SizedBox(
@@ -270,7 +270,7 @@ class _HomePageState extends State<HomePage> {
                                                 height: 5,
                                               ),
                                               CustomText(
-                                                textContent: ' 一週體感預報',
+                                                textContent: '一週體感預報',
                                                 fontSize: 20,
                                               ),
                                               SizedBox(

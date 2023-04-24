@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:localization/localization.dart';
 import 'package:simple_weahter/ExtensionToolClass/CustomText.dart';
 import '../ApiCommand.dart/apiService.dart';
 import '../ApiModel.dart/weathersModel2.dart';
@@ -216,7 +217,7 @@ class _CloudPageState extends State<CloudPage> {
                                     .weatherElements[2].times[0].parameterName;
                                 return Container(
                                     child: CustomText(
-                                  textContent: '$temperature° | $weatherStatus',
+                                  textContent: '$temperature° | ${weatherStatus.i18n()}',
                                   align: TextAlign.center,
                                   fontSize: 20,
                                   textColor: Colors.white,
@@ -310,7 +311,7 @@ class _CloudPageState extends State<CloudPage> {
                       children: [
                         MyItem(
                             types: cloudAllType.WD,
-                            text: '$wind ' + ' $wdData',
+                            text:wind,
                             view: CompassWidget(
                                 size: screenHeight / 4,
                                 direction: ParseCompassDirection.fromString(
@@ -439,6 +440,8 @@ class RHTdwidget extends StatelessWidget {
         } else {
           return '';
         }
+
+
         break;
       case cloudType.Td:
         if (temp <= 15) {
@@ -454,6 +457,7 @@ class RHTdwidget extends StatelessWidget {
         } else {
           return '';
         }
+
 
         break;
       case cloudType.RH:

@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:localization/localization.dart';
 import 'package:simple_weahter/ExtensionToolClass/HttpServer/Httpserver.dart';
 import '../ApiModel.dart/sunRiseSetModel.dart';
 import '../ApiModel.dart/weatherAlertModel.dart';
@@ -82,7 +83,7 @@ class apiService {
         .map((w) => ImageTextWidget(
             image: Image.asset('assets/${w.elementValue[1].value}.png'),
             text:
-                '${DateFormat('EEEE', 'zh_Hant').format(w.startTime)}\n${w.elementValue[0].value}'))
+                '${DateFormat('EEEE', 'zh_Hant').format(w.startTime).i18n()}\n${w.elementValue[0].value}'))
         .toList();
     //where 過濾出t.startTime.hour == 18 && t.endTime.hour == 6的物件
     final matItem = minT.time
@@ -98,7 +99,7 @@ class apiService {
         .map((t) => ImageTextWidget(
             image: Image.asset('assets/bodytemp.png'),
             text:
-                '${DateFormat('EEEE', 'zh_Hant').format(t.startTime)}\n${t.elementValue[0].value}',
+                '${DateFormat('EEEE', 'zh_Hant').format(t.startTime).i18n()}\n${t.elementValue[0].value}',
             textcolor: Colors.yellow))
         .toList();
 
@@ -157,9 +158,7 @@ class apiService {
                   //今日資料
                   cloudforwidgets['UVI'] = UVIWidget(
                       textfirst: element.elementValue[1].value,
-                      textsecond: element.elementValue[0].measures +
-                          ':' +
-                          element.elementValue[0].value,
+                      textsecond:  '${element.elementValue[0].measures.i18n()}: ${element.elementValue[0].value}',
                       uviLevel: element.elementValue[0].value)
                 }
             },

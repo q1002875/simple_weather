@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:localization/localization.dart';
 
 class CustomText extends StatelessWidget {
   final String textContent;
@@ -16,7 +17,7 @@ class CustomText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      textContent,
+      textContent.i18n(),
       textAlign: align,
       
       style: TextStyle(
