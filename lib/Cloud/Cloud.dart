@@ -1,150 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:localization/localization.dart';
 import 'package:simple_weahter/ExtensionToolClass/CustomText.dart';
+
 import '../ApiCommand.dart/apiService.dart';
 import '../ApiModel.dart/weathersModel2.dart';
 import '../Home/homePage.dart';
 import '../Home/homeWidget.dart/ListWidget/Compass.dart';
 import 'TypeDetailWidget.dart';
 
-///////////////////////result week get
-enum cloudType { T, Td, RH }
-
-// ignore: camel_case_types
-enum cloudAllType {
-  UVI,
-  SUN,
-  WD,
-  T,
-  Td,
-  RH,
-}
-
-extension cloudAllTypeExtension on cloudAllType {
-  String get Englishname {
-    switch (this) {
-      case cloudAllType.UVI:
-        return 'UVI';
-        break;
-      case cloudAllType.SUN:
-        return '日出日落';
-        break;
-      case cloudAllType.WD:
-        return 'WD';
-        break;
-      case cloudAllType.T:
-        return 'T';
-        break;
-      case cloudAllType.Td:
-        return 'Td';
-        break;
-      case cloudAllType.RH:
-        return 'RH';
-        break;
-    }
-  }
-
-  String get name {
-    switch (this) {
-      case cloudAllType.UVI:
-        return '紫外線';
-        break;
-      case cloudAllType.SUN:
-        return '日出日落';
-        break;
-      case cloudAllType.WD:
-        return '風向';
-        break;
-      case cloudAllType.T:
-        return '平均溫度';
-        break;
-      case cloudAllType.Td:
-        return '露點溫度';
-        break;
-      case cloudAllType.RH:
-        return '濕度';
-        break;
-    }
-  }
-
-   String get detailHeaderFirstTitle {
-    switch (this) {
-      case cloudAllType.UVI:
-        return '紫外線指數';
-        break;
-      case cloudAllType.SUN:
-        return '日出';
-        break;
-      case cloudAllType.WD:
-        return '';
-        break;
-      case cloudAllType.T:
-        return '攝氏度';
-        break;
-      case cloudAllType.Td:
-        return '攝氏度';
-        break;
-      case cloudAllType.RH:
-        return '百分比';
-        break;
-    }
-  }
-
-   String get detailHeaderSecondTitle {
-    switch (this) {
-      case cloudAllType.UVI:
-        return '詳細內容';
-        break;
-      case cloudAllType.SUN:
-        return '日落';
-        break;
-      case cloudAllType.WD:
-        return '風向';
-        break;
-      case cloudAllType.T:
-        return '詳細內容';
-        break;
-      case cloudAllType.Td:
-        return '詳細內容';
-        break;
-      case cloudAllType.RH:
-        return '詳細內容';
-        break;
-    }
-  }
-
-  String get property {
-    switch (this) {
-      case cloudAllType.UVI:
-        return '紫外線指數';
-        break;
-      case cloudAllType.SUN:
-        return '攝氏度';
-        break;
-      case cloudAllType.WD:
-        return '風向';
-        break;
-      case cloudAllType.T:
-        return '攝氏度';
-        break;
-      case cloudAllType.Td:
-        return '攝氏度';
-        break;
-      case cloudAllType.RH:
-        return '%';
-        break;
-    }
-  }
-}
-
-class CloudPage extends StatefulWidget {
-  const CloudPage({this.title});
-  final String title;
-  @override
-  _CloudPageState createState() => _CloudPageState();
-}
-
 final api = apiService();
+
 // ignore: missing_return
 Future<Map<String, dynamic>> getData(String country) async {
   final countrydata = await api.getCloudData(country);
@@ -157,12 +22,206 @@ Future<List<String>> getSunRiseSetData(String country) async {
   return countrydata;
 }
 
-class _CloudPageState extends State<CloudPage> {
+// ignore: camel_case_types
+enum cloudAllType {
+  UVI,
+  SUN,
+  WD,
+  T,
+  Td,
+  RH,
+}
+
+class CloudPage extends StatefulWidget {
+  final String title;
+  const CloudPage({this.title});
   @override
-  initState() {
-    super.initState();
+  _CloudPageState createState() => _CloudPageState();
+}
+
+///////////////////////result week get
+enum cloudType { T, Td, RH }
+
+class CustomPageRoute<T> extends PageRoute<T> {
+  final WidgetBuilder builder;
+
+  CustomPageRoute({
+    this.builder,
+    RouteSettings settings,
+    bool fullscreenDialog = false,
+  }) : super(settings: settings, fullscreenDialog: fullscreenDialog);
+
+  @override
+  Color get barrierColor => Colors.black.withOpacity(0.5);
+
+  @override
+  bool get barrierDismissible => true;
+
+  @override
+  String get barrierLabel => null;
+
+  @override
+  bool get maintainState => true;
+
+  @override
+  bool get opaque => false;
+
+  @override
+  Duration get transitionDuration => const Duration(milliseconds: 400);
+
+  @override
+  Widget buildPage(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation) {
+    return builder(context);
+  }
+}
+
+class MyItem extends StatelessWidget {
+  final String text;
+  final Icon icon;
+  final Widget view;
+  final cloudAllType types;
+  const MyItem(
+      {Key key, this.text, this.icon, this.view, this.types = cloudAllType.UVI})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight =
+        MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
+    return Expanded(
+        child: GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(CustomPageRoute(
+          builder: (_) => MyModalPage(type: types),
+        ));
+      },
+      child: Container(
+        width: screenHeight / 4,
+        height: screenHeight / 3.5,
+        margin: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0),
+          color: Color.fromARGB(120, 74, 57, 131),
+        ),
+        child: Column(
+          children: [
+            Container(
+              // color: Colors.blueGrey,
+              height: 30,
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 5,
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  CustomText(textContent: text, textColor: Colors.white)
+                ],
+              ),
+            ),
+            Expanded(child: Container(width: screenWidth, child: view))
+          ],
+        ),
+      ),
+    ));
+  }
+}
+
+// ignore: missing_return
+class RHTdwidget extends StatelessWidget {
+  final String text;
+  final String Detaltext;
+  final String value;
+  final cloudType type;
+  // ignore: non_constant_identifier_names
+  const RHTdwidget({this.text, this.Detaltext, this.value, this.type});
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    // final screenHeight =
+    // MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(
+          width: 5,
+        ),
+        Container(
+          width: screenWidth / 3 - 5,
+          child: CustomText(
+              textContent: text ?? '', fontSize: 40, align: TextAlign.left),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        Expanded(
+            child: ListView(
+          scrollDirection: Axis.vertical,
+          children: [
+            CustomText(
+                textContent: getrh(value, type) ?? ' ',
+                fontSize: 15,
+                align: TextAlign.left),
+          ],
+        ))
+      ],
+    );
   }
 
+  // ignore: missing_return
+  String getrh(String value, cloudType type) {
+    // 一般都會在露點到達15℃至20℃時開始感到不適；而當露點越過21℃時更會感到悶熱。
+    final temp = int.parse(value);
+    switch (type) {
+      case cloudType.T:
+        if (temp <= 25) {
+          return '舒適溫度，感到涼爽舒適。';
+        } else if (temp >= 26 && temp <= 29) {
+          return '略微悶熱，需要注意保持適當的水分補充。';
+        } else if (temp >= 30 && temp <= 34) {
+          return '明顯的悶熱，出汗增加，需加強水分補充。';
+        } else if (temp >= 35 && temp <= 39) {
+          return '非常悶熱，易出現中暑等問題，需及時休息和補充水分。';
+        } else if (temp >= 40) {
+          return '極度炎熱，容易導致中暑，避免長時間暴露在高溫環境中。';
+        } else {
+          return '';
+        }
+
+        break;
+      case cloudType.Td:
+        if (temp <= 15) {
+          return '相對濕度較低，感覺較為乾燥，不太容易出現露水現象。';
+        } else if (temp >= 16 && temp <= 18) {
+          return '相對濕度適中，感覺比較舒適，不易出現露水現象。';
+        } else if (temp >= 19 && temp <= 22) {
+          return '相對濕度較高，感覺比較悶熱，容易出現露水現象。';
+        } else if (temp >= 23 && temp <= 25) {
+          return '相對濕度高，感覺非常悶熱，容易出現露水現象。';
+        } else if (temp >= 26) {
+          return '相對濕度極高，感覺非常悶熱，露水現象明顯。';
+        } else {
+          return '';
+        }
+
+        break;
+      case cloudType.RH:
+        if (temp <= 30) {
+          return '相對濕度過低，空氣比較乾燥，可能會引起喉嚨不適或皮膚乾燥。';
+        } else if (temp >= 30 && temp <= 60) {
+          return '相對濕度適中，感覺比較舒適。';
+        } else {
+          return '相對濕度過高，空氣比較悶熱，可能會引起暑熱不適或增加病毒等病害的傳播。';
+        }
+        break;
+    }
+  }
+}
+
+class _CloudPageState extends State<CloudPage> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -172,7 +231,7 @@ class _CloudPageState extends State<CloudPage> {
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Color.fromARGB(255, 74, 57, 131),
-          title: Text(selectedOption)),
+          title: Text(selectedOption.i18n())),
       body: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -217,7 +276,8 @@ class _CloudPageState extends State<CloudPage> {
                                     .weatherElements[2].times[0].parameterName;
                                 return Container(
                                     child: CustomText(
-                                  textContent: '$temperature° | ${weatherStatus.i18n()}',
+                                  textContent:
+                                      '$temperature° | ${weatherStatus.i18n()}',
                                   align: TextAlign.center,
                                   fontSize: 20,
                                   textColor: Colors.white,
@@ -311,7 +371,7 @@ class _CloudPageState extends State<CloudPage> {
                       children: [
                         MyItem(
                             types: cloudAllType.WD,
-                            text:wind,
+                            text: wind,
                             view: CompassWidget(
                                 size: screenHeight / 4,
                                 direction: ParseCompassDirection.fromString(
@@ -357,185 +417,126 @@ class _CloudPageState extends State<CloudPage> {
           )),
     );
   }
-}
-
-class MyItem extends StatelessWidget {
-  final String text;
-  final Icon icon;
-  final Widget view;
-  final cloudAllType types;
-  const MyItem(
-      {Key key, this.text, this.icon, this.view, this.types = cloudAllType.UVI})
-      : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight =
-        MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
-    return Expanded(
-        child: GestureDetector(
-      onTap: () {
-        Navigator.of(context).push(CustomPageRoute(
-          builder: (_) => MyModalPage(type: types),
-        ));
-      },
-      child: Container(
-        width: screenHeight / 4,
-        height: screenHeight / 3.5,
-        margin: const EdgeInsets.all(15),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8.0),
-          color: Color.fromARGB(120, 74, 57, 131),
-        ),
-        child: Column(
-          children: [
-            Container(
-              // color: Colors.blueGrey,
-              height: 30,
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 5,
-                  ),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  CustomText(textContent: text, textColor: Colors.white)
-                ],
-              ),
-            ),
-            Expanded(child: Container(width: screenWidth, child: view))
-          ],
-        ),
-      ),
-    ));
+  initState() {
+    super.initState();
   }
 }
 
-// ignore: missing_return
-class RHTdwidget extends StatelessWidget {
-  final String text;
-  final String Detaltext;
-  final String value;
-  final cloudType type;
-  // ignore: non_constant_identifier_names
-  const RHTdwidget({this.text, this.Detaltext, this.value, this.type});
-  // ignore: missing_return
-  String getrh(String value, cloudType type) {
-    // 一般都會在露點到達15℃至20℃時開始感到不適；而當露點越過21℃時更會感到悶熱。
-    final temp = int.parse(value);
-    switch (type) {
-      case cloudType.T:
-        if (temp <= 25) {
-          return '舒適溫度，感到涼爽舒適。';
-        } else if (temp >= 26 && temp <= 29) {
-          return '略微悶熱，需要注意保持適當的水分補充。';
-        } else if (temp >= 30 && temp <= 34) {
-          return '明顯的悶熱，出汗增加，需加強水分補充。';
-        } else if (temp >= 35 && temp <= 39) {
-          return '非常悶熱，易出現中暑等問題，需及時休息和補充水分。';
-        } else if (temp >= 40) {
-          return '極度炎熱，容易導致中暑，避免長時間暴露在高溫環境中。';
-        } else {
-          return '';
-        }
-
-
+extension cloudAllTypeExtension on cloudAllType {
+  String get detailHeaderFirstTitle {
+    switch (this) {
+      case cloudAllType.UVI:
+        return '紫外線指數';
         break;
-      case cloudType.Td:
-        if (temp <= 15) {
-          return '相對濕度較低，感覺較為乾燥，不太容易出現露水現象。';
-        } else if (temp >= 16 && temp <= 18) {
-          return '相對濕度適中，感覺比較舒適，不易出現露水現象。';
-        } else if (temp >= 19 && temp <= 22) {
-          return '相對濕度較高，感覺比較悶熱，容易出現露水現象。';
-        } else if (temp >= 23 && temp <= 25) {
-          return '相對濕度高，感覺非常悶熱，容易出現露水現象。';
-        } else if (temp >= 26) {
-          return '相對濕度極高，感覺非常悶熱，露水現象明顯。';
-        } else {
-          return '';
-        }
-
-
+      case cloudAllType.SUN:
+        return '日出';
         break;
-      case cloudType.RH:
-        if (temp <= 30) {
-          return '相對濕度過低，空氣比較乾燥，可能會引起喉嚨不適或皮膚乾燥。';
-        } else if (temp >= 30 && temp <= 60) {
-          return '相對濕度適中，感覺比較舒適。';
-        } else {
-          return '相對濕度過高，空氣比較悶熱，可能會引起暑熱不適或增加病毒等病害的傳播。';
-        }
+      case cloudAllType.WD:
+        return '';
+        break;
+      case cloudAllType.T:
+        return '攝氏度';
+        break;
+      case cloudAllType.Td:
+        return '攝氏度';
+        break;
+      case cloudAllType.RH:
+        return '百分比';
         break;
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    // final screenHeight =
-    // MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-          width: 5,
-        ),
-        Container(
-          width: screenWidth / 3 - 5,
-          child: CustomText(
-              textContent: text ?? '', fontSize: 40, align: TextAlign.left),
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        Expanded(
-          child: ListView(
-            scrollDirection: Axis.vertical,
-            children: [
-            CustomText(
-                textContent: getrh(value, type) ?? ' ',
-                fontSize: 15,
-                align: TextAlign.left),
-            ],)
-        )
-      ],
-    );
-  }
-}
-
-class CustomPageRoute<T> extends PageRoute<T> {
-  CustomPageRoute({
-    this.builder,
-    RouteSettings settings,
-    bool fullscreenDialog = false,
-  }) : super(settings: settings, fullscreenDialog: fullscreenDialog);
-
-  final WidgetBuilder builder;
-
-  @override
-  Color get barrierColor => Colors.black.withOpacity(0.5);
-
-  @override
-  bool get opaque => false;
-
-  @override
-  bool get barrierDismissible => true;
-
-  @override
-  String get barrierLabel => null;
-
-  @override
-  Widget buildPage(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation) {
-    return builder(context);
+  String get detailHeaderSecondTitle {
+    switch (this) {
+      case cloudAllType.UVI:
+        return '詳細內容';
+        break;
+      case cloudAllType.SUN:
+        return '日落';
+        break;
+      case cloudAllType.WD:
+        return '風向';
+        break;
+      case cloudAllType.T:
+        return '詳細內容';
+        break;
+      case cloudAllType.Td:
+        return '詳細內容';
+        break;
+      case cloudAllType.RH:
+        return '詳細內容';
+        break;
+    }
   }
 
-  @override
-  bool get maintainState => true;
+  String get Englishname {
+    switch (this) {
+      case cloudAllType.UVI:
+        return 'UVI';
+        break;
+      case cloudAllType.SUN:
+        return '日出日落';
+        break;
+      case cloudAllType.WD:
+        return 'WD';
+        break;
+      case cloudAllType.T:
+        return 'T';
+        break;
+      case cloudAllType.Td:
+        return 'Td';
+        break;
+      case cloudAllType.RH:
+        return 'RH';
+        break;
+    }
+  }
 
-  @override
-  Duration get transitionDuration => const Duration(milliseconds: 400);
+  String get name {
+    switch (this) {
+      case cloudAllType.UVI:
+        return '紫外線';
+        break;
+      case cloudAllType.SUN:
+        return '日出日落';
+        break;
+      case cloudAllType.WD:
+        return '風向';
+        break;
+      case cloudAllType.T:
+        return '平均溫度';
+        break;
+      case cloudAllType.Td:
+        return '露點溫度';
+        break;
+      case cloudAllType.RH:
+        return '濕度';
+        break;
+    }
+  }
+
+  String get property {
+    switch (this) {
+      case cloudAllType.UVI:
+        return '紫外線指數';
+        break;
+      case cloudAllType.SUN:
+        return '攝氏度';
+        break;
+      case cloudAllType.WD:
+        return '風向';
+        break;
+      case cloudAllType.T:
+        return '攝氏度';
+        break;
+      case cloudAllType.Td:
+        return '攝氏度';
+        break;
+      case cloudAllType.RH:
+        return '%';
+        break;
+    }
+  }
 }

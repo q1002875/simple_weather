@@ -53,7 +53,7 @@
     "詳細內容": "Detail",
     "百分比":"percentage",
     "攝氏度":"Celsius",
-    
+    "降雨機率":"chance of rain",
     "東": "E",
     "西": "W",
     "南": "S",
@@ -92,6 +92,31 @@
     "相對濕度較高": "High humidity",
     "相對濕度高": "Very high humidity",
     "相對濕度極高": "Extremely high humidity",
-    "相對濕度過高": "Too high humidity"
+    "相對濕度過高": "Too high humidity",
+
+    "各地特報":"Special reports from various places",
+    "今日無地方特報":"No local special report today",
+    "晴天": "CLEAR",
+    "晴時多雲": "MOSTLY CLEAR",
+    "多雲時晴": "PARTLY CLEAR",
+    "多雲": "PARTLY CLOUDY",
+    "多雲時陰": "MOSTLY CLOUDY",
+    "陰時多雲": "MOSTLY CLOUDY",
+    "陰天": "CLOUDY",
+    "多雲陣雨": "PARTLY CLOUDY WITH SHOWERS 8",
+    "多雲短暫雨": "PARTLY CLOUDY WITH OCCASIONAL RAIN",
+    "多雲短暫陣雨": "PARTLY CLOUDY WITH OCCASIONAL SHOWERS",
+    "午後短暫陣雨": "OCCASIONAL AFTERNOON SHOWERS",
+    "短暫陣雨": "OCCASIONAL SHOWERS",
+    "多雲時晴短暫陣雨": "PARTLY CLEAR WITH OCCASIONAL SHOWERS",
+    "多雲時晴短暫雨": "PARTLY CLEAR WITH OCCASIONAL RAIN",
+    "晴時多雲短暫陣雨": "MOSTLY CLEAR WITH OCCASIONAL SHOWERS",
+    "晴短暫陣雨": "CLEAR WITH OCCASIONAL SHOWERS",
+    "短暫雨": "OCCASIONAL RAIN",
+    "多雲時陰短暫雨": "MOSTLY CLOUDY WITH OCCASIONAL RAIN",
+    "多雲時陰短暫陣雨": "MOSTLY CLOUDY WITH OCCASIONAL SHOWERS",
+    "陰時多雲短暫雨": "MOSTLY CLOUDY WITH OCCASIONAL RAIN",
+    "陰時多雲短暫陣雨": "MOSTLY CLOUDY WITH OCCASIONAL SHOWERS",
+    "雨天": "RAINY"
 
 }

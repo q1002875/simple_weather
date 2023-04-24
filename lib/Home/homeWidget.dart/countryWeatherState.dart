@@ -1,15 +1,17 @@
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:localization/localization.dart';
+
 import '../../ApiModel.dart/weathersModel2.dart';
 import '../../ExtensionToolClass/CustomText.dart';
 import 'ListWidget/weatherHourItem.dart';
 
 class CountryWeather extends StatelessWidget {
-  CountryWeather({this.width, this.height, this.weatherData});
-
   final double width;
+
   final double height;
   final WeatherData weatherData;
+  CountryWeather({this.width, this.height, this.weatherData});
 
   @override
   Widget build(BuildContext context) {
@@ -61,17 +63,17 @@ class CountryWeather extends StatelessWidget {
           children: <Widget>[
             InfoContainer(
                 image: Image.asset('assets/$weatherimage.png'),
-                text: '$weatherStatus',
+                text: '$weatherStatus'.i18n(),
                 width: width / 2.8,
                 height: height / 3.5),
             InfoContainer(
                 image: Image.asset('assets/bodytemp.png'),
-                text: '$conforStatus',
+                text: '$conforStatus'.i18n(),
                 width: width / 2.8,
                 height: height / 3.5),
             InfoContainer(
                 image: Image.asset('assets/raining.png'),
-                text: '降雨機率$rain%',
+                text: '降雨機率'.i18n() + '$rain%',
                 width: width / 2.8,
                 height: height / 3.3),
           ],
@@ -82,6 +84,11 @@ class CountryWeather extends StatelessWidget {
 }
 
 class InfoContainer extends StatelessWidget {
+  final Image image;
+
+  final String text;
+  final double width;
+  final double height;
   const InfoContainer({
     Key key,
     this.image,
@@ -89,11 +96,6 @@ class InfoContainer extends StatelessWidget {
     this.width,
     this.height,
   }) : super(key: key);
-
-  final Image image;
-  final String text;
-  final double width;
-  final double height;
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:localization/localization.dart';
 import 'package:simple_weahter/Cloud/Cloud.dart';
 import 'package:simple_weahter/Cloud/simplelinecahrt_widget.dart';
 import 'package:simple_weahter/ExtensionToolClass/CustomText.dart';
@@ -118,31 +119,27 @@ class cloudDetailText extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Flexible(
-                        flex: 1,
-                        child: 
-                        Container(
+                          flex: 1,
+                          child: Container(
                             width: double.maxFinite,
-                          child: CustomText(
-                          textColor: select ? Colors.yellow : Colors.white,
-                          textContent: '週$day',
-                          fontSize: 18,
-                        ),)
-                      ),
+                            child: CustomText(
+                              textColor: select ? Colors.yellow : Colors.white,
+                              textContent: '週$day',
+                              fontSize: 18,
+                            ),
+                          )),
                       Flexible(
-                        flex: 1,
-                         child: Container(
-                          width: double.maxFinite,
-                          child: CustomText(
+                          flex: 1,
+                          child: Container(
+                            width: double.maxFinite,
+                            child: CustomText(
                               textColor: select ? Colors.yellow : Colors.white,
                               textContent: showTypetext(),
                               fontSize: 18,
                             ),
-                          )
-                        
-                      ),
+                          )),
                     ],
                   )),
-
         Divider(
           height: 5,
           color: Colors.white,
@@ -194,7 +191,6 @@ class returnCloudDataText {
         }
         break;
 
-
       case cloudAllType.Td:
         if (temp <= 15) {
           return '相對濕度較低';
@@ -209,8 +205,6 @@ class returnCloudDataText {
         } else {
           return '';
         }
-
-
 
         break;
       case cloudAllType.RH:
@@ -254,7 +248,7 @@ class _MyModalPageState extends State<MyModalPage> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Color.fromARGB(255, 74, 57, 131),
-          title: Text(selectedOption + ' ' + widget.type.name),
+          title: Text(selectedOption.i18n() + ' ' + widget.type.name.i18n()),
         ),
         body: Container(
             decoration: BoxDecoration(
@@ -363,82 +357,87 @@ class _MyModalPageState extends State<MyModalPage> {
                           ),
                           child: Flex(
                             direction: Axis.vertical,
-                            children: [widget.type != cloudAllType.WD
-                              ?Flex(
-                                // mainAxisSize:MainAxisSize.max,
-                                direction: Axis.horizontal,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Flexible(
-                                      flex: 2,
-                                      child: Container(
-                                        width: double.maxFinite,
-                                        color: Color.fromARGB(0, 96, 125, 139),
-                                        child: CustomText(
-                                          textColor: Colors.white,
-                                          textContent: '',
-                                          fontSize: 20,
-                                        ),
-                                      )),
-                                  Flexible(
-                                      flex: 2,
-                                      child: Container(
-                                        width: double.maxFinite,
-                                        color: Color.fromARGB(0, 176, 190, 197),
-                                        child: CustomText(
-                                          textColor: Colors.white,
-                                          textContent: widget
-                                              .type.detailHeaderFirstTitle,
-                                          fontSize: 20,
-                                        ),
-                                      )),
-                                  Expanded(
-                                      flex: 4,
-                                      child: Container(
-                                        width: double.maxFinite,
-                                        color: Color.fromARGB(0, 144, 164, 174),
-                                        child: CustomText(
-                                          textColor: Colors.white,
-                                          textContent: widget
-                                              .type.detailHeaderSecondTitle,
-                                          fontSize: 20,
-                                        ),
-                                      )),
-                                ],
-                              )
-                              :Flex(
-                                // mainAxisSize:MainAxisSize.max,
-                                direction: Axis.horizontal,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Flexible(
-                                      flex: 1,
-                                      child: Container(
-                                        width: double.maxFinite,
-                                        color: Color.fromARGB(0, 96, 125, 139),
-                                        child: CustomText(
-                                          textColor: Colors.white,
-                                          textContent: '',
-                                          fontSize: 20,
-                                        ),
-                                      )),
-
-                                  Flexible(
-                                      flex: 1,
-                                      child: Container(
-                                        width: double.maxFinite,
-                                        color: Color.fromARGB(0, 144, 164, 174),
-                                        child: CustomText(
-                                          textColor: Colors.white,
-                                          textContent: widget
-                                              .type.detailHeaderSecondTitle,
-                                          fontSize: 20,
-                                        ),
-                                      )),
-                                ],
-                              ),
+                            children: [
+                              widget.type != cloudAllType.WD
+                                  ? Flex(
+                                      // mainAxisSize:MainAxisSize.max,
+                                      direction: Axis.horizontal,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Flexible(
+                                            flex: 2,
+                                            child: Container(
+                                              width: double.maxFinite,
+                                              color: Color.fromARGB(
+                                                  0, 96, 125, 139),
+                                              child: CustomText(
+                                                textColor: Colors.white,
+                                                textContent: '',
+                                                fontSize: 20,
+                                              ),
+                                            )),
+                                        Flexible(
+                                            flex: 2,
+                                            child: Container(
+                                              width: double.maxFinite,
+                                              color: Color.fromARGB(
+                                                  0, 176, 190, 197),
+                                              child: CustomText(
+                                                textColor: Colors.white,
+                                                textContent: widget.type
+                                                    .detailHeaderFirstTitle,
+                                                fontSize: 20,
+                                              ),
+                                            )),
+                                        Expanded(
+                                            flex: 4,
+                                            child: Container(
+                                              width: double.maxFinite,
+                                              color: Color.fromARGB(
+                                                  0, 144, 164, 174),
+                                              child: CustomText(
+                                                textColor: Colors.white,
+                                                textContent: widget.type
+                                                    .detailHeaderSecondTitle,
+                                                fontSize: 20,
+                                              ),
+                                            )),
+                                      ],
+                                    )
+                                  : Flex(
+                                      // mainAxisSize:MainAxisSize.max,
+                                      direction: Axis.horizontal,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Flexible(
+                                            flex: 1,
+                                            child: Container(
+                                              width: double.maxFinite,
+                                              color: Color.fromARGB(
+                                                  0, 96, 125, 139),
+                                              child: CustomText(
+                                                textColor: Colors.white,
+                                                textContent: '',
+                                                fontSize: 20,
+                                              ),
+                                            )),
+                                        Flexible(
+                                            flex: 1,
+                                            child: Container(
+                                              width: double.maxFinite,
+                                              color: Color.fromARGB(
+                                                  0, 144, 164, 174),
+                                              child: CustomText(
+                                                textColor: Colors.white,
+                                                textContent: widget.type
+                                                    .detailHeaderSecondTitle,
+                                                fontSize: 20,
+                                              ),
+                                            )),
+                                      ],
+                                    ),
                               Flexible(
                                 flex: 8,
                                 child: ListView.builder(
@@ -467,7 +466,7 @@ class _MyModalPageState extends State<MyModalPage> {
 
     final clouddata = await api.getCloudWeekDetailData(country, type);
     print(clouddata.toString());
-    clouddata.asMap().forEach((key,element) {
+    clouddata.asMap().forEach((key, element) {
       element.elementValue.forEach((e) {
         print(e.value + e.measures);
         final daystartTime = element.startTime.day;
@@ -480,7 +479,7 @@ class _MyModalPageState extends State<MyModalPage> {
             value: e.value,
             daynumber: '$formattedDate',
             weekday: '$dayendTime',
-            select: key == 0 ? true:false));
+            select: key == 0 ? true : false));
       });
     });
     //去除重複的值
@@ -507,7 +506,7 @@ class _MyModalPageState extends State<MyModalPage> {
 
     List<SunDataTime> rise = await api.getSunWeekRiseSetTime(country);
 
-    rise.asMap().forEach((key,element) {
+    rise.asMap().forEach((key, element) {
       DateTime date = DateTime.parse(element.date);
       String formattedDate =
           DateFormat('EEEE', 'zh_Hant').format(date).replaceAll('星期', '');
@@ -519,7 +518,7 @@ class _MyModalPageState extends State<MyModalPage> {
           value: '$sunrise-$sunset',
           daynumber: formattedDate,
           weekday: '$day',
-          select: key == 0 ?true :false));
+          select: key == 0 ? true : false));
     });
     setState(() {
       data = datacloud;

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:localization/localization.dart';
 import 'package:simple_weahter/ApiCommand.dart/apiService.dart';
 import 'package:simple_weahter/ApiModel.dart/weatherAlertModel.dart';
 import 'package:simple_weahter/ExtensionToolClass/CustomText.dart';
@@ -188,7 +189,7 @@ class _AlertPageState extends State<AlertPage> {
                   )
                 : Container()
           ],
-          title: Text('各地特報')),
+          title: Text('各地特報'.i18n())),
       body: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -272,7 +273,7 @@ class _AlertPageState extends State<AlertPage> {
                       ),
                     ),
                   );
-                } else if (snapshot.hasError ) {
+                } else if (snapshot.hasError) {
                   print("地方特報頁面錯誤:${snapshot.error}");
                   return Container(
                       alignment: Alignment.center,
@@ -294,8 +295,8 @@ class _AlertPageState extends State<AlertPage> {
                       width: 10,
                       height: screenHeight / 8,
                       child: CircularProgressIndicator());
-                }else{
-                     return Container(
+                } else {
+                  return Container(
                       alignment: Alignment.center,
                       margin: EdgeInsets.all(15),
                       decoration: BoxDecoration(
@@ -320,7 +321,6 @@ class _AlertPageState extends State<AlertPage> {
   initState() {
     super.initState();
     // getAlertReport();
-
   }
 }
 
