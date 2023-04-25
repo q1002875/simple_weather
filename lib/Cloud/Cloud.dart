@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:localization/localization.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_weahter/ExtensionToolClass/CustomText.dart';
 
 import '../ApiCommand.dart/apiService.dart';
 import '../ApiModel.dart/weathersModel2.dart';
 import '../Home/homePage.dart';
 import '../Home/homeWidget.dart/ListWidget/Compass.dart';
+import '../provider/provider_theme.dart';
 import 'TypeDetailWidget.dart';
 
 final api = apiService();
@@ -235,7 +237,7 @@ class _CloudPageState extends State<CloudPage> {
       body: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/homeBackground.png'),
+              image: context.read<ThemeProvider>().pimage.image,
               fit: BoxFit.cover,
             ),
           ),

@@ -1,14 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:localization/localization.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_weahter/Home/homePage.dart';
+import 'package:simple_weahter/provider/provider_%20localization.dart';
+import 'package:simple_weahter/provider/provider_theme.dart';
 
 import 'Alert/AlertWeather.dart';
 import 'Cloud/Cloud.dart';
 import 'Setting/SettingPage.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    // 在根 widget 中使用 MultiProvider，同時提供 CounterModel 和 ThemeModel 類別
+    MultiProvider(
+      providers: [
+          ChangeNotifierProvider(create: (_) => LocaleProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

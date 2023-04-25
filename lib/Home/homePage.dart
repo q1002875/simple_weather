@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:localization/localization.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_weahter/ApiCommand.dart/apiService.dart';
 import 'package:simple_weahter/ExtensionToolClass/ShowDialog.dart';
 import '../ApiModel.dart/weathersModel2.dart';
 import '../ExtensionToolClass/CustomText.dart';
 import '../ExtensionToolClass/StorageService.dart';
+import '../provider/provider_theme.dart';
 import 'homeWidget.dart/countryWeatherHourType.dart';
 import 'homeWidget.dart/countryWeatherState.dart';
 import 'package:geolocator/geolocator.dart';
@@ -144,7 +146,7 @@ class _HomePageState extends State<HomePage> {
                   child: Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: AssetImage('assets/homeBackground.png'),
+                          image: context.read<ThemeProvider>().pimage.image,
                           fit: BoxFit.cover,
                         ),
                       ),

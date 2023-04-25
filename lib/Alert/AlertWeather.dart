@@ -3,12 +3,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:localization/localization.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_weahter/ApiCommand.dart/apiService.dart';
 import 'package:simple_weahter/ApiModel.dart/weatherAlertModel.dart';
 import 'package:simple_weahter/ExtensionToolClass/CustomText.dart';
 import 'package:simple_weahter/Home/homeWidget.dart/ListWidget/weatherHourItem.dart';
 
 import '../ExtensionToolClass/ShowDialog.dart';
+import '../provider/provider_theme.dart';
 
 Future<Records> getAlertReport() async {
   final api = apiService();
@@ -193,7 +195,7 @@ class _AlertPageState extends State<AlertPage> {
       body: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/homeBackground.png'),
+              image: context.read<ThemeProvider>().pimage.image,
               fit: BoxFit.cover,
             ),
           ),
