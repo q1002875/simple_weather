@@ -19,7 +19,6 @@ if (_pimage  != image) {
       _pimage = image;
       notifyListeners();
     }
-    notifyListeners();
   }
 }
 

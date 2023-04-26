@@ -117,6 +117,15 @@
     "多雲時陰短暫陣雨": "MOSTLY CLOUDY WITH OCCASIONAL SHOWERS",
     "陰時多雲短暫雨": "MOSTLY CLOUDY WITH OCCASIONAL RAIN",
     "陰時多雲短暫陣雨": "MOSTLY CLOUDY WITH OCCASIONAL SHOWERS",
-    "雨天": "RAINY"
+    "雨天": "RAINY",
+
+     "背景二": "Background Two",
+     "背景一": "Background One",
+     "繁體中文": "Traditional Chinese",
+    "英文": "English",
+     "設定背景": "Background Settings",
+    "設定語言": "Language Settings",
+     "設定":"Setting"
 
 }
+

@@ -233,7 +233,13 @@ class _CloudPageState extends State<CloudPage> {
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Color.fromARGB(255, 74, 57, 131),
-          title: Text(selectedOption.i18n())),
+          title: CustomText(
+            textContent: selectedOption,
+            textColor: Colors.white,
+            fontSize: 20,
+          )
+          
+          ),
       body: Container(
           decoration: BoxDecoration(
             image: DecorationImage(

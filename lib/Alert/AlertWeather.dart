@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_weahter/ApiCommand.dart/apiService.dart';
 import 'package:simple_weahter/ApiModel.dart/weatherAlertModel.dart';
@@ -191,7 +190,13 @@ class _AlertPageState extends State<AlertPage> {
                   )
                 : Container()
           ],
-          title: Text('各地特報'.i18n())),
+          title:  CustomText(
+            textContent: "各地特報",
+            textColor: Colors.white,
+            fontSize: 20,
+          )
+          
+          ),
       body: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
