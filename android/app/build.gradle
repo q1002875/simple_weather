@@ -37,7 +37,7 @@ android {
         applicationId "myapp.simpleweahter"
         minSdkVersion 31
         targetSdkVersion 32
-        versionCode flutterVersionCode.toInteger()
+        versionCode 2
         versionName flutterVersionName
     }
    signingConfigs {
