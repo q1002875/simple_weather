@@ -12,7 +12,7 @@ import 'Setting/SettingPage.dart';
 
 void main() {
   runApp(
-    // 在根 widget 中使用 MultiProvider，同時提供 CounterModel 和 ThemeModel 類別
+    // 在根 widget 中使用 MultiProvider，同時提供 ThemeProvider 和 ThemeModel 類別
     MultiProvider(
       providers: [
           ChangeNotifierProvider(create: (_) => LocaleProvider()),

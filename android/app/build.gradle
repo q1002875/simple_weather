@@ -34,18 +34,26 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.simple_weahter"
-        minSdkVersion 16
-        targetSdkVersion 30
+        applicationId "myapp.simpleweahter"
+        minSdkVersion 31
+        targetSdkVersion 32
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+    }
+   signingConfigs {
+        release {
+            keyAlias 'myapp'  // 別名
+            keyPassword '062106'  // 密碼
+            storeFile file('/Users/Kevin/Desktop/我的專案及code/自身專案/simple_weather/myapp.keystore')  // keystore 文件路徑
+            storePassword '062106'  // keystore 密碼
+        }
     }
 
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+                signingConfig signingConfigs.release
         }
     }
 }
