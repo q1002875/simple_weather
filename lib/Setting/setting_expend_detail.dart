@@ -15,7 +15,8 @@ class setting_expend_detail extends StatelessWidget {
 
   const setting_expend_detail({key, this.data, this.section, this.index,this.screenheight});
 
-  Widget show_detailText(
+ // ignore: missing_return
+ Widget show_detailText(
       Locale lcale, Image image, SettingList item, int section, int index) {
     switch (section) {
       case 0:
